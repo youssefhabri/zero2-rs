@@ -1,0 +1,28 @@
+[package]
+name = "zero2_rs"
+version = "0.1.0"
+authors = ["Youssef Habri <youssef.habri@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+dotenv = "0.13"
+
+log = "0.4"
+env_logger = "0.6"
+pretty_env_logger = "0.3"
+
+reqwest = "0.9"
+
+serde = "1.0"
+serde_derive = "1.0"
+serde_json = "1.0"
+
+typemap = "0.3"
+rust-embed = "4.3"
+
+[dependencies.serenity]
+git = "https://github.com/serenity-rs/serenity.git"
+features = ["framework", "standard_framework"]
+
+[patch.crates-io]
+openssl = { git = "https://github.com/ishitatsuyuki/rust-openssl", branch = "0.9.x" }

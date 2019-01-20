@@ -1,0 +1,33 @@
+query ($search: String, $type: MediaType) {
+    Page(perPage: 50) {
+        media(search: $search, type: $type) {
+            id
+            idMal
+            type
+            title {
+                romaji
+                english
+                native
+                userPreferred
+            }
+            nextAiringEpisode {
+                airingAt
+            }
+            status
+            meanScore
+            episodes
+            chapters
+            siteUrl
+            externalLinks {
+                site
+                url
+            }
+            coverImage {
+                medium
+                large
+            }
+            bannerImage
+            description
+        }
+    }
+}
