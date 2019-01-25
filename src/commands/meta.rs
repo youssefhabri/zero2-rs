@@ -4,14 +4,14 @@ use serenity::{
     client::bridge::gateway::ShardId,
     framework::standard::{Args, Command, CommandError},
 };
-use crate::structs::ShardManagerContainer;
+use crate::store::ShardManagerContainer;
 
 
 pub struct Test;
 
 impl Command for Test {
-    fn execute(&self, _: &mut Context, message: &Message, args: Args) -> Result<(), CommandError> {
-        message.channel_id.say(format!("{:?}", args));
+    fn execute(&self, ctx: &mut Context, message: &Message, args: Args) -> Result<(), CommandError> {
+
 
         Ok(())
     }

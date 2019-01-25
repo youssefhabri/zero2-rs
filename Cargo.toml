@@ -19,9 +19,12 @@ serde_json = "1.0"
 
 typemap = "0.3"
 rust-embed = "4.3"
+dissolve = "0.2"
+libmath = "0.2"
 
 [dependencies.serenity]
 git = "https://github.com/serenity-rs/serenity.git"
+branch = "current"
 features = ["framework", "standard_framework"]
 
 [patch.crates-io]
