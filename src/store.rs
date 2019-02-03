@@ -6,8 +6,16 @@ use serenity::{
     prelude::*
 };
 use typemap::Key;
-use serenity::model::id::{GuildId, MessageId};
+use serenity::model::user::User;
+use serenity::model::id::{UserId, MessageId};
 use serenity::builder::CreateEmbed;
+
+// Bot ownerId Container
+pub struct BotOwnerContainer;
+
+impl Key for BotOwnerContainer {
+    type Value = User;
+}
 
 // Shard Manager Container
 pub struct ShardManagerContainer;
@@ -23,14 +31,15 @@ impl Key for CommandCounter {
     type Value = HashMap<String, u64>;
 }
 
-pub struct GuildPaginator;
+pub struct MessagePaginator;
 
-impl Key for GuildPaginator {
-    type Value = HashMap<GuildId, GuildPagination>;
+impl Key for MessagePaginator {
+    type Value = HashMap<MessageId, MessagePagination>;
 }
 
-pub struct GuildPagination {
+pub struct MessagePagination {
     pub pages: Vec<CreateEmbed>,
     pub current_page: u32,
     pub message_id: MessageId,
+    pub author_id: UserId
 }
