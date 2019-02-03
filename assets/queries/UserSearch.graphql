@@ -35,6 +35,7 @@ query ($id: Int, $search: String) {
                             first
                             last
                             native
+                            alternative
                         }
                     }
                 }

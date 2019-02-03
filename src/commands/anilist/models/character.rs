@@ -1,41 +1,114 @@
 use crate::commands::anilist::models::user::MediaConnection;
+use crate::commands::anilist::utils::synopsis;
 
 #[derive(Deserialize, Debug)]
 pub struct CharacterName {
-    first: Option<String>,
-    last: Option<String>,
-    native: Option<String>,
-    alternative: Vec<String>
+    pub first: Option<String>,
+    pub last: Option<String>,
+    pub native: Option<String>,
+    pub alternative: Vec<String>
 }
 
 #[derive(Deserialize, Debug)]
 pub struct CharacterImage {
-    large: Option<String>,
-    medium: Option<String>
+    pub large: Option<String>,
+    pub medium: Option<String>
 }
 
 #[derive(Deserialize, Debug)]
 pub struct CharacterBase {
-    id: u32,
+    pub id: u32,
 
     #[serde(rename = "siteUrl")]
-    site_url: String,
+    pub site_url: String,
 
-    name: CharacterName
+    pub name: CharacterName
+}
+
+impl CharacterBase {
+    pub fn full_name(&self) -> String {
+        let mut name_list = vec![];
+
+        match &self.name.first {
+            Some(first) => name_list.push(first.clone()),
+            None => {},
+        }
+
+        match &self.name.last {
+            Some(last) => name_list.push(last.clone()),
+            None => {},
+        }
+
+        name_list.join(" ")
+    }
 }
 
 #[derive(Deserialize, Debug)]
 pub struct Character {
-    id: u32,
+    pub id: u32,
 
     #[serde(rename = "siteUrl")]
-    site_url: String,
+    pub site_url: String,
 
-    description: String,
+    pub description: Option<String>,
 
-    name: CharacterName,
+    pub name: CharacterName,
 
-    image: CharacterImage,
+    pub image: CharacterImage,
 
-    media: MediaConnection
+    pub media: MediaConnection
+}
+
+impl Character {
+    pub fn full_name(&self) -> String {
+        let mut name_list = vec![];
+
+        match &self.name.first {
+            Some(first) => name_list.push(first.clone()),
+            None => {},
+        }
+
+        match &self.name.last {
+            Some(last) => name_list.push(last.clone()),
+            None => {},
+        }
+
+        name_list.join(" ")
+    }
+
+    pub fn about(&self) -> String {
+        match &self.description {
+            Some(description) => synopsis(description, 300),
+            None => String::new()
+        }
+    }
+
+    pub fn cover_image(&self) -> String {
+        match &self.image.large {
+            Some(image) => format!("{}", image),
+            None => String::new()
+        }
+    }
+
+    pub fn media_list(&self, media_type: &str) -> String {
+        let media_list = &self.media.nodes;
+
+        let mut fav_list: Vec<String> = vec![];
+
+        if media_list.len() > 0 {
+            let mut count = 0;
+            for (i, media) in media_list.iter().enumerate() {
+                if media.media_type == media_type {
+                    fav_list.push(
+                        format!("[{}]({})", media.title.user_preferred, media.site_url));
+                    count = count + 1;
+                }
+                if count >= 5 { break }
+            }
+
+            return fav_list.join("\n");
+        }
+
+        return String::from("N/A")
+    }
 }

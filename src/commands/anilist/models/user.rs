@@ -1,25 +1,26 @@
-use crate::commands::anilist::models::{
-    media::MediaBase,
-    character::CharacterBase,
+use crate::commands::anilist::{
+    utils::{synopsis, format_time},
+    models::media::MediaBase,
+    models::character::CharacterBase,
 };
 
-#[derive(Deserialize, Debug)]
+#[derive(Clone, Deserialize, Debug)]
 pub struct UserAvatar {
-    large: String,
+    pub large: String,
 }
 
 #[derive(Deserialize, Debug)]
 pub struct UserStats {
     #[serde(rename = "watchedTime")]
-    watched_time: Option<u32>,
+    pub watched_time: Option<u64>,
 
     #[serde(rename = "chaptersRead")]
-    chapters_read: Option<u32>,
+    pub chapters_read: Option<u32>,
 }
 
 #[derive(Deserialize, Debug)]
 pub struct MediaConnection {
-    nodes: Vec<MediaBase>
+    pub nodes: Vec<MediaBase>
 }
 
 #[derive(Deserialize, Debug)]
@@ -29,27 +30,114 @@ pub struct CharacterConnection {
 
 #[derive(Deserialize, Debug)]
 pub struct Favourites {
-    anime: MediaConnection,
-    manga: MediaConnection,
-    characters: CharacterConnection
+    pub anime: MediaConnection,
+    pub manga: MediaConnection,
+    pub characters: CharacterConnection
 }
 
 #[derive(Deserialize, Debug)]
 pub struct User {
-    id: u32,
-    name: String,
+    pub id: u32,
+    pub name: String,
 
     #[serde(rename = "siteUrl")]
-    site_url: String,
+    pub site_url: String,
 
-    avatar: UserAvatar,
+    pub avatar: UserAvatar,
 
     #[serde(rename = "bannerImage")]
-    banner_image: Option<String>,
+    pub banner_image: Option<String>,
 
-    about: Option<String>,
+    pub about: Option<String>,
 
-    stats: UserStats,
+    pub stats: UserStats,
 
-    favourites: Favourites
+    pub favourites: Favourites
+}
+
+impl User {
+    pub fn about(&self) -> String {
+        match &self.about {
+            Some(about) => synopsis(about, 300),
+            None => String::new()
+        }
+    }
+
+    pub fn watched_time(&self) -> String {
+        match &self.stats.watched_time {
+            Some(watched_time) => format_time(*watched_time as f64),
+            None => String::from("N/A")
+        }
+    }
+
+    pub fn chapters_read(&self) -> String {
+        match &self.stats.chapters_read {
+            Some(chapters_read) => format!("{}", chapters_read),
+            None => String::from("N/A")
+        }
+    }
+
+    pub fn favourite_media(&self, fav_type: &str) -> String {
+        let media_list = match fav_type {
+            "ANIME" => &self.favourites.anime.nodes,
+            "MANGA" => &self.favourites.anime.nodes,
+            _ => return String::from("N/A")
+        };
+
+        let mut fav_list: Vec<String> = vec![];
+
+        if media_list.len() > 0 {
+            for (i, media) in media_list.iter().enumerate() {
+                if i == 5 { break; }
+                fav_list.push(
+                    format!("[{}]({})", media.title.user_preferred, media.site_url))
+            }
+
+            if media_list.len() > 5 {
+                return format!(
+                    "{}\n + {} more",
+                    fav_list.join("\n"),
+                    media_list.len() - 5
+                )
+            }
+
+            return fav_list.join("\n");
+        }
+
+        return String::from("N/A")
+    }
+
+    pub fn favourite_anime(&self) -> String {
+        self.favourite_media("ANIME")
+    }
+
+    pub fn favourite_manga(&self) -> String {
+        self.favourite_media("MANGA")
+    }
+
+    pub fn favourite_characters(&self) -> String {
+        let character_list = &self.favourites.characters.nodes;
+
+        let mut fav_list: Vec<String> = vec![];
+
+        if character_list.len() > 0 {
+            for (i, character) in character_list.iter().enumerate() {
+                if i == 5 { break; }
+                fav_list.push(
+                    format!("[{}]({})", character.full_name(), character.site_url))
+            }
+
+            if character_list.len() > 5 {
+                return format!(
+                    "{}\n + {} more",
+                    fav_list.join("\n"),
+                    character_list.len() - 5
+                )
+            }
+
+            return fav_list.join("\n");
+        }
+
+        return String::from("N/A")
+    }
 }

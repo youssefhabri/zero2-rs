@@ -1,0 +1,64 @@
+query ($id: Int) {
+    Activity(id: $id) {
+        __typename
+        ... on TextActivity {
+            id
+            createdAt
+            type
+            siteUrl
+            user {
+                ...userBase
+            }
+            text(asHtml: true)
+        }
+
+        ... on ListActivity {
+            id
+            createdAt
+            type
+            siteUrl
+            user {
+                ...userBase
+            }
+            status
+            progress
+            media {
+                id
+                type
+                siteUrl
+                title {
+                    romaji
+                    english
+                    native
+                    userPreferred
+                }
+                coverImage {
+                    large
+                }
+            }
+        }
+
+        ... on MessageActivity {
+            id
+            createdAt
+            type
+            siteUrl
+            recipient {
+                ...userBase
+            }
+            messenger {
+                ...userBase
+            }
+            message(asHtml: true)
+        }
+    }
+}
+
+fragment userBase on User {
+    id
+    name
+    siteUrl
+    avatar {
+        large
+    }
+}

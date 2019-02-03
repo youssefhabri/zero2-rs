@@ -2,7 +2,7 @@ use crate::commands::anilist::utils::{synopsis, format_time};
 use std::time::SystemTime;
 use std::time::UNIX_EPOCH;
 
-#[derive(Deserialize, Debug)]
+#[derive(Clone, Deserialize, Debug)]
 pub struct MediaTitle {
     pub romaji: Option<String>,
 
@@ -27,14 +27,14 @@ pub struct  MediaExternalLink {
     pub site: String,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Clone, Deserialize, Debug)]
 pub struct MediaCoverImage {
     pub large: String,
 
     pub medium: String,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Clone, Deserialize, Debug)]
 pub struct MediaBase {
     pub id: u32,
 
@@ -45,6 +45,9 @@ pub struct MediaBase {
 
     #[serde(rename = "siteUrl")]
     pub site_url: String,
+
+    #[serde(rename = "coverImage")]
+    pub cover_image: MediaCoverImage,
 }
 
 #[derive(Deserialize, Debug)]

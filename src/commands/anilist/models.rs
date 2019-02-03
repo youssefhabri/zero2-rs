@@ -1,8 +1,10 @@
 use std::collections::HashMap;
+use crate::commands::anilist::models::activity::Activity;
 
 pub mod user;
 pub mod media;
 pub mod character;
+pub mod activity;
 
 
 pub type Variables = HashMap<String, String>;
@@ -18,6 +20,16 @@ pub struct Page {
     pub media: Option<Vec<media::Media>>,
     pub users: Option<Vec<user::User>>,
     pub characters: Option<Vec<character::Character>>,
+}
+
+impl Default for Page {
+    fn default() -> Self {
+        Page {
+            media: None,
+            users: None,
+            characters: None,
+        }
+    }
 }
 
 impl Page {
@@ -45,8 +57,11 @@ impl Page {
 
 #[derive(Deserialize, Debug)]
 pub struct Data {
-    #[serde(rename = "Page")]
+    #[serde(default, rename = "Page")]
     pub page: Page,
+
+    #[serde(default, rename = "Activity")]
+    pub activity: Option<Activity>
 }
 
 #[derive(Deserialize, Debug)]

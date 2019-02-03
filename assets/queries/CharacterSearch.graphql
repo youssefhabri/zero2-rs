@@ -14,7 +14,7 @@ query ($id: Int,$search: String) {
                 large
                 medium
             }
-            media {
+            media(sort: SCORE_DESC) {
                 nodes {
                     id
                     type
