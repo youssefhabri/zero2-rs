@@ -4,12 +4,16 @@ version = "0.1.0"
 authors = ["Youssef Habri <youssef.habri@gmail.com>"]
 edition = "2018"
 
+build = "build.rs"
+
 [dependencies]
 dotenv = "0.13"
 
 log = "0.4"
 env_logger = "0.6"
 pretty_env_logger = "0.3"
+
+regex = "1"
 
 reqwest = "0.9"
 
