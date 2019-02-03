@@ -3,7 +3,7 @@ use serenity::{
     framework::StandardFramework,
     framework::standard::{Args, Command, CommandError},
     model::channel::Message,
-    builder::{CreateEmbed, CreateMessage}
+    builder::CreateMessage
 };
 
 use crate::commands::anilist::models::{
@@ -226,12 +226,12 @@ impl Command for ActivityCommand {
         let keyword = args.full().to_owned();
 
 
-        let re = Regex::new(r"\d+/?$").unwrap();
+        let re = Regex::new(r"\d+/?>?$").unwrap();
 
         let activity_id = match re.captures(keyword.as_str()) {
             Some(caps) => {
                 match caps.get(0) {
-                    Some(activity_id) => activity_id.as_str().replace("/", ""),
+                    Some(activity_id) => activity_id.as_str().replace("/", "").replace(">", ""),
                     None => return Ok(())
                 }
             },

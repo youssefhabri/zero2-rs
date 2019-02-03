@@ -1,2 +1,3 @@
-pub mod meta;
 pub mod anilist;
+pub mod giphy;
+pub mod meta;

@@ -6,6 +6,7 @@ use crate::commands::anilist::models::{
     user::User
 };
 use crate::commands::anilist::utils::synopsis;
+use crate::commands::giphy::Giphy;
 
 
 pub fn media_pages_builder(results: Vec<Media>, embed_builder: fn(&Media, String) -> CreateEmbed) -> Vec<CreateEmbed> {
@@ -40,7 +41,6 @@ pub fn character_pages_builder(results: Vec<Character>, embed_builder: fn(&Chara
 
     pages
 }
-
 
 pub fn anime_embed_builder(anime: &Media, prefix: String) -> CreateEmbed {
     CreateEmbed::default()
@@ -174,4 +174,27 @@ fn message_activity_embed_builder(activity: &Activity) -> CreateEmbed {
         .footer(|f| f
             .icon_url("https://anilist.co/img/icons/favicon-32x32.png")
             .text("Powered by AniList"))
+}
+
+// Giphy builders
+pub fn giphy_pages_builder(results: Vec<Giphy>, embed_builder: fn(&Giphy, String) -> CreateEmbed) -> Vec<CreateEmbed> {
+    let mut pages = vec![];
+    let len = results.len().clone();
+
+    for (i, gif) in results.iter().enumerate() {
+        pages.push(embed_builder(gif, format!("Page: {}/{} | ", i + 1, len)))
+    }
+
+    pages
+}
+
+pub fn giphy_embed_builder(gif: &Giphy, prefix: String) -> CreateEmbed {
+    CreateEmbed::default()
+        .color(3447003)
+        .title(&gif.title)
+        .url(&gif.url)
+        .image(&gif.images.original.url)
+        .footer(|f| f
+            .icon_url("https://giphy.com/static/img/giphy_logo_square_social.png")
+            .text(format!("{}Powered by Giphy", prefix)))
 }

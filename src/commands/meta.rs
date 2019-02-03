@@ -12,7 +12,6 @@ pub struct Test;
 impl Command for Test {
     fn execute(&self, ctx: &mut Context, message: &Message, args: Args) -> Result<(), CommandError> {
 
-
         Ok(())
     }
 }
