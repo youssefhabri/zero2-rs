@@ -1,58 +1,58 @@
 query ($id: Int, $search: String) {
-    Page(perPage: 50) {
-        users(id: $id, search: $search, sort: USERNAME) {
-            id
-            name
-            siteUrl
-            avatar {
-                large
-            }
-            bannerImage
-            about(asHtml: true)
-            stats {
-                watchedTime
-                chaptersRead
-            }
-            favourites {
-                manga {
-                    nodes {
-                        id
-                        type
-                        siteUrl
-                        title {
-                            romaji
-                            english
-                            native
-                            userPreferred
-                        }
-                    }
-                }
-                characters {
-                    nodes {
-                        id
-                        siteUrl
-                        name {
-                            first
-                            last
-                            native
-                            alternative
-                        }
-                    }
-                }
-                anime {
-                    nodes {
-                        id
-                        type
-                        siteUrl
-                        title {
-                            romaji
-                            english
-                            native
-                            userPreferred
-                        }
-                    }
-                }
-            }
+  Page(perPage: 50) {
+    users(id: $id, search: $search, sort: USERNAME) {
+      id
+      name
+      siteUrl
+      avatar {
+        large
+      }
+      bannerImage
+      about(asHtml: true)
+      stats {
+        watchedTime
+        chaptersRead
+      }
+      favourites {
+        manga {
+          nodes {
+            ...mediaBase
+          }
         }
+        characters {
+          nodes {
+            id
+            siteUrl
+            name {
+              first
+              last
+              native
+              alternative
+            }
+          }
+        }
+        anime {
+          nodes {
+            ...mediaBase
+          }
+        }
+      }
     }
+  }
+}
+
+fragment mediaBase on Media {
+  id
+  type
+  siteUrl
+  title {
+    romaji
+    english
+    native
+    userPreferred
+  }
+  coverImage {
+    large
+    medium
+  }
 }
