@@ -4,8 +4,6 @@ version = "0.1.0"
 authors = ["Youssef Habri <youssef.habri@gmail.com>"]
 edition = "2018"
 
-build = "build.rs"
-
 [dependencies]
 dotenv = "0.13"
 
