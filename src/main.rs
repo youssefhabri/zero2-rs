@@ -24,6 +24,7 @@ use crate::store::{
     MessagePaginator,
     ShardManagerContainer,
 };
+use serenity::model::gateway::Game;
 
 
 // Event Handler
@@ -34,7 +35,11 @@ impl EventHandler for Zero2Handler {
         menu::handle_reaction(&context, &add_reaction);
     }
 
-    fn ready(&self, _: Context, ready: Ready) {
+    fn ready(&self, ctx: Context, ready: Ready) {
+        ctx.set_game(
+            Game::listening(format!("2!help", ).as_str())
+        );
+
         info!("Connected as {}", ready.user.name);
     }
 
@@ -48,7 +53,6 @@ fn main() {
     let token: String = dotenv::var("DISCORD_TOKEN").expect("token");
     let prefix_aliases: String = dotenv::var("BOT_PREFIXES").expect("prefixes");
 
-    // TODO Fix logger on production env
     pretty_env_logger::init();
 
     let mut client = Client::new(
@@ -73,6 +77,7 @@ fn main() {
     }
 
     let mut framework = StandardFramework::new()
+        .before(|_, msg, _| { let _ = msg.channel_id.broadcast_typing(); true })
         .configure(|c| c
             .prefixes(prefix_aliases.split(","))
             .owners(owner_ids_set))
@@ -90,6 +95,7 @@ fn main() {
         );
 
     framework = commands::anilist::register(framework);
+    framework = commands::nekoslife::register(framework);
 
     client.with_framework(framework);
 

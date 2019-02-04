@@ -28,9 +28,18 @@ pub struct GiphyResponse {
 }
 
 
-pub fn query(endpoint: String, query: String) -> GiphyResponse {
+pub fn query(query: String) -> GiphyResponse {
+    let giphy_key = dotenv::var("GIPHY_API_KEY").expect("giphy_api_token");
     let client = reqwest::Client::new();
-    let mut res = client.get(endpoint.as_str())
+
+    let endpoint = if !query.is_empty() {
+        format!("search?q={}", query)
+    } else {
+        "trending?".to_owned()
+    };
+
+    let request = format!("http://api.giphy.com/v1/gifs/{}api_key={}&fmt=json", endpoint, giphy_key);
+    let mut res = client.get(request.as_str())
         .send().expect("response");
     let response: GiphyResponse = res.json().expect("json");
 
@@ -41,16 +50,8 @@ pub struct GiphyCommand;
 
 impl Command for GiphyCommand {
     fn execute(&self, context: &mut Context, message: &Message, args: Args) -> Result<(), CommandError> {
-        let giphy_key = dotenv::var("GIPHY_API_KEY").expect("giphy_api_token");
         let keyword = args.full().to_owned();
-        let results = if args.full().len() <= 0 {
-            let request = format!("http://api.giphy.com/v1/gifs/trending?api_key={}&fmt=json", giphy_key);
-            query(request, "".to_owned()).data
-        } else {
-            let request = format!("http://api.giphy.com/v1/gifs/search?q={}&api_key={}&fmt=json", keyword, giphy_key);
-            query(request, keyword.clone()).data
-        };
-
+        let results = query(keyword.clone()).data;
 
         if results.len() > 0 {
             let gif: &Giphy = results.get(0).unwrap();
