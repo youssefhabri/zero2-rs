@@ -83,7 +83,6 @@ fn main() {
             .owners(owner_ids_set))
         .command("ping", |c| c.cmd(commands::meta::Ping))
         .command("gif", |c| c.cmd(commands::giphy::GiphyCommand))
-        .command("test", |c| c.cmd(commands::meta::Test))
         .customised_help(help_commands::with_embeds, |c| c
             .individual_command_tip("Hello! こんにちは！Hola! Bonjour! 您好!\n\
                 If you want more information about a specific command, just pass the command as argument.")
