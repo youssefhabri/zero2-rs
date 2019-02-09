@@ -3,7 +3,6 @@ use serenity::{
     framework::StandardFramework,
     framework::standard::{Args, Command, CommandError},
     model::channel::Message,
-    builder::CreateMessage
 };
 
 use crate::commands::anilist::models::{
@@ -11,6 +10,7 @@ use crate::commands::anilist::models::{
     media::Media,
     user::User
 };
+use crate::menu::builders;
 
 // Import menu functionality
 use crate::menu;
@@ -19,7 +19,6 @@ use regex::Regex;
 pub mod utils;
 pub mod models;
 pub mod client;
-pub mod builders;
 
 
 pub fn register(framework: StandardFramework) -> StandardFramework {
@@ -216,7 +215,7 @@ impl Command for CharacterCommand {
 pub struct ActivityCommand;
 
 impl Command for ActivityCommand {
-    fn execute(&self, context: &mut Context, message: &Message, args: Args) -> Result<(), CommandError> {
+    fn execute(&self, _context: &mut Context, message: &Message, args: Args) -> Result<(), CommandError> {
 
         if args.full().len() <= 0 {
             let _ = message.channel_id.say("You need to input a activity url or ID.");

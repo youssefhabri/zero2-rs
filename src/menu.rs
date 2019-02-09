@@ -8,6 +8,8 @@ use serenity::{
 
 use crate::store::{BotOwnerContainer, MessagePaginator, MessagePagination};
 
+pub mod builders;
+
 // Emulating an enum of reactions ¯\_(ツ)_/¯
 pub mod reactions {
     pub const PREV: &str = "⬅";
@@ -56,7 +58,10 @@ pub fn handle_reaction(ctx: &Context, reaction: &Reaction) {
         let is_owner = owner.id == reaction.user_id;
 
         if !is_current_bot {
-            reaction.delete();
+            match reaction.delete() {
+                Ok(_) => (),
+                Err(why) => warn!("Err deleting reaction: {:?}", why)
+            }
         }
 
         is_paginated_msg && !is_current_bot && (is_author || is_owner)

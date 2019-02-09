@@ -1,8 +1,9 @@
 use serenity::framework::standard::{Args, Command, CommandError};
 use serenity::model::channel::Message;
 use serenity::prelude::*;
+
 use crate::menu;
-use crate::commands::anilist::builders;
+use crate::menu::builders;
 
 
 #[derive(Deserialize, Debug)]
