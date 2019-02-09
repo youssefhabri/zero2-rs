@@ -28,6 +28,7 @@ query ($search: String, $type: MediaType) {
             }
             bannerImage
             description
+            genres
         }
     }
 }
