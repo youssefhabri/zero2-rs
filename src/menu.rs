@@ -27,21 +27,41 @@ pub enum Modifier {
 #[derive(Debug)]
 pub enum Error {}
 
+pub type HandlerFunc = fn(&Context, &Reaction) -> fn(&Context, ChannelId, MessageId) -> Result<(), Error>;
+
+
 pub fn new_pagination(context: &Context, message_id: MessageId, author_id: UserId, pages: Vec<CreateEmbed>) {
+    new_pagination_with_handler(
+        context,
+        message_id,
+        author_id,
+        pages,
+        None
+    )
+}
+
+pub fn new_pagination_with_handler(
+    context: &Context,
+    message_id: MessageId,
+    author_id: UserId,
+    pages: Vec<CreateEmbed>,
+    handler: Option<HandlerFunc>
+) {
     let mut data = context.data.lock();
     let paginator = data.get_mut::<MessagePaginator>().unwrap();
     paginator.insert(message_id, MessagePagination {
-        current_page: 0,
-        message_id,
         author_id,
-        pages
+        current_page: 0,
+        handler,
+        message_id,
+        pages,
     });
 }
 
 pub fn handle_reaction(ctx: &Context, reaction: &Reaction) {
     let cache = CACHE.read();
 
-    let should_handle_reaction = if let Some(_channel) = cache.channels.get(&reaction.channel_id) {
+    let handler = if let Some(_channel) = cache.channels.get(&reaction.channel_id) {
 
         let data = ctx.data.lock();
         let paginator = data.get::<MessagePaginator>().unwrap();
@@ -64,24 +84,28 @@ pub fn handle_reaction(ctx: &Context, reaction: &Reaction) {
             }
         }
 
-        is_paginated_msg && !is_current_bot && (is_author || is_owner)
+        if !(is_paginated_msg && !is_current_bot && (is_author || is_owner)) {
+            return;
+        }
+
+        pagination.handler
+
     } else {
         return;
     };
 
-    if !should_handle_reaction {
-        return;
-    }
+    let func = match handler {
+        Some(handler) => handler(ctx, reaction),
+        None => match reaction.emoji {
+            ReactionType::Unicode(ref x) if x == reactions::NEXT => right,
+            ReactionType::Unicode(ref x) if x == reactions::PREV => left,
+            ReactionType::Unicode(ref x) if x == reactions::STOP => {
+                let _ = reaction.message().unwrap().delete_reactions();
 
-    let func = match reaction.emoji {
-        ReactionType::Unicode(ref x) if x == reactions::NEXT => right,
-        ReactionType::Unicode(ref x) if x == reactions::PREV => left,
-        ReactionType::Unicode(ref x) if x == reactions::STOP => {
-            let _ = reaction.message().unwrap().delete_reactions();
-
-            return;
-        },
-        _ => return,
+                return;
+            },
+            _ => return,
+        }
     };
 
     if let Err(why) = func(ctx, reaction.channel_id, reaction.message_id) {

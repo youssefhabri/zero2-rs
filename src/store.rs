@@ -2,13 +2,16 @@ use std::sync::Arc;
 use std::collections::HashMap;
 
 use serenity::{
+    builder::CreateEmbed,
     client::bridge::gateway::ShardManager,
+    model::{
+        id::{MessageId, UserId},
+        user::User,
+    },
     prelude::*
 };
 use typemap::Key;
-use serenity::model::user::User;
-use serenity::model::id::{UserId, MessageId};
-use serenity::builder::CreateEmbed;
+use crate::menu::HandlerFunc;
 
 // Bot ownerId Container
 pub struct BotOwnerContainer;
@@ -38,8 +41,9 @@ impl Key for MessagePaginator {
 }
 
 pub struct MessagePagination {
-    pub pages: Vec<CreateEmbed>,
+    pub author_id: UserId,
     pub current_page: u32,
+    pub handler: Option<HandlerFunc>,
     pub message_id: MessageId,
-    pub author_id: UserId
+    pub pages: Vec<CreateEmbed>,
 }
