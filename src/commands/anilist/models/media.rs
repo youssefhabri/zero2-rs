@@ -87,6 +87,8 @@ pub struct Media {
     pub banner_image: Option<String>,
 
     pub description: Option<String>,
+
+    genres: Vec<String>,
 }
 
 impl Media {
@@ -118,7 +120,23 @@ impl Media {
         }
     }
 
-    pub fn streaming_services(&self) -> String {
+    pub fn genres(&self) -> String {
+        if self.genres.len() > 0 {
+            let mut genres = vec![];
+            let url = |genre: &String|
+                format!("https://anilist.co/search/anime?includedGenres={}", genre.replace(" ", "+"));
+
+            for genre in &self.genres {
+                genres.push(format!("[{0}]({1})", genre, url(genre)));
+            }
+
+            return genres.join(", ")
+        }
+
+        return "N/A".to_owned();
+    }
+
+    pub fn _streaming_services(&self) -> String {
         if self.external_links.len() > 0 {
             let mut list: Vec<String> = vec![];
             for service in &self.external_links {

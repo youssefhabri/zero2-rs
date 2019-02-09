@@ -52,7 +52,7 @@ pub fn anime_embed_builder(anime: &Media, prefix: String) -> CreateEmbed {
         .thumbnail(&anime.cover_image.large)
         .field("Score", &anime.mean_score(), true)
         .field("Episodes", &anime.episodes(), true)
-        .field("Streaming Services", &anime.streaming_services(), true)
+        .field("Genres", &anime.genres(), true)
         .field("More info", &anime.tracking_sites(), true)
         .footer(|f| f
             .icon_url("https://anilist.co/img/icons/favicon-32x32.png")
@@ -68,7 +68,8 @@ pub fn manga_embed_builder(manga: &Media, prefix: String) -> CreateEmbed {
         .image(&manga.banner_image())
         .thumbnail(&manga.cover_image.large)
         .field("Score", &manga.mean_score(), true)
-        .field("Episodes", &manga.chapters(), true)
+        .field("Chapters", &manga.chapters(), true)
+        .field("Genres", &manga.genres(), true)
         .field("More info", &manga.tracking_sites(), true)
         .footer(|f| f
             .icon_url("https://anilist.co/img/icons/favicon-32x32.png")

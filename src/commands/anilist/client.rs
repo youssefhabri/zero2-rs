@@ -13,7 +13,7 @@ use crate::commands::anilist::models::{
 
 
 #[derive(RustEmbed)]
-#[folder = "assets/queries"]
+#[folder = "assets/graphql"]
 struct Query;
 
 
