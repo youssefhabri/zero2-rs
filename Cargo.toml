@@ -25,10 +25,7 @@ rust-embed = "4.3"
 dissolve = "0.2"
 libmath = "0.2"
 
-[dependencies.serenity]
-git = "https://github.com/serenity-rs/serenity.git"
-branch = "current"
-features = ["framework", "standard_framework"]
+serenity = "0.5"
 
 [patch.crates-io]
 openssl = { git = "https://github.com/ishitatsuyuki/rust-openssl", branch = "0.9.x" }

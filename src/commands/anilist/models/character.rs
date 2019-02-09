@@ -97,7 +97,7 @@ impl Character {
 
         if media_list.len() > 0 {
             let mut count = 0;
-            for (i, media) in media_list.iter().enumerate() {
+            for media in media_list {
                 if media.media_type == media_type {
                     fav_list.push(
                         format!("[{}]({})", media.title.user_preferred, media.site_url));
