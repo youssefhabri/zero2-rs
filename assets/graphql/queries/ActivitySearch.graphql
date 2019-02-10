@@ -7,7 +7,7 @@ query ($id: Int) {
             type
             siteUrl
             user {
-                ...userBase
+                ...UserBase
             }
             text(asHtml: true)
         }
@@ -18,24 +18,12 @@ query ($id: Int) {
             type
             siteUrl
             user {
-                ...userBase
+                ...UserBase
             }
             status
             progress
             media {
-                id
-                type
-                siteUrl
-                title {
-                    romaji
-                    english
-                    native
-                    userPreferred
-                }
-                coverImage {
-                    large
-                    medium
-                }
+                ...MediaBase
             }
         }
 
@@ -45,21 +33,12 @@ query ($id: Int) {
             type
             siteUrl
             recipient {
-                ...userBase
+                ...UserBase
             }
             messenger {
-                ...userBase
+                ...UserBase
             }
             message(asHtml: true)
         }
-    }
-}
-
-fragment userBase on User {
-    id
-    name
-    siteUrl
-    avatar {
-        large
     }
 }

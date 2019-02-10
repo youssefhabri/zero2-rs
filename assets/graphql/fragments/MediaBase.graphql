@@ -1,0 +1,15 @@
+fragment MediaBase on Media {
+    id
+    type
+    siteUrl
+    title {
+        romaji
+        english
+        native
+        userPreferred
+    }
+    coverImage {
+        large
+        medium
+    }
+}

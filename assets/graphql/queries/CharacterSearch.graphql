@@ -16,15 +16,7 @@ query ($id: Int,$search: String) {
             }
             media(sort: SCORE_DESC) {
                 nodes {
-                    id
-                    type
-                    siteUrl
-                    title {
-                        romaji
-                        english
-                        native
-                        userPreferred
-                    }
+                    ...MediaBase
                 }
             }
         }

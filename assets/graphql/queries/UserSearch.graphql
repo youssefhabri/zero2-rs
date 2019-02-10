@@ -16,7 +16,7 @@ query ($id: Int, $search: String) {
       favourites {
         manga {
           nodes {
-            ...mediaBase
+            ...MediaBase
           }
         }
         characters {
@@ -33,26 +33,10 @@ query ($id: Int, $search: String) {
         }
         anime {
           nodes {
-            ...mediaBase
+            ...MediaBase
           }
         }
       }
     }
-  }
-}
-
-fragment mediaBase on Media {
-  id
-  type
-  siteUrl
-  title {
-    romaji
-    english
-    native
-    userPreferred
-  }
-  coverImage {
-    large
-    medium
   }
 }

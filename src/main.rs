@@ -14,9 +14,10 @@ use serenity::{
     prelude::*,
 };
 
-mod store;
-mod menu;
 mod commands;
+mod menu;
+mod store;
+mod utils;
 
 use crate::store::{
     BotOwnerContainer,

@@ -1,3 +1,8 @@
+use chrono::prelude::*;
+use std::ops::Add;
+use time::Duration;
+use regex::Regex;
+
 use serenity::{
     prelude::*,
     framework::StandardFramework,
@@ -6,15 +11,16 @@ use serenity::{
 };
 
 use crate::commands::anilist::models::{
+    airing_schedule::AiringSchedule,
     character::Character,
     media::Media,
     user::User
 };
-use crate::menu::builders;
+use crate::utils::*;
 
 // Import menu functionality
 use crate::menu;
-use regex::Regex;
+use crate::menu::builders;
 
 pub mod utils;
 pub mod models;
@@ -53,6 +59,13 @@ pub fn register(framework: StandardFramework) -> StandardFramework {
             .usage("<activity_id|activity_url>")
             .desc("Embed an activity from AniList")
         )
+
+        .command("airing", |c| c
+            .cmd(AiringCommand)
+            .batch_known_as(vec!["airs"])
+            .usage("[weekday]")
+            .desc("Embed an activity from AniList")
+        )
     )
 }
 
@@ -75,7 +88,7 @@ impl Command for AnimeCommand {
             let sending = message.channel_id.send_message(
                 |m| m.embed(
                     |_| builders::anime_embed_builder(anime, format!("Page: {}/{} | ", 1, results.len()))
-                ).reactions(menu::REACTIONS.to_vec())
+                ).reactions(menu::reactions::default())
             );
 
             if let Ok(sending_msg) = sending {
@@ -114,7 +127,7 @@ impl Command for MangaCommand {
             let sending = message.channel_id.send_message(
                 |m| m.embed(
                     |_| builders::manga_embed_builder(manga, format!("Page: {}/{} | ", 1, results.len()))
-                ).reactions(menu::REACTIONS.to_vec())
+                ).reactions(menu::reactions::default())
             );
 
             if let Ok(sending_msg) = sending {
@@ -153,7 +166,7 @@ impl Command for UserCommand {
             let sending = message.channel_id.send_message(
                 |m| m.embed(
                     |_| builders::user_embed_builder(user, format!("Page: {}/{} | ", 1, results.len()))
-                ).reactions(menu::REACTIONS.to_vec())
+                ).reactions(menu::reactions::default())
             );
 
             if let Ok(sending_msg) = sending {
@@ -192,7 +205,7 @@ impl Command for CharacterCommand {
             let sending = message.channel_id.send_message(
                 |m| m.embed(
                     |_| builders::character_embed_builder(character, format!("Page: {}/{} | ", 1, results.len()))
-                ).reactions(menu::REACTIONS.to_vec())
+                ).reactions(menu::reactions::default())
             );
 
             if let Ok(sending_msg) = sending {
@@ -246,6 +259,49 @@ impl Command for ActivityCommand {
             None => {
                 let _ = message.channel_id.say(format!("No user was found for: `{}`", keyword));
             }
+        }
+
+        Ok(())
+    }
+}
+
+pub struct AiringCommand;
+
+impl Command for AiringCommand {
+    fn execute(&self, _context: &mut Context, message: &Message, args: Args) -> Result<(), CommandError> {
+        let (start, day) = if args.full().len() <= 0 {
+            (to_midnight(Local::now()), "Today".to_owned())
+        } else {
+            let day = args.full();
+            match day.parse::<Weekday>() {
+                Ok(day) => {
+                    (to_midnight(next_day(day)), weekday_to_string(day))
+                }
+                Err(_) => (to_midnight(Local::now()), "Today".to_owned())
+            }
+        };
+
+        let results: Vec<AiringSchedule> = client::search_airing_schedule(start.timestamp(), start.add(Duration::days(1)).timestamp());
+
+        if results.len() > 0 {
+            let mut airing = vec![];
+
+            for item in results {
+                airing.push(item.to_url());
+            }
+
+            let _ = message.channel_id.send_message(|m| m
+                .embed(|e| e
+                    .color(3447003)
+                    .title(format!("Airing Schedule for {}", day))
+                    .description(airing.join("\n"))
+                    .footer(|f| f
+                        .icon_url("https://anilist.co/img/icons/favicon-32x32.png")
+                        .text("Powered by AniList"))
+                )
+            );
+        } else {
+            let _ = message.channel_id.say(format!("Error checking the airing schedule"));
         }
 
         Ok(())

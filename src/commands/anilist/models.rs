@@ -1,10 +1,11 @@
 use std::collections::HashMap;
 use crate::commands::anilist::models::activity::Activity;
 
-pub mod user;
-pub mod media;
-pub mod character;
 pub mod activity;
+pub mod airing_schedule;
+pub mod character;
+pub mod media;
+pub mod user;
 
 
 pub type Variables = HashMap<String, String>;
@@ -17,22 +18,35 @@ pub struct QueryBody {
 
 #[derive(Deserialize, Debug)]
 pub struct Page {
-    pub media: Option<Vec<media::Media>>,
-    pub users: Option<Vec<user::User>>,
+    #[serde(rename = "airingSchedules")]
+    pub airing_schedule: Option<Vec<airing_schedule::AiringSchedule>>,
+
     pub characters: Option<Vec<character::Character>>,
+
+    pub media: Option<Vec<media::Media>>,
+
+    pub users: Option<Vec<user::User>>,
 }
 
 impl Default for Page {
     fn default() -> Self {
         Page {
+            airing_schedule: None,
+            characters: None,
             media: None,
             users: None,
-            characters: None,
         }
     }
 }
 
 impl Page {
+    pub fn airing_schedule(self) -> Vec<airing_schedule::AiringSchedule> {
+        match self.airing_schedule {
+            Some(airing_schedule) => airing_schedule,
+            None => vec![]
+        }
+    }
+
     pub fn media(self) -> Vec<media::Media> {
         match self.media {
             Some(media) => media,

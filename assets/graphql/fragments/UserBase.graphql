@@ -1,0 +1,8 @@
+fragment UserBase on User {
+    id
+    name
+    siteUrl
+    avatar {
+        large
+    }
+}

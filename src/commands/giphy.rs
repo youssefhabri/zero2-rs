@@ -59,7 +59,7 @@ impl Command for GiphyCommand {
             let sending = message.channel_id.send_message(
                 |m| m.embed(
                     |_| builders::giphy_embed_builder(gif, format!("Page: {}/{} | ", 1, results.len()))
-                ).reactions(menu::REACTIONS.to_vec())
+                ).reactions(menu::reactions::default())
             );
 
             if let Ok(sending_msg) = sending {

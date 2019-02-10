@@ -15,9 +15,11 @@ pub mod reactions {
     pub const PREV: &str = "⬅";
     pub const NEXT: &str = "➡";
     pub const STOP: &str = "🇽";
-}
 
-pub const REACTIONS: [&str; 3] = [reactions::PREV, reactions::NEXT, reactions::STOP];
+    pub fn default<'a>() -> Vec<&'a str> {
+        [PREV, NEXT, STOP].to_vec()
+    }
+}
 
 pub enum Modifier {
     Decrement,
