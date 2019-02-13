@@ -39,7 +39,7 @@ impl Command for Ping {
             },
         };
 
-        let _ = message.reply(&format!("The shard latency is {}", runner.latency.unwrap().as_millis()));
+        let _ = message.reply(&format!("The shard latency is {}ms", runner.latency.unwrap().as_millis()));
 
         Ok(())
     }
