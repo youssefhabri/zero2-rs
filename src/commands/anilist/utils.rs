@@ -16,8 +16,9 @@ pub fn synopsis(description: &String, length: usize) -> String {
 
     if synopsis.len() > length {
         // Slicing by nth character rather and a simple index
-        let end = synopsis.char_indices().map(|(i, _)| i).nth(length).unwrap();
-        return format!("{} ...", &synopsis[..end]);
+        // let end = synopsis.char_indices().map(|(i, _)| i).nth(length).unwrap();
+        &synopsis.truncate(length);
+        return format!("{} ...", &synopsis);
     }
 
     synopsis

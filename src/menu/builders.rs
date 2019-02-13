@@ -1,12 +1,12 @@
 use serenity::builder::CreateEmbed;
-use crate::commands::anilist::models::{
+use crate::models::anilist::{
     activity::Activity,
     character::Character,
     media::Media,
     user::User
 };
+use crate::models::giphy::Giphy;
 use crate::commands::anilist::utils::synopsis;
-use crate::commands::giphy::Giphy;
 
 
 pub fn media_pages_builder(results: Vec<Media>, embed_builder: fn(&Media, String) -> CreateEmbed) -> Vec<CreateEmbed> {

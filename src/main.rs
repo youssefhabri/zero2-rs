@@ -16,6 +16,7 @@ use serenity::{
 
 mod commands;
 mod menu;
+mod models;
 mod store;
 mod utils;
 
@@ -94,8 +95,7 @@ fn main() {
             .wrong_channel(HelpBehaviour::Strike)
         );
 
-    framework = commands::anilist::register(framework);
-    framework = commands::nekoslife::register(framework);
+    framework = commands::register(framework);
 
     client.with_framework(framework);
 
