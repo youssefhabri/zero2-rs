@@ -1,5 +1,5 @@
-use crate::commands::anilist::models::media::MediaBase;
-use crate::commands::anilist::models::user::UserAvatar;
+use crate::models::anilist::media::MediaBase;
+use crate::models::anilist::user::UserAvatar;
 
 #[derive(Clone, Deserialize, Debug)]
 pub struct UserBase {

@@ -1,7 +1,7 @@
-use crate::commands::anilist::{
-    utils::{synopsis, format_time},
-    models::media::MediaBase,
-    models::character::CharacterBase,
+use crate::commands::anilist::utils::{synopsis, format_time};
+use crate::models::anilist::{
+    media::MediaBase,
+    character::CharacterBase,
 };
 
 #[derive(Clone, Deserialize, Debug)]

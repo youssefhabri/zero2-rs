@@ -1,5 +1,4 @@
 use std::collections::HashMap;
-use crate::commands::anilist::models::activity::Activity;
 
 pub mod activity;
 pub mod airing_schedule;
@@ -75,7 +74,7 @@ pub struct Data {
     pub page: Page,
 
     #[serde(default, rename = "Activity")]
-    pub activity: Option<Activity>
+    pub activity: Option<activity::Activity>
 }
 
 #[derive(Deserialize, Debug)]
