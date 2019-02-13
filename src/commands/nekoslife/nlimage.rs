@@ -4,7 +4,7 @@ use serenity::builder::CreateEmbed;
 use serenity::prelude::*;
 
 use regex::Regex;
-use rand::prelude::*;
+use crate::utils::random_num;
 
 
 const TYPE_LIST: [&str; 17] = [
@@ -99,6 +99,5 @@ pub fn selection(message: &Message, keyword: String) -> String {
         return keyword;
     }
 
-    let mut rnd = rand::thread_rng();
-    (TYPE_LIST[rnd.gen_range(0, TYPE_LIST.len() - 1)]).to_owned()
+    (TYPE_LIST[random_num(0, TYPE_LIST.len() - 1)]).to_owned()
 }

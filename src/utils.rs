@@ -1,6 +1,7 @@
 use chrono::prelude::*;
 use time::Duration;
 use std::ops::Add;
+use rand::prelude::*;
 
 pub fn next_day(target: Weekday) -> DateTime<Local> {
     let mut dt = Local::now();
@@ -33,4 +34,8 @@ pub fn weekday_to_string(weekday: Weekday) -> String {
     };
 
     weekday.to_owned()
+}
+
+pub fn random_num(min: usize, max: usize) -> usize {
+    rand::thread_rng().gen_range(min, max)
 }
