@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use std::str;
 
-use crate::commands::anilist::models::{
+use crate::models::anilist::{
     Variables,
     QueryBody,
     Response,
@@ -35,7 +35,6 @@ fn load_graphql_with_fragment(query_file: &str, fragment_files: Vec<&str>) -> St
         );
     }
 
-    // TODO better error messages (expect)
     format!("{}\n{}",
             query,
             fragments.join("\n"))
