@@ -29,6 +29,9 @@ libmath = "0.2"
 
 serenity = "0.5"
 
+sys-info = "*"
+sysinfo = "0.5"
+
 urbandictionary = { git = "https://github.com/youssefhabri/urbandictionary.rs" }
 
 [patch.crates-io]
