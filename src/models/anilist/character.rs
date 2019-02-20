@@ -105,7 +105,9 @@ impl Character {
                 }
                 if count >= 5 { break }
             }
+        }
 
+        if fav_list.len() > 0 {
             return fav_list.join("\n");
         }
 
