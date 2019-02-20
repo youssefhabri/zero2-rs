@@ -20,7 +20,7 @@ impl Command for CharacterCommand {
 
         let keyword = args.full().to_owned();
 
-        let results: Vec<Character> = client::search_character(keyword.clone());
+        let results: Vec<Character> = client::search_characters(keyword.clone());
 
         if results.len() > 0 {
             let character: &Character = results.get(0).unwrap();
@@ -30,13 +30,14 @@ impl Command for CharacterCommand {
                 ).reactions(menu::reactions::default())
             );
 
-            if let Ok(sending_msg) = sending {
-                menu::new_pagination(
+            match sending {
+                Ok(sending_msg) => menu::new_pagination(
                     context,
                     sending_msg.id,
                     message.author.id,
                     builders::character_pages_builder(results, builders::character_embed_builder)
-                )
+                ),
+                Err(why) => error!("Err sending character embed: {:?}", why)
             }
 
         } else {

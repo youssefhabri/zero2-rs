@@ -46,6 +46,7 @@ impl Command for NLImageCommand {
                                 .replace("<", "")
                                 .replace(">", "")
                                 .replace("@", "")
+                                .replace("!", "")
                                 .parse::<u64>().unwrap();
                             Some(UserId(id).to_user().unwrap())
                         },

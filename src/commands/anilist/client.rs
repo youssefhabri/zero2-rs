@@ -64,7 +64,7 @@ pub fn search_media(keyword: String, media_type: String) -> Vec<Media> {
     query(media_query, variables).data.page.media()
 }
 
-pub fn search_user(keyword: String) -> Vec<User> {
+pub fn search_users(keyword: String) -> Vec<User> {
     let user_query = load_graphql_with_fragment("UserSearch", vec!["MediaBase"]);
     debug!("{}", user_query);
     let mut variables = HashMap::new();
@@ -73,7 +73,7 @@ pub fn search_user(keyword: String) -> Vec<User> {
     query(user_query, variables).data.page.users()
 }
 
-pub fn search_character(keyword: String) -> Vec<Character> {
+pub fn search_characters(keyword: String) -> Vec<Character> {
     let character_query = load_graphql_with_fragment("CharacterSearch", vec!["MediaBase"]);
     let mut variables = HashMap::new();
     variables.insert("search".to_owned(), keyword);

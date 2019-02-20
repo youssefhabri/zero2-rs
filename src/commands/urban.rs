@@ -4,6 +4,7 @@ use urbandictionary::ReqwestUrbanDictionaryRequester;
 
 use serenity::{
     prelude::*,
+    builder::CreateEmbed,
     framework::StandardFramework,
     framework::standard::{Args, Command, CommandError},
     model::channel::Message,
@@ -54,25 +55,25 @@ impl Command for UrbanDictionary {
                     s.truncate(1800);
                 }
 
-                // discord doesn't allow empty fields, so add placeholder in case no
-                // example
-                // TODO: I guess we just shouldn't send a field in case this is empty
-                let mut e = def.example.clone();
-                if e.is_empty() {
-                    e = "<none>".into();
-                }
-
-                match message.channel_id.send_message(|f| f.embed(|m| m
+                let mut embed = CreateEmbed::default()
                     .color(Colour::FOOYOO)
                     .title(&format!("Definition of {}", &def.word))
                     .url(&def.permalink)
                     .description(s)
-                    .field("Example", e, true)
-                    .field("Votes", format!("👍: **{}** 👎: **{}**",
-                                            &def.thumbs_up, &def.thumbs_down), true)
                     .footer(|f| f
-                        .text(&format!("Defined by {}", def.author)))
-                )) {
+                        .text(&format!("Defined by {}", def.author)));
+
+                // Only add example field if there's an example
+                let example = def.example.clone();
+                if !example.is_empty() {
+                    embed = embed.field("Example", example, true);
+                }
+
+                // This is a workaround since we can't order fields
+                embed = embed.field("Votes", format!("👍: **{}** 👎: **{}**",
+                                            &def.thumbs_up, &def.thumbs_down), true);
+
+                match message.channel_id.send_message(|f| f.embed(|_| embed)) {
                     Ok(_) => {},
                     Err(why) => error!("Sending UB failed: {:#?}", why)
                 }

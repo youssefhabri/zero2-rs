@@ -20,7 +20,7 @@ impl Command for UserCommand {
 
         let keyword = args.full().to_owned();
 
-        let results: Vec<User> = client::search_user(keyword.clone());
+        let results: Vec<User> = client::search_users(keyword.clone());
 
         if results.len() > 0 {
             let user: &User = results.get(0).unwrap();
