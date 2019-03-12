@@ -1,0 +1,32 @@
+query ($id: Int, $type: MediaType) {
+    Media(id: $id, type: $type) {
+        id
+        idMal
+        type
+        title {
+            romaji
+            english
+            native
+            userPreferred
+        }
+        nextAiringEpisode {
+            airingAt
+        }
+        status
+        meanScore
+        episodes
+        chapters
+        siteUrl
+        externalLinks {
+            site
+            url
+        }
+        coverImage {
+            medium
+            large
+        }
+        bannerImage
+        description
+        genres
+    }
+}

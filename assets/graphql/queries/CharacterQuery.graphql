@@ -1,0 +1,22 @@
+query ($id: Int) {
+    Character(id: $id) {
+        id
+        siteUrl
+        description(asHtml: true)
+        name {
+            first
+            last
+            native
+            alternative
+        }
+        image {
+            large
+            medium
+        }
+        media(sort: SCORE_DESC) {
+            nodes {
+                ...MediaBase
+            }
+        }
+    }
+}

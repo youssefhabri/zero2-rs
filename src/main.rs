@@ -17,6 +17,7 @@ use serenity::{
 mod commands;
 mod menu;
 mod models;
+mod monitors;
 mod store;
 mod utils;
 
@@ -27,12 +28,17 @@ use crate::store::{
     ShardManagerContainer,
 };
 use serenity::model::gateway::Game;
+use serenity::model::channel::Message;
 
 
 // Event Handler
 pub struct Zero2Handler;
 
 impl EventHandler for Zero2Handler {
+    fn message(&self, ctx: Context, message: Message) {
+        monitors::run_monitors(ctx, message);
+    }
+
     fn reaction_add(&self, context: Context, add_reaction: Reaction) {
         menu::handle_reaction(&context, &add_reaction);
     }

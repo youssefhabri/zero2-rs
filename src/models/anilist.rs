@@ -74,7 +74,16 @@ pub struct Data {
     pub page: Page,
 
     #[serde(default, rename = "Activity")]
-    pub activity: Option<activity::Activity>
+    pub activity: Option<activity::Activity>,
+
+    #[serde(default, rename = "Character")]
+    pub character: Option<character::Character>,
+
+    #[serde(default, rename = "Media")]
+    pub media: Option<media::Media>,
+
+    #[serde(default, rename = "User")]
+    pub user: Option<user::User>
 }
 
 #[derive(Deserialize, Debug)]
