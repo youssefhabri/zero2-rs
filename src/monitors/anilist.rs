@@ -9,6 +9,10 @@ use crate::models::anilist::user::User;
 
 
 pub fn anilist_monitor(_ctx: Context, message: Message) {
+    if !message.content_safe().as_str().starts_with("https://anilist.co/") {
+        return
+    }
+
     let full_message = message.content_safe().replace("https://anilist.co/", "");
 
     let clean_text = full_message
