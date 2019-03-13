@@ -9,24 +9,20 @@ use crate::models::anilist::user::User;
 
 
 pub fn anilist_monitor(_ctx: Context, message: Message) {
-    if !message.content_safe().as_str().starts_with("https://anilist.co/") {
+    if !message.content_safe().as_str().contains("https://anilist.co/") {
         return
     }
 
-    let full_message = message.content_safe().replace("https://anilist.co/", "");
+    let full_message = message.content_safe();
 
-    let clean_text = full_message
-        .trim_start_matches("/")
-        .trim_end_matches("/");
-
-    let re = Regex::new(r"(anime|manga|character|activity|user)/([0-9]+)?/?([^/]+)?").unwrap();
+    let re = Regex::new(r"https://anilist\.co/(anime|manga|character|activity|user)/([0-9]+)?/?([^/]+)?/?").unwrap();
 
     let (
         _group0, // URI
         group1,  // TYPE
         group2,  // ID
         group3   // TITLE | USERNAME
-    ) = match re.captures(clean_text) {
+    ) = match re.captures(full_message.as_str()) {
         Some(caps) => {
             let group0 = match caps.get(0) {
                 Some(group0) => Some(group0.as_str()),
