@@ -10,33 +10,32 @@ use serenity::{
     },
     prelude::*
 };
-use typemap::Key;
 use crate::menu::HandlerFunc;
 
 // Bot ownerId Container
 pub struct BotOwnerContainer;
 
-impl Key for BotOwnerContainer {
+impl TypeMapKey for BotOwnerContainer {
     type Value = User;
 }
 
 // Shard Manager Container
 pub struct ShardManagerContainer;
 
-impl Key for ShardManagerContainer {
+impl TypeMapKey for ShardManagerContainer {
     type Value = Arc<Mutex<ShardManager>>;
 }
 
 // Command Counter
 pub struct CommandCounter;
 
-impl Key for CommandCounter {
+impl TypeMapKey for CommandCounter {
     type Value = HashMap<String, u64>;
 }
 
 pub struct MessagePaginator;
 
-impl Key for MessagePaginator {
+impl TypeMapKey for MessagePaginator {
     type Value = HashMap<MessageId, MessagePagination>;
 }
 
