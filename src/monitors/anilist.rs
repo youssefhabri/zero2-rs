@@ -15,13 +15,13 @@ pub fn anilist_monitor(_ctx: Context, message: Message) {
         .trim_start_matches("/")
         .trim_end_matches("/");
 
-    let re = Regex::new(r"(anime|manga|character|activity|user)/([0-9]+)?/?(.+)?").unwrap();
+    let re = Regex::new(r"(anime|manga|character|activity|user)/([0-9]+)?/?([^/]+)?").unwrap();
 
     let (
-        group0, // URI
-        group1, // TYPE
-        group2, // ID
-        group3  // TITLE | USERNAME
+        _group0, // URI
+        group1,  // TYPE
+        group2,  // ID
+        group3   // TITLE | USERNAME
     ) = match re.captures(clean_text) {
         Some(caps) => {
             let group0 = match caps.get(0) {
@@ -54,23 +54,22 @@ pub fn anilist_monitor(_ctx: Context, message: Message) {
 
     match group1.unwrap() {
         "anime" | "manga" => {
-            handle_media(message, group1.unwrap(), group2.unwrap(), group3.unwrap());
+            handle_media(message, group1.unwrap(), group2.unwrap());
         },
         "activity" => {
-            handle_activity(message, group0.unwrap(), group2.unwrap());
+            handle_activity(message, group2.unwrap());
         },
         "character" => {
-            handle_character(message, group2.unwrap(), group3.unwrap());
+            handle_character(message, group2.unwrap());
         },
         "user" => {
             handle_user(message, group3.unwrap());
         },
-        _ => ()
+        _ => return
     }
 }
 
-fn handle_media(message: Message, media_type: &str, media_id: &str, title: &str) {
-    let clean_title = title.replace("-", " ");
+fn handle_media(message: Message, media_type: &str, media_id: &str) {
     let media: Option<Media> = client::search_media_by_id(media_id.into(), media_type.to_uppercase());
 
     match media {
@@ -81,27 +80,22 @@ fn handle_media(message: Message, media_type: &str, media_id: &str, title: &str)
                 )
             );
         },
-        None => {
-            let _ = message.channel_id.say(format!("No {} was found for: `{}`", media_type, clean_title));
-        }
+        None => return
     }
 }
 
-fn handle_activity(message: Message, uri: &str, activity_id: &str) {
+fn handle_activity(message: Message, activity_id: &str) {
     match client::search_activity(activity_id.into()) {
         Some(activity) => {
             let _ = message.channel_id.send_message(
                 |m| m.embed(|_| builders::activity_embed_builder(&activity))
             );
         },
-        None => {
-            let _ = message.channel_id.say(format!("No activity was found for: `https://anilist.co/{}`", uri));
-        }
+        None => return
     }
 }
 
-fn handle_character(message: Message, character_id: &str, name: &str) {
-    let clean_name = name.replace("-", " ");
+fn handle_character(message: Message, character_id: &str) {
     let character: Option<Character> = client::search_character_by_id(character_id.into());
 
     match character {
@@ -112,9 +106,7 @@ fn handle_character(message: Message, character_id: &str, name: &str) {
                 )
             );
         },
-        None => {
-            let _ = message.channel_id.say(format!("No character was found for: `{}`", clean_name));
-        }
+        None => return
     }
 }
 
@@ -129,8 +121,6 @@ fn handle_user(message: Message, username: &str) {
                 )
             );
         },
-        None => {
-            let _ = message.channel_id.say(format!("No user was found for: `{}`", username));
-        }
+        None => return
     }
 }
