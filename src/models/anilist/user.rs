@@ -80,7 +80,7 @@ impl User {
     pub fn favourite_media(&self, fav_type: &str) -> String {
         let media_list = match fav_type {
             "ANIME" => &self.favourites.anime.nodes,
-            "MANGA" => &self.favourites.anime.nodes,
+            "MANGA" => &self.favourites.manga.nodes,
             _ => return String::from("N/A")
         };
 
