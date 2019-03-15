@@ -3,7 +3,7 @@ query ($id: Int,$search: String) {
         characters(id: $id, search: $search) {
             id
             siteUrl
-            description(asHtml: true)
+            description(asHtml: false)
             name {
                 first
                 last

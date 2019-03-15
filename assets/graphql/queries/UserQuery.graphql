@@ -7,7 +7,7 @@ query ($username: String) {
             large
         }
         bannerImage
-        about(asHtml: true)
+        about(asHtml: false)
         stats {
             watchedTime
             chaptersRead

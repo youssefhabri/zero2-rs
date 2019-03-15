@@ -2,7 +2,7 @@ query ($id: Int) {
     Character(id: $id) {
         id
         siteUrl
-        description(asHtml: true)
+        description(asHtml: false)
         name {
             first
             last
