@@ -26,8 +26,6 @@ impl Command for Stats {
                     } else {
                         stats.insert(author_id, 1);
                     }
-
-                    if stats.len() >= 10 { break; }
                 }
 
                 stats.sort_by(|_, a, _, b| b.cmp(a));
@@ -74,6 +72,8 @@ fn build_embed(channel_id: ChannelId, stats_list: IndexMap<UserId, u32>) -> Crea
 
     for (i, (user_id, msg_number)) in stats_list.iter().enumerate() {
         content = format!("{}\n\n{}. <@{}>: {}", content, i + 1, user_id, msg_number);
+
+        if i >= 10 { break; }
     }
 
     CreateEmbed::default()
