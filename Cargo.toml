@@ -26,6 +26,8 @@ rust-embed = "4.3"
 dissolve = "0.2"
 libmath = "0.2"
 
+indexmap = "1.0"
+
 serenity = "0.5"
 
 sys-info = "*"
