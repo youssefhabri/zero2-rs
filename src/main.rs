@@ -9,7 +9,7 @@ use std::sync::Arc;
 use serenity::{
     client::Client,
     model::{channel::Reaction, gateway::Ready, event::ResumedEvent},
-    framework::standard::{StandardFramework, HelpBehaviour, help_commands},
+    framework::standard::StandardFramework,
     http,
     prelude::*,
 };
@@ -89,18 +89,7 @@ fn main() {
         .configure(|c| c
             .prefixes(prefix_aliases.split(","))
             .owners(owner_ids_set))
-        .command("ping", |c| c.cmd(commands::meta::Ping))
-        .command("info", |c| c.cmd(commands::meta::BotInfo))
-        .command("gif", |c| c.cmd(commands::giphy::GiphyCommand))
-        .customised_help(help_commands::with_embeds, |c| c
-            .individual_command_tip("Hello! こんにちは！Hola! Bonjour! 您好!\n\
-                If you want more information about a specific command, just pass the command as argument.")
-            .command_not_found_text("Could not find: `{}`.")
-            .max_levenshtein_distance(3)
-            .lacking_permissions(HelpBehaviour::Hide)
-            .lacking_role(HelpBehaviour::Nothing)
-            .wrong_channel(HelpBehaviour::Strike)
-        );
+        ;
 
     framework = commands::register(framework);
 
