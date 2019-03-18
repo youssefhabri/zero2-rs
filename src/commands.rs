@@ -2,14 +2,14 @@ use serenity::framework::standard::{StandardFramework, HelpBehaviour, help_comma
 
 pub mod anilist;
 pub mod giphy;
-pub mod fortune;
+pub mod fun;
 pub mod meta;
 pub mod nekoslife;
 pub mod urban;
 
 pub fn register(mut framework: StandardFramework) -> StandardFramework {
     framework = anilist::register(framework);
-    framework = fortune::register(framework);
+    framework = fun::register(framework);
     framework = meta::register(framework);
     framework = nekoslife::register(framework);
     framework = urban::register(framework);

@@ -1,18 +1,9 @@
 use serenity::prelude::*;
 use serenity::model::channel::Message;
 use serenity::framework::standard::{Args, Command, CommandError};
-use serenity::framework::StandardFramework;
 
 use crate::utils::random_num;
 
-pub fn register(framework: StandardFramework) -> StandardFramework {
-    framework.group("Fun", |cg| cg
-        .command("fortune", |c| c
-            .cmd(FortuneCommand)
-            .desc("Find out you fortune. It just might be you lucky day ...")
-        )
-    )
-}
 
 pub struct FortuneCommand;
 

@@ -1,4 +1,11 @@
 /target
 **/*.rs.bk
 .env
+.deploy.env
 .idea
+
+# Google Cloud files
+.dockerignore
+Dockerfile
+app.yaml
+zero2_rs

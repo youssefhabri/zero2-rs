@@ -2,6 +2,7 @@ use chrono::prelude::*;
 use time::Duration;
 use std::ops::Add;
 use rand::prelude::*;
+use math::round::floor;
 
 pub fn next_day(target: Weekday) -> DateTime<Local> {
     let mut dt = Local::now();
@@ -34,6 +35,34 @@ pub fn weekday_to_string(weekday: Weekday) -> String {
     };
 
     weekday.to_owned()
+}
+
+pub fn format_time(time_minutes: f64) -> String {
+    let minutes = floor(time_minutes % 60.0, 0);
+    let hours = floor((time_minutes / 60.0) % 24.0, 0);
+    let days = floor(time_minutes / 60.0 / 24.0, 0);
+
+    if days > 0.0 {
+        return format!("{} days, {}:{}", days, hours, minutes);
+    } else if hours > 0.0 {
+        return format!("{} hours, {} minutes", hours, minutes);
+    }
+
+    format!("{} minutes", minutes)
+}
+
+pub fn format_time_long(time_minutes: f64) -> String {
+    let minutes = floor(time_minutes % 60.0, 0);
+    let hours = floor((time_minutes / 60.0) % 24.0, 0);
+    let days = floor(time_minutes / 60.0 / 24.0, 0);
+
+    if days > 0.0 {
+        return format!("{} days, {} hours {} minutes", days, hours, minutes);
+    } else if hours > 0.0 {
+        return format!("{} hours, {} minutes", hours, minutes);
+    }
+
+    format!("{} minutes", minutes)
 }
 
 pub fn random_num(min: usize, max: usize) -> usize {
