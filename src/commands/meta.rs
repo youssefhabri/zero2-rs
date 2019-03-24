@@ -1,6 +1,7 @@
 use serenity::framework::StandardFramework;
 
 
+mod avatar;
 mod botinfo;
 mod ping;
 mod stats;
@@ -15,6 +16,9 @@ pub fn register(framework: StandardFramework) -> StandardFramework {
         )
         .command("stats", |c| c
             .cmd(stats::Stats)
+        )
+        .command("avatar", |c| c
+            .cmd(avatar::Avatar)
         )
     )
 }
