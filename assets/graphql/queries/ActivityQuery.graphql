@@ -9,7 +9,7 @@ query ($id: Int) {
             user {
                 ...UserBase
             }
-            text(asHtml: true)
+            text(asHtml: false)
         }
 
         ... on ListActivity {
@@ -38,7 +38,7 @@ query ($id: Int) {
             messenger {
                 ...UserBase
             }
-            message(asHtml: true)
+            message(asHtml: false)
         }
     }
 }

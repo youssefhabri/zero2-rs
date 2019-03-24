@@ -4,6 +4,9 @@ use std::ops::Add;
 use rand::prelude::*;
 use math::round::floor;
 
+
+pub const BOT_IDS: [u64; 4] = [453773001805135883, 510136293968183317, 510000124949168165, 235088799074484224];
+
 pub fn next_day(target: Weekday) -> DateTime<Local> {
     let mut dt = Local::now();
 
@@ -35,6 +38,24 @@ pub fn weekday_to_string(weekday: Weekday) -> String {
     };
 
     weekday.to_owned()
+}
+
+pub fn month_to_string<'a>(month: u32) -> &'a str {
+    match month {
+        1 => "Jan",
+        2 => "Feb",
+        3 => "Mar",
+        4 => "Apr",
+        5 => "May",
+        6 => "Jun",
+        7 => "Jul",
+        8 => "Aug",
+        9 => "Sep",
+        10 => "Oct",
+        11 => "Nov",
+        12 => "Dec",
+        _ => unreachable!()
+    }
 }
 
 pub fn format_time(time_minutes: f64) -> String {

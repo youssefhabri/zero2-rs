@@ -4,6 +4,10 @@ version = "0.1.0"
 authors = ["Youssef Habri <youssef.habri@gmail.com>"]
 edition = "2018"
 
+[profile.release]
+opt-level = 'z'  # Optimize for size.
+lto = true
+
 [dependencies]
 dotenv = "0.13"
 

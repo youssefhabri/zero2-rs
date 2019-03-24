@@ -1,18 +1,8 @@
-use dissolve::strip_html_tags;
 use regex::Regex;
+use dissolve::strip_html_tags;
 
-fn _remove_spoilers(content: &String) -> String {
-    let re = Regex::new(r"<span class='markdown_spoiler'>(.+?)</span>").unwrap();
 
-    let mut result = String::new();
-
-    for cap in re.captures_iter(content.as_str()) {
-        let capture = strip_html_tags(&cap[0]).join("");
-        result = content.replace(capture.as_str(), "");
-    }
-
-    result
-}
+// TODO Refactor markdown code or break into own module
 
 fn clean_spoilers(content: String) -> String {
     let content = content
@@ -31,10 +21,38 @@ fn clean_spoilers(content: String) -> String {
     result
 }
 
+fn parse_markdown(content: String) -> String {
+    let re = Regex::new(r"(img|webm|youtube)[0-9]{0,3}\((.*?)\)").unwrap();
+
+    let res = re.captures_iter(content.as_str())
+        .map(|cap| {
+            match &cap[1] {
+                "img" | "webm" => content.replace(&cap[0], format!("[image]({})", &cap[2]).as_str()),
+                "youtube" => content.replace(&cap[0], format!("[video]({})", &cap[2]).as_str()),
+                _ => String::new()
+            }
+        })
+        .collect::<Vec<String>>();
+
+    if res.len() > 0 { res.join("") } else { content }
+}
+
+fn parse_markdown_links(content: String) -> String {
+    let re = Regex::new(r"\[ (img|webm)[0-9]{0,3}\((.*?)\) ]\((.*?)\)").unwrap();
+
+    let res = re.captures_iter(content.as_str()).map(|cap| {
+        content.replace(&cap[0], format!("[image link]({})", &cap[3]).as_str())
+    }).collect::<Vec<String>>();
+
+    if res.len() > 0 { res.join("") } else { content }
+}
+
 pub fn synopsis(description: &String, length: usize) -> String {
 
-    let synopsis = description.clone();
-//    synopsis = synopsis.replace("\n\n", "\n");
+    let mut synopsis = description.clone();
+
+    synopsis = parse_markdown_links(synopsis);
+    synopsis = parse_markdown(synopsis);
 
     if synopsis.len() > length {
         // Slicing by nth character rather and a simple index
@@ -44,10 +62,10 @@ pub fn synopsis(description: &String, length: usize) -> String {
         result = result.split_at(result.rfind(" ").unwrap()).0.to_string();
         result = clean_spoilers(result);
 
-        return format!("{} ...", result);
+        synopsis =  format!("{} ...", result);
     }
 
-    if !synopsis.is_empty() { synopsis } else { "N/A".into() }
+    if !synopsis.is_empty() { strip_html_tags(synopsis.as_str()).join("") } else { "N/A".into() }
 }
 
 #[cfg(test)]
@@ -55,16 +73,21 @@ mod tests {
     use crate::commands::anilist::utils::*;
 
     #[test]
-    fn test_remove_spoilers() {
-        let content = "<p>Testing spoiler removing function. </p>\n<p><span class='markdown_spoiler'><span>This is a spoiler.</span></span></p>";
-        let content_no_spoilers = "<p>Testing spoiler removing function. </p>\n<p><span class=\'markdown_spoiler\'><span></span></span></p>";
-        assert_eq!(remove_spoilers(&content.to_string()), content_no_spoilers);
+    fn test_synopsis() {
+        let content = "This is a test post. Please ignore.\n[ img100(https://66.media.tumblr.com/c96c0139755c00d0b9fb7dbae51208cf/tumblr_pftji62LCI1x2kdwmo2_r3_500.gif) ](http://google.com)";
+        let expected = "Test test test ||hello spoilers|| test test.  ...";
+        assert_eq!(synopsis(&content.to_string(), 300), expected);
     }
 
     #[test]
-    fn test_synopsis() {
-        let content = "_Birthday:__ July 7\n__Hair Color:__ Purple\n__Eye Color:__ Blue\n__Height:__ 165 cm\n__Weight:__ 45 kg\n~!5 kg when she was under the influence of the heavy crab.!~\n\nHitagi, the main female character, is a weak-looking girl with an \"incurable disease\". She is in the same class as Koyomi, but he has almost never heard her speak. When she was in the first year of high school, she encountered a mysterious crab, after which she became weightless. Ever since, she has avoided contact with everyone else, threatening everyone who discovers her secret. She called herself a tsundere and always speaks in an abusive style.\n\n~!At the end of Mayoi Snail, she admits that she loves Koyomi, and subsequently enters into a relationship with him.!~\n\n~!After the events in Tsukihi Phoenix, she overcame all of her trauma, and became a rather cheerful and normal girl. She starts calling Araragi with a cute nickname, chuckling at small things and sending e-mails full of Emojis, although her sharp tongue is still there, but toned down.!~\n\n~! She seems to also have a father complex as she becomes excited to the point of being unable to fall asleep when using her father's blanket.!~";
-        let expected = "Test test test ||hello spoilers|| test test.  ...";
-        assert_eq!(synopsis(&content.to_string(), 55), expected);
+    fn test_clean_markdown_links() {
+        let content = "This is a test post. Please ignore.\n[image link](http://google.com)";
+        assert_eq!(parse_markdown_links(content.to_string()), "This is a test post. Please ignore.\n[image link](http://google.com)");
+    }
+
+    #[test]
+    fn test_clean_markdown() {
+        let content = "This is a test post. Please ignore.\n[image](http://google.com)";
+        assert_eq!(parse_markdown(content.to_string()), "This is a test post. Please ignore.\n[image](http://google.com)");
     }
 }
