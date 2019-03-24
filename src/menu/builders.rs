@@ -9,37 +9,14 @@ use crate::models::giphy::Giphy;
 use crate::commands::anilist::utils::synopsis;
 
 
-pub fn media_pages_builder(results: Vec<Media>, embed_builder: fn(&Media, String) -> CreateEmbed) -> Vec<CreateEmbed> {
-    let mut pages = vec![];
-    let len = results.len().clone();
-
-    for (i, media) in results.iter().enumerate() {
-        pages.push(embed_builder(&media, format!("Page: {}/{} | ", i + 1, len)))
-    }
-
-    pages
-}
-
-pub fn user_pages_builder(results: Vec<User>, embed_builder: fn(&User, String) -> CreateEmbed) -> Vec<CreateEmbed> {
-    let mut pages = vec![];
-    let len = results.len().clone();
-
-    for (i, user) in results.iter().enumerate() {
-        pages.push(embed_builder(&user, format!("Page: {}/{} | ", i + 1, len)))
-    }
-
-    pages
-}
-
-pub fn character_pages_builder(results: Vec<Character>, embed_builder: fn(&Character, String) -> CreateEmbed) -> Vec<CreateEmbed> {
-    let mut pages = vec![];
-    let len = results.len().clone();
-
-    for (i, character) in results.iter().enumerate() {
-        pages.push(embed_builder(&character, format!("Page: {}/{} | ", i + 1, len)))
-    }
-
-    pages
+pub fn pages_builder<T>(results: Vec<T>, embed_builder: fn(&T, String) -> CreateEmbed) -> Vec<CreateEmbed> {
+    results
+        .iter()
+        .enumerate()
+        .map(|(i, item)| {
+            embed_builder(&item, format!("Page: {}/{} | ", i + 1, results.len()))
+        })
+        .collect::<Vec<CreateEmbed>>()
 }
 
 pub fn anime_embed_builder(anime: &Media, prefix: String) -> CreateEmbed {

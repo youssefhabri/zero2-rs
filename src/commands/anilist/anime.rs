@@ -35,7 +35,7 @@ impl Command for AnimeCommand {
                     context,
                     sending_msg.id,
                     message.author.id,
-                    builders::media_pages_builder(results, builders::anime_embed_builder)
+                    builders::pages_builder::<Media>(results, builders::anime_embed_builder)
                 )
             }
 

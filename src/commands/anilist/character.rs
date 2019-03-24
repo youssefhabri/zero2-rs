@@ -35,7 +35,7 @@ impl Command for CharacterCommand {
                     context,
                     sending_msg.id,
                     message.author.id,
-                    builders::character_pages_builder(results, builders::character_embed_builder)
+                    builders::pages_builder::<Character>(results, builders::character_embed_builder)
                 ),
                 Err(why) => error!("Err sending character embed: {:?}", why)
             }

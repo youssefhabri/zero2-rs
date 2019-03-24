@@ -35,7 +35,7 @@ impl Command for UserCommand {
                     context,
                     sending_msg.id,
                     message.author.id,
-                    builders::user_pages_builder(results, builders::user_embed_builder)
+                    builders::pages_builder::<User>(results, builders::user_embed_builder)
                 )
             }
 

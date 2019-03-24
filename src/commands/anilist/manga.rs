@@ -35,7 +35,7 @@ impl Command for MangaCommand {
                     context,
                     sending_msg.id,
                     message.author.id,
-                    builders::media_pages_builder(results, builders::manga_embed_builder)
+                    builders::pages_builder::<Media>(results, builders::manga_embed_builder)
                 )
             }
 
