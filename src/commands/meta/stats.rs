@@ -5,6 +5,7 @@ use serenity::model::channel::Message;
 use indexmap::IndexMap;
 use serenity::model::id::{UserId, ChannelId};
 use serenity::builder::CreateEmbed;
+use crate::utils::BOT_IDS;
 
 pub struct Stats;
 
@@ -20,12 +21,10 @@ impl Command for Stats {
 
                 for msg in messages {
                     let author_id = msg.author.id;
-                    let count = stats.get(&author_id);
-                    if count.is_some() {
-                        stats.insert(author_id, count.unwrap() + 1);
-                    } else {
-                        stats.insert(author_id, 1);
-                    }
+                    match stats.get(&author_id) {
+                        Some(count) => stats.insert(author_id, count + 1),
+                        None => stats.insert(author_id, 1),
+                    };
                 }
 
                 stats.sort_by(|_, a, _, b| b.cmp(a));
@@ -68,13 +67,16 @@ fn get_all_messages(message: &Message) -> Option<Vec<Message>> {
 
 fn build_embed(channel_id: ChannelId, stats_list: IndexMap<UserId, u32>) -> CreateEmbed {
 
-    let mut content = String::new();
-
-    for (i, (user_id, msg_number)) in stats_list.iter().enumerate() {
-        content = format!("{}\n\n{}. <@{}>: {}", content, i + 1, user_id, msg_number);
-
-        if i >= 10 { break; }
-    }
+    let content = stats_list
+        .iter()
+        .take(10)
+        .enumerate()
+        .filter(|(_, (user_id, _))| !BOT_IDS.contains(user_id.as_u64()))
+        .map(|(i, (user_id, msgs_count))|{
+            format!("{}. <@{}>: {}", i + 1, user_id, msgs_count)
+        })
+        .collect::<Vec<String>>()
+        .join("\n\n");
 
     CreateEmbed::default()
         .title(format!("Messages stats in #{}", channel_id.name().unwrap()))
