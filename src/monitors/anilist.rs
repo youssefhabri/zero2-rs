@@ -8,7 +8,19 @@ use crate::models::anilist::character::Character;
 use crate::models::anilist::user::User;
 
 
-pub fn anilist_monitor(_ctx: Context, message: Message) {
+pub fn rem_monitor(_ctx: &Context, message: &Message) {
+    if !message.content_safe().as_str().contains("rem") {
+        return
+    }
+
+    let _ = message.channel_id.say("Who's rem?");
+}
+
+/// AniList Links Monitor
+/// 
+/// Checks messages for anilist links (containing `https://anilist.co`)
+/// and get the data from AniList and embed it in a message.
+pub fn anilist_links_monitor(_ctx: &Context, message: &Message) {
     if !message.content_safe().as_str().contains("https://anilist.co/") {
         return
     }
@@ -69,14 +81,15 @@ pub fn anilist_monitor(_ctx: Context, message: Message) {
     }
 }
 
-fn handle_media(message: Message, media_type: &str, media_id: &str) {
+/// Handles media embeds for the AniList Links Monitor
+fn handle_media(message: &Message, media_type: &str, media_id: &str) {
     let media: Option<Media> = client::search_media_by_id(media_id.into(), media_type.to_uppercase());
 
     match media {
         Some(media) => {
             let _sending = message.channel_id.send_message(
                 |m| m.embed(
-                    |_| builders::anime_embed_builder(&media, "".into())
+                    |_| builders::media_embed_builder(&media, "".into())
                 )
             );
         },
@@ -84,7 +97,8 @@ fn handle_media(message: Message, media_type: &str, media_id: &str) {
     }
 }
 
-fn handle_activity(message: Message, activity_id: &str) {
+/// Handles activity embeds for the AniList Links Monitor
+fn handle_activity(message: &Message, activity_id: &str) {
     match client::search_activity(activity_id.into()) {
         Some(activity) => {
             let _ = message.channel_id.send_message(
@@ -95,7 +109,8 @@ fn handle_activity(message: Message, activity_id: &str) {
     }
 }
 
-fn handle_character(message: Message, character_id: &str) {
+/// Handles character embeds for the AniList Links Monitor
+fn handle_character(message: &Message, character_id: &str) {
     let character: Option<Character> = client::search_character_by_id(character_id.into());
 
     match character {
@@ -110,7 +125,8 @@ fn handle_character(message: Message, character_id: &str) {
     }
 }
 
-fn handle_user(message: Message, username: &str) {
+/// Handles user embeds for the AniList Links Monitor
+fn handle_user(message: &Message, username: &str) {
     let user: Option<User> = client::search_user(username.into());
 
     match user {
