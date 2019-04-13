@@ -14,6 +14,7 @@ query ($search: String, $type: MediaType) {
                 airingAt
             }
             status
+            isAdult
             meanScore
             episodes
             chapters

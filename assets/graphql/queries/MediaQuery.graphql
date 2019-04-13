@@ -13,6 +13,7 @@ query ($id: Int, $type: MediaType) {
             airingAt
         }
         status
+        isAdult
         meanScore
         episodes
         chapters
