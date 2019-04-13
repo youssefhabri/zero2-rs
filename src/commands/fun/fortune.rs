@@ -58,7 +58,7 @@ fn request() -> Option<Vec<Fortune>> {
 fn random_fortune() -> Option<Fortune> {
     match request() {
         Some(fortunes) => {
-            Some(fortunes.get(random_num(0, fortunes.len())).unwrap().clone())
+            Some(fortunes[random_num(0, fortunes.len())].clone())
         },
         None => None
     }

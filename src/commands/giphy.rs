@@ -33,8 +33,8 @@ impl Command for GiphyCommand {
         let keyword = args.full().to_owned();
         let results = query(keyword.clone()).data;
 
-        if results.len() > 0 {
-            let gif: &Giphy = results.get(0).unwrap();
+        if !results.is_empty() {
+            let gif: &Giphy = &results[0];
             let sending = message.channel_id.send_message(
                 |m| m.embed(
                     |_| builders::giphy_embed_builder(gif, format!("Page: {}/{} | ", 1, results.len()))

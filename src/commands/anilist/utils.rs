@@ -34,7 +34,7 @@ fn parse_markdown(content: String) -> String {
         })
         .collect::<Vec<String>>();
 
-    if res.len() > 0 { res.join("") } else { content }
+    if !res.is_empty() { res.join("") } else { content }
 }
 
 fn parse_markdown_links(content: String) -> String {
@@ -44,7 +44,7 @@ fn parse_markdown_links(content: String) -> String {
         content.replace(&cap[0], format!("[image link]({})", &cap[3]).as_str())
     }).collect::<Vec<String>>();
 
-    if res.len() > 0 { res.join("") } else { content }
+    if !res.is_empty() { res.join("") } else { content }
 }
 
 pub fn synopsis(description: &String, length: usize) -> String {
@@ -59,7 +59,7 @@ pub fn synopsis(description: &String, length: usize) -> String {
         let end = synopsis.char_indices().map(|(i, _)| i).nth(length).unwrap();
 
         let mut result = (&synopsis[0..end]).to_string();
-        result = result.split_at(result.rfind(" ").unwrap()).0.to_string();
+        result = result.split_at(result.rfind(' ').unwrap()).0.to_string();
         result = clean_spoilers(result);
 
         synopsis =  format!("{} ...", result);

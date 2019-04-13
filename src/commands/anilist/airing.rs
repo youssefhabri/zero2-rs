@@ -15,7 +15,7 @@ pub struct AiringCommand;
 
 impl Command for AiringCommand {
     fn execute(&self, _context: &mut Context, message: &Message, args: Args) -> Result<(), CommandError> {
-        let (start, day) = if args.full().len() <= 0 {
+        let (start, day) = if args.full().is_empty() {
             (to_midnight(Local::now()), "Today".to_owned())
         } else {
             let day = args.full();
@@ -29,7 +29,7 @@ impl Command for AiringCommand {
 
         let results: Vec<AiringSchedule> = client::search_airing_schedule(start.timestamp(), start.add(Duration::days(1)).timestamp());
 
-        if results.len() > 0 {
+        if !results.is_empty() {
             let mut airing = vec![];
 
             for item in results {

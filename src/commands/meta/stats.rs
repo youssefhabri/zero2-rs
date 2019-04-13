@@ -53,7 +53,7 @@ fn get_all_messages(message: &Message) -> Option<Vec<Message>> {
         .before(message.id).limit(limit)
     ).unwrap();
 
-    while messages.len() > 0 {
+    while !messages.is_empty() {
         all_messages.extend(messages.clone());
         let last_message_id = messages[messages.len() - 1].id;
         messages = message.channel_id.messages(|g| g
@@ -61,7 +61,7 @@ fn get_all_messages(message: &Message) -> Option<Vec<Message>> {
         ).unwrap();
     }
 
-    if all_messages.len() > 0 { Some(all_messages) }
+    if !all_messages.is_empty() { Some(all_messages) }
     else { None }
 }
 

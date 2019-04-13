@@ -147,7 +147,7 @@ fn message_activity_embed_builder(activity: &Activity) -> CreateEmbed {
 // Giphy builders
 pub fn giphy_pages_builder(results: Vec<Giphy>, embed_builder: fn(&Giphy, String) -> CreateEmbed) -> Vec<CreateEmbed> {
     let mut pages = vec![];
-    let len = results.len().clone();
+    let len = results.len();
 
     for (i, gif) in results.iter().enumerate() {
         pages.push(embed_builder(gif, format!("Page: {}/{} | ", i + 1, len)))

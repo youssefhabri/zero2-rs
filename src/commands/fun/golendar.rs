@@ -5,7 +5,7 @@ use serenity::framework::standard::{Args, Command, CommandError};
 use chrono::{DateTime, Datelike, Timelike, NaiveDateTime, Utc};
 use crate::utils::{month_to_string, weekday_to_string};
 
-const TIMESTAMP_START: i64 = 1551312000000; //1551308400000;
+const TIMESTAMP_START: i64 = 1_551_312_000_000; //1551308400000;
 
 pub struct GolendarCommand;
 

@@ -28,12 +28,12 @@ pub struct NLImageCommand;
 impl Command for NLImageCommand {
     fn execute(&self, _context: &mut Context, message: &Message, args: Args) -> Result<(), CommandError> {
 
-        let params = if args.full().len() > 0 {
+        let params = if !args.full().is_empty() {
             args.multiple::<String>().unwrap()
         } else { vec![] };
 
 
-        let keyword = if params.len() > 0 { params[0].clone() } else { String::new() };
+        let keyword = if !params.is_empty() { params[0].clone() } else { String::new() };
         let user: Option<User> = if params.len() > 1 {
 
             let re = Regex::new(r"^<@!?\d+>$").unwrap();

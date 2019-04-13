@@ -87,7 +87,7 @@ impl User {
 
         let mut fav_list: Vec<String> = vec![];
 
-        if media_list.len() > 0 {
+        if !media_list.is_empty() {
             for (i, media) in media_list.iter().enumerate() {
                 if i == 5 { break; }
                 fav_list.push(
@@ -105,7 +105,7 @@ impl User {
             return fav_list.join("\n");
         }
 
-        return String::from("N/A")
+        String::from("N/A")
     }
 
     pub fn favourite_anime(&self) -> String {
@@ -121,7 +121,7 @@ impl User {
 
         let mut fav_list: Vec<String> = vec![];
 
-        if character_list.len() > 0 {
+        if !character_list.is_empty() {
             for (i, character) in character_list.iter().enumerate() {
                 if i == 5 { break; }
                 fav_list.push(
@@ -139,6 +139,6 @@ impl User {
             return fav_list.join("\n");
         }
 
-        return String::from("N/A")
+        String::from("N/A")
     }
 }

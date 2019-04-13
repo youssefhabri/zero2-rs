@@ -8,7 +8,7 @@ pub struct NLOwOCommand;
 
 impl Command for NLOwOCommand {
     fn execute(&self, _: &mut Context, message: &Message, args: Args) -> Result<(), CommandError> {
-        if args.full().len() <= 0 {
+        if args.full().is_empty() {
             let _ = message.channel_id.say("You need to input text to convert.");
             return Ok(());
         }

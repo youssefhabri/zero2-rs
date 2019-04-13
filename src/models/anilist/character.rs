@@ -85,7 +85,7 @@ impl Character {
 
     pub fn cover_image(&self) -> String {
         match &self.image.large {
-            Some(image) => format!("{}", image),
+            Some(image) => image.to_string(),
             None => String::new()
         }
     }
@@ -95,22 +95,22 @@ impl Character {
 
         let mut fav_list: Vec<String> = vec![];
 
-        if media_list.len() > 0 {
+        if !media_list.is_empty() {
             let mut count = 0;
             for media in media_list {
                 if media.media_type == media_type {
                     fav_list.push(
                         format!("[{}]({})", media.title.user_preferred, media.site_url));
-                    count = count + 1;
+                    count += 1;
                 }
                 if count >= 5 { break }
             }
         }
 
-        if fav_list.len() > 0 {
+        if !fav_list.is_empty() {
             return fav_list.join("\n");
         }
 
-        return String::from("N/A")
+        String::from("N/A")
     }
 }

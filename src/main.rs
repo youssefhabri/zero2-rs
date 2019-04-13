@@ -47,7 +47,7 @@ fn main() {
     };
 
     let mut owner_ids_set = HashSet::new();
-    owner_ids_set.insert(owner.id.clone());
+    owner_ids_set.insert(owner.id);
 
     {
         let mut data = client.data.lock();
@@ -60,7 +60,7 @@ fn main() {
     let mut framework = StandardFramework::new()
         .before(|_, msg, _| { let _ = msg.channel_id.broadcast_typing(); true })
         .configure(|c| c
-            .prefixes(prefix_aliases.split(","))
+            .prefixes(prefix_aliases.split(','))
             .owners(owner_ids_set))
         ;
 

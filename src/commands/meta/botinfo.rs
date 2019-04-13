@@ -55,14 +55,14 @@ impl Command for BotInfo {
                 ,shard_count)
                    ,false)
             .thumbnail(thumbnail)
-            .colour(Colour::new(0x5da9ff));
+            .colour(Colour::new(0x005d_a9ff));
         if let Some(process) = sys.get_process(get_current_pid()) {
             message.channel_id.send_message(|m| m
                 .embed(|_| embed
                     .field("System Info", format!(
                         "Type: {} {}\nUptime: {}"
-                        ,sys_info::os_type().unwrap_or(String::from("OS Not Found"))
-                        ,sys_info::os_release().unwrap_or(String::from("Release Not Found"))
+                        ,sys_info::os_type().unwrap_or_else(|_| String::from("OS Not Found"))
+                        ,sys_info::os_release().unwrap_or_else(|_| String::from("Release Not Found"))
                         ,seconds_to_hrtime(sys.get_uptime() as usize))
                            ,true)
                     .field("Process Info", format!(

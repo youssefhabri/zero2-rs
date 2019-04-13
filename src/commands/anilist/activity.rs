@@ -12,7 +12,7 @@ pub struct ActivityCommand;
 impl Command for ActivityCommand {
     fn execute(&self, _context: &mut Context, message: &Message, args: Args) -> Result<(), CommandError> {
 
-        if args.full().len() <= 0 {
+        if args.full().is_empty() {
             let _ = message.channel_id.say("You need to input a activity url or ID.");
             return Ok(());
         }

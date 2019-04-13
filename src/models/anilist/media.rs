@@ -68,6 +68,9 @@ pub struct Media {
 
     pub status: String,
 
+    #[serde(rename = "isAdult")]
+    pub is_adult: bool,
+
     #[serde(rename = "meanScore")]
     pub mean_score: Option<u8>,
 
@@ -116,13 +119,13 @@ impl Media {
 
     pub fn banner_image(&self) -> String {
         match &self.banner_image {
-            Some(banner_image) => format!("{}", banner_image),
-            None => "".to_owned()
+            Some(banner_image) => banner_image.to_string(),
+            None => "".to_string()
         }
     }
 
     pub fn genres(&self) -> String {
-        if self.genres.len() > 0 {
+        if !self.genres.is_empty() {
             let mut genres = vec![];
             let url = |genre: &String|
                 format!("https://anilist.co/search/anime?includedGenres={}", genre.replace(" ", "+"));
@@ -134,11 +137,11 @@ impl Media {
             return genres.join(", ")
         }
 
-        return "N/A".to_owned();
+        "N/A".to_string()
     }
 
     pub fn _streaming_services(&self) -> String {
-        if self.external_links.len() > 0 {
+        if !self.external_links.is_empty() {
             let mut list: Vec<String> = vec![];
             for service in &self.external_links {
                 list.push(format!("[{}]({})", service.site, service.url));
@@ -146,7 +149,7 @@ impl Media {
             return list.join(", ");
         }
 
-        "Not available".to_owned()
+        "Not available".to_string()
     }
 
     pub fn tracking_sites(&self) -> String {
@@ -162,13 +165,13 @@ impl Media {
     pub fn synopsis(&self) -> String {
         match &self.description {
             Some(description) => synopsis(description, 300),
-            None => "".to_owned()
+            None => "".to_string()
         }
     }
 
     pub fn status(&self) -> String {
         let status = match self.status.as_str() {
-            "FINISHED" => "Finished".to_owned(),
+            "FINISHED" => "Finished".to_string(),
             "RELEASING" => {
                 if self.media_type == "ANIME" {
                     match &self.next_airing_episode {
@@ -180,17 +183,17 @@ impl Media {
 
                             format!("Airing | Next episode: {}", format_time((delta_time / 60) as f64))
                         },
-                        None => "Airing".to_owned()
+                        None => "Airing".to_string()
                     }
                 } else {
-                    "Releasing".to_owned()
+                    "Releasing".to_string()
                 }
             }
-            "NOT_YET_RELEASED" => "Not Yet Released".to_owned(),
-            "CANCELLED" => "Cancelled".to_owned(),
-            _ => "Unknown Status".to_owned()
+            "NOT_YET_RELEASED" => "Not Yet Released".to_string(),
+            "CANCELLED" => "Cancelled".to_string(),
+            _ => "Unknown Status".to_string()
         };
 
-        status.to_owned()
+        status
     }
 }

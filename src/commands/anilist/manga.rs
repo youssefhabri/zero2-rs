@@ -13,7 +13,7 @@ pub struct MangaCommand;
 impl Command for MangaCommand {
     fn execute(&self, context: &mut Context, message: &Message, args: Args) -> Result<(), CommandError> {
 
-        if args.full().len() <= 0 {
+        if args.full().is_empty() {
             let _ = message.channel_id.say("You need to input a manga title.");
             return Ok(());
         }
@@ -22,8 +22,8 @@ impl Command for MangaCommand {
 
         let results: Vec<Media> = client::search_media(keyword.clone(), "MANGA".to_owned());
 
-        if results.len() > 0 {
-            let manga: &Media = results.get(0).unwrap();
+        if !results.is_empty() {
+            let manga: &Media = &results[0];
             let sending = message.channel_id.send_message(
                 |m| m.embed(
                     |_| builders::media_embed_builder(manga, format!("Page: {}/{} | ", 1, results.len()))

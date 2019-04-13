@@ -10,7 +10,7 @@ pub struct Avatar;
 impl Command for Avatar {
     fn execute(&self, _: &mut Context, message: &Message, args: Args) -> Result<(), CommandError> {
 
-        if args.full().len() <= 0 {
+        if args.full().is_empty() {
             let _ = message.channel_id.say("You need to input a username.");
             return Ok(());
         }
@@ -30,7 +30,7 @@ impl Command for Avatar {
                                     .title(format!("{}'s avatar",
                                                    user.nick_in(
                                                        message.guild_id.unwrap()
-                                                   ).unwrap_or(user.name.clone())))
+                                                   ).unwrap_or_else(|| user.name.clone())))
                                     .url(user.avatar_url().unwrap())
                                     .image(user.avatar_url().unwrap())
                                 )

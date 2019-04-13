@@ -27,7 +27,7 @@ pub struct UrbanDictionary;
 
 impl Command for UrbanDictionary {
     fn execute(&self, _context: &mut Context, message: &Message, args: Args) -> Result<(), CommandError> {
-        if args.full().len() <= 0 {
+        if args.full().is_empty() {
             let _ = message.channel_id.say("You need to input a anime title.");
             return Ok(());
         }

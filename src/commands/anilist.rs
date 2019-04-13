@@ -44,7 +44,6 @@ pub fn register(framework: StandardFramework) -> StandardFramework {
             .usage("<activity_id|activity_url>")
             .desc("Embed an activity from AniList")
         )
-
         .command("airing", |c| c
             .cmd(airing::AiringCommand)
             .batch_known_as(vec!["airs"])
