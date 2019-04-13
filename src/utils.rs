@@ -4,9 +4,10 @@ use std::ops::Add;
 use rand::prelude::*;
 use math::round::floor;
 
-
+/// AniTrend Bots ids for reference
 pub const BOT_IDS: [u64; 4] = [453773001805135883, 510136293968183317, 510000124949168165, 235088799074484224];
 
+/// Get the DateTime<Local> for the next Weekday
 pub fn next_day(target: Weekday) -> DateTime<Local> {
     let mut dt = Local::now();
 
@@ -17,6 +18,7 @@ pub fn next_day(target: Weekday) -> DateTime<Local> {
     dt
 }
 
+/// Convert a DateTime<Local> to midnight
 pub fn to_midnight(datetime: DateTime<Local>) -> DateTime<FixedOffset> {
     let midnight = format!(
         "{}-{:02}-{}T00:00:00{}",
@@ -26,6 +28,7 @@ pub fn to_midnight(datetime: DateTime<Local>) -> DateTime<FixedOffset> {
     DateTime::parse_from_rfc3339(midnight.as_str()).unwrap()
 }
 
+/// Convert a Weekday enum to weekday name
 pub fn weekday_to_string(weekday: Weekday) -> String {
     let weekday: &str = match weekday {
         Weekday::Mon => "Monday",
@@ -40,6 +43,7 @@ pub fn weekday_to_string(weekday: Weekday) -> String {
     weekday.to_owned()
 }
 
+/// Convert month (number) to short format name
 pub fn month_to_string<'a>(month: u32) -> &'a str {
     match month {
         1 => "Jan",
@@ -58,6 +62,7 @@ pub fn month_to_string<'a>(month: u32) -> &'a str {
     }
 }
 
+/// Returns formated time from minutes
 pub fn format_time(time_minutes: f64) -> String {
     let minutes = floor(time_minutes % 60.0, 0);
     let hours = floor((time_minutes / 60.0) % 24.0, 0);
@@ -72,7 +77,7 @@ pub fn format_time(time_minutes: f64) -> String {
     format!("{} minutes", minutes)
 }
 
-pub fn format_time_long(time_minutes: f64) -> String {
+pub fn _format_time_long(time_minutes: f64) -> String {
     let minutes = floor(time_minutes % 60.0, 0);
     let hours = floor((time_minutes / 60.0) % 24.0, 0);
     let days = floor(time_minutes / 60.0 / 24.0, 0);
@@ -86,6 +91,7 @@ pub fn format_time_long(time_minutes: f64) -> String {
     format!("{} minutes", minutes)
 }
 
+/// Generate a random number between the min & max values
 pub fn random_num(min: usize, max: usize) -> usize {
     rand::thread_rng().gen_range(min, max)
 }
