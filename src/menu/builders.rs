@@ -19,38 +19,28 @@ pub fn pages_builder<T>(results: Vec<T>, embed_builder: fn(&T, String) -> Create
         .collect::<Vec<CreateEmbed>>()
 }
 
-pub fn anime_embed_builder(anime: &Media, prefix: String) -> CreateEmbed {
-    CreateEmbed::default()
+pub fn media_embed_builder(media: &Media, prefix: String) -> CreateEmbed {
+    let mut embed = CreateEmbed::default()
         .color(3447003)
-        .title(&anime.title.user_preferred)
-        .url(&anime.site_url)
-        .description(&anime.synopsis())
-        .image(&anime.banner_image())
-        .thumbnail(&anime.cover_image.large)
-        .field("Score", &anime.mean_score(), true)
-        .field("Episodes", &anime.episodes(), true)
-        .field("Genres", &anime.genres(), true)
-        .field("More info", &anime.tracking_sites(), true)
+        .title(&media.title.user_preferred)
+        .url(&media.site_url)
+        .description(&media.synopsis())
+        .image(&media.banner_image())
+        .thumbnail(&media.cover_image.large)
+        .field("Score", &media.mean_score(), true)
+        .field("Genres", &media.genres(), true)
+        .field("More info", &media.tracking_sites(), true)
         .footer(|f| f
             .icon_url("https://anilist.co/img/icons/favicon-32x32.png")
-            .text(format!("{}Status: {} | Powered by AniList", prefix, &anime.status())))
-}
+            .text(format!("{}Status: {} | Powered by AniList", prefix, &media.status())));
+    
+    if &media.media_type == "ANIME" {
+        embed = embed.field("Episodes", &media.episodes(), true)
+    } else {
+        embed = embed.field("Chapters", &media.chapters(), true)
+    }
 
-pub fn manga_embed_builder(manga: &Media, prefix: String) -> CreateEmbed {
-    CreateEmbed::default()
-        .color(3447003)
-        .title(&manga.title.user_preferred)
-        .url(&manga.site_url)
-        .description(&manga.synopsis())
-        .image(&manga.banner_image())
-        .thumbnail(&manga.cover_image.large)
-        .field("Score", &manga.mean_score(), true)
-        .field("Chapters", &manga.chapters(), true)
-        .field("Genres", &manga.genres(), true)
-        .field("More info", &manga.tracking_sites(), true)
-        .footer(|f| f
-            .icon_url("https://anilist.co/img/icons/favicon-32x32.png")
-            .text(format!("{}Status: {} | Powered by AniList", prefix, &manga.status())))
+    embed
 }
 
 pub fn user_embed_builder(user: &User, prefix: String) -> CreateEmbed {

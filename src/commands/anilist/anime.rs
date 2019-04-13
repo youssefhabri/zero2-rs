@@ -13,7 +13,7 @@ pub struct AnimeCommand;
 impl Command for AnimeCommand {
     fn execute(&self, context: &mut Context, message: &Message, args: Args) -> Result<(), CommandError> {
 
-        if args.full().len() <= 0 {
+        if args.full().is_empty() {
             let _ = message.channel_id.say("You need to input a anime title.");
             return Ok(());
         }
@@ -22,11 +22,11 @@ impl Command for AnimeCommand {
 
         let results: Vec<Media> = client::search_media(keyword.clone(), "ANIME".to_owned());
 
-        if results.len() > 0 {
-            let anime: &Media = results.get(0).unwrap();
+        if !results.is_empty() {
+            let anime: &Media = &results[0];
             let sending = message.channel_id.send_message(
                 |m| m.embed(
-                    |_| builders::anime_embed_builder(anime, format!("Page: {}/{} | ", 1, results.len()))
+                    |_| builders::media_embed_builder(anime, format!("Page: {}/{} | ", 1, results.len()))
                 ).reactions(menu::reactions::default())
             );
 
@@ -35,7 +35,7 @@ impl Command for AnimeCommand {
                     context,
                     sending_msg.id,
                     message.author.id,
-                    builders::pages_builder::<Media>(results, builders::anime_embed_builder)
+                    builders::pages_builder::<Media>(results, builders::media_embed_builder)
                 )
             }
 

@@ -26,7 +26,7 @@ impl Command for MangaCommand {
             let manga: &Media = results.get(0).unwrap();
             let sending = message.channel_id.send_message(
                 |m| m.embed(
-                    |_| builders::manga_embed_builder(manga, format!("Page: {}/{} | ", 1, results.len()))
+                    |_| builders::media_embed_builder(manga, format!("Page: {}/{} | ", 1, results.len()))
                 ).reactions(menu::reactions::default())
             );
 
@@ -35,7 +35,7 @@ impl Command for MangaCommand {
                     context,
                     sending_msg.id,
                     message.author.id,
-                    builders::pages_builder::<Media>(results, builders::manga_embed_builder)
+                    builders::pages_builder::<Media>(results, builders::media_embed_builder)
                 )
             }
 
