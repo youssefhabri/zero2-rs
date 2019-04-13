@@ -2002,7 +2002,7 @@ dependencies = [
 
 [[package]]
 name = "zero2_rs"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "chrono 0.4.6 (registry+https://github.com/rust-lang/crates.io-index)",
  "dissolve 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)",
