@@ -15,6 +15,7 @@ use serenity::{
 use crate::utils::seconds_to_hrtime;
 use crate::store::BotOwnerContainer;
 
+const BOT_VERSION: &'static str = env!("CARGO_PKG_VERSION");
 
 /// Taken from https://gitlab.com/Mishio595/momiji-rust
 /// under the MIT license
@@ -49,6 +50,7 @@ impl Command for BotInfo {
                 ,owner.tag()
                 ,owner.id)
                    ,true)
+            .field("Version", format!("v{}", BOT_VERSION), true)
             .field("Counts", format!(
                 "Guilds: {}\nShards: {}"
                 ,guild_count
