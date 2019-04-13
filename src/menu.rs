@@ -10,7 +10,7 @@ use crate::store::{BotOwnerContainer, MessagePaginator, MessagePagination};
 
 pub mod builders;
 
-// Emulating an enum of reactions ¯\_(ツ)_/¯
+/// Emulating an enum of reactions ¯\_(ツ)_/¯
 pub mod reactions {
     pub const PREV: &str = "⬅";
     pub const NEXT: &str = "➡";
@@ -21,6 +21,9 @@ pub mod reactions {
     }
 }
 
+/// Menu modifier enum
+/// 
+/// Used to tell the menu system whether to go forward or backward
 pub enum Modifier {
     Decrement,
     Increment,
@@ -31,7 +34,7 @@ pub enum Error {}
 
 pub type HandlerFunc = fn(&Context, &Reaction) -> fn(&Context, ChannelId, MessageId) -> Result<(), Error>;
 
-
+/// Create a new menu pagination
 pub fn new_pagination(context: &Context, message_id: MessageId, author_id: UserId, pages: Vec<CreateEmbed>) {
     new_pagination_with_handler(
         context,
@@ -42,6 +45,7 @@ pub fn new_pagination(context: &Context, message_id: MessageId, author_id: UserI
     )
 }
 
+/// Create a new menu pagination with a a custom reaction handler
 pub fn new_pagination_with_handler(
     context: &Context,
     message_id: MessageId,
@@ -60,6 +64,9 @@ pub fn new_pagination_with_handler(
     });
 }
 
+/// Hanldes menu reactions
+/// 
+/// Triggered by serenity's EventHandler
 pub fn handle_reaction(ctx: &Context, reaction: &Reaction) {
     let cache = CACHE.read();
 
