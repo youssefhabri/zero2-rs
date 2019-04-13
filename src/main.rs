@@ -8,13 +8,12 @@ use std::collections::{HashSet, HashMap};
 use std::sync::Arc;
 use serenity::{
     client::Client,
-    model::{channel::Reaction, gateway::Ready, event::ResumedEvent},
     framework::standard::StandardFramework,
     http,
-    prelude::*,
 };
 
 mod commands;
+mod handler;
 mod menu;
 mod models;
 mod monitors;
@@ -27,34 +26,8 @@ use crate::store::{
     MessagePaginator,
     ShardManagerContainer,
 };
-use serenity::model::gateway::Game;
-use serenity::model::channel::Message;
+use crate::handler::Zero2Handler;
 
-
-// Event Handler
-pub struct Zero2Handler;
-
-impl EventHandler for Zero2Handler {
-    fn message(&self, ctx: Context, message: Message) {
-        monitors::run_monitors(ctx, message);
-    }
-
-    fn reaction_add(&self, context: Context, add_reaction: Reaction) {
-        menu::handle_reaction(&context, &add_reaction);
-    }
-
-    fn ready(&self, ctx: Context, ready: Ready) {
-        ctx.set_game(
-            Game::listening(format!("2!help", ).as_str())
-        );
-
-        info!("Connected as {}", ready.user.name);
-    }
-
-    fn resume(&self, _: Context, _: ResumedEvent) {
-        info!("Resumed");
-    }
-}
 
 fn main() {
     // Load token from environment variables or .env file
