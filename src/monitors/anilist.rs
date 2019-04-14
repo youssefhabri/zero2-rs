@@ -29,22 +29,28 @@ pub fn anilist_links_monitor(_ctx: &Context, message: &Message) {
 
     let re = Regex::new(r"https://anilist\.co/(anime|manga|character|activity|user)/([0-9]+)?/?([^/]+)?/?").unwrap();
 
-    for cap in re.captures_iter(full_message.as_str()) {
-        match &cap[1] {
-            "anime" | "manga" => {
-                handle_media(message, &cap[1], &cap[2]);
-            },
-            "activity" => {
-                handle_activity(message, &cap[2]);
-            },
-            "character" => {
-                handle_character(message, &cap[2]);
-            },
-            "user" => {
-                handle_user(message, &cap[3]);
-            },
-            _ => return
-        }
+    let matches: Vec<_> = re.captures_iter(full_message.as_str()).collect();
+
+    if matches.len() != 1 {
+        return
+    }
+
+    let cap = &matches[0];
+
+    match &cap[1] {
+        "anime" | "manga" => {
+            handle_media(message, &cap[1], &cap[2]);
+        },
+        "activity" => {
+            handle_activity(message, &cap[2]);
+        },
+        "character" => {
+            handle_character(message, &cap[2]);
+        },
+        "user" => {
+            handle_user(message, &cap[3]);
+        },
+        _ => return
     }
 }
 
