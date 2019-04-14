@@ -29,55 +29,22 @@ pub fn anilist_links_monitor(_ctx: &Context, message: &Message) {
 
     let re = Regex::new(r"https://anilist\.co/(anime|manga|character|activity|user)/([0-9]+)?/?([^/]+)?/?").unwrap();
 
-    let (
-        _group0, // URI
-        group1,  // TYPE
-        group2,  // ID
-        group3   // TITLE | USERNAME
-    ) = match re.captures(full_message.as_str()) {
-        Some(caps) => {
-            let group0 = match caps.get(0) {
-                Some(group0) => Some(group0.as_str()),
-                None => None
-            };
-
-            let group1 = match caps.get(1) {
-                Some(group1) => Some(group1.as_str()),
-                None => None
-            };
-
-            let group2 = match caps.get(2) {
-                Some(group2) => Some(group2.as_str()),
-                None => None
-            };
-
-            let group3 = match caps.get(3) {
-                Some(group3) => Some(group3.as_str()),
-                None => None
-            };
-
-            (group0, group1, group2, group3)
-        },
-        None => {
-            debug!("Pattern matching failed!");
-            return
+    for cap in re.captures_iter(full_message.as_str()) {
+        match &cap[1] {
+            "anime" | "manga" => {
+                handle_media(message, &cap[1], &cap[2]);
+            },
+            "activity" => {
+                handle_activity(message, &cap[2]);
+            },
+            "character" => {
+                handle_character(message, &cap[2]);
+            },
+            "user" => {
+                handle_user(message, &cap[3]);
+            },
+            _ => return
         }
-    };
-
-    match group1.unwrap() {
-        "anime" | "manga" => {
-            handle_media(message, group1.unwrap(), group2.unwrap());
-        },
-        "activity" => {
-            handle_activity(message, group2.unwrap());
-        },
-        "character" => {
-            handle_character(message, group2.unwrap());
-        },
-        "user" => {
-            handle_user(message, group3.unwrap());
-        },
-        _ => return
     }
 }
 
