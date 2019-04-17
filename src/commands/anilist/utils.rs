@@ -21,30 +21,28 @@ fn clean_spoilers(content: String) -> String {
     result
 }
 
-fn parse_markdown(content: String) -> String {
-    let re = Regex::new(r"(img|webm|youtube)[0-9]{0,3}\((.*?)\)").unwrap();
+fn parse_markdown(mut content: String) -> String {
+    let re = Regex::new(r"(img|webm|youtube)[0-9]{0,3}%?\((.*?)\)").unwrap();
 
-    let res = re.captures_iter(content.as_str())
-        .map(|cap| {
-            match &cap[1] {
-                "img" | "webm" => content.replace(&cap[0], format!("[image]({})", &cap[2]).as_str()),
-                "youtube" => content.replace(&cap[0], format!("[video]({})", &cap[2]).as_str()),
-                _ => String::new()
-            }
-        })
-        .collect::<Vec<String>>();
+    for cap in re.captures_iter(content.clone().as_str()) {
+        match &cap[1] {
+            "img" | "webm" => content = content.replace(&cap[0], format!("[image]({})", &cap[2]).as_str()),
+            "youtube" => content = content.replace(&cap[0], format!("[video]({})", &cap[2]).as_str()),
+            _ => ()
+        }
+    }
 
-    if !res.is_empty() { res.join("") } else { content }
+    content
 }
 
-fn parse_markdown_links(content: String) -> String {
-    let re = Regex::new(r"\[ (img|webm)[0-9]{0,3}\((.*?)\) ]\((.*?)\)").unwrap();
+fn parse_markdown_links(mut content: String) -> String {
+    let re = Regex::new(r"\[ (img|webm)[0-9]{0,3}%?\((.*?)\) ]\((.*?)\)").unwrap();
 
-    let res = re.captures_iter(content.as_str()).map(|cap| {
-        content.replace(&cap[0], format!("[image link]({})", &cap[3]).as_str())
-    }).collect::<Vec<String>>();
+    for cap in re.captures_iter(content.clone().as_str()) {
+        content = content.replace(&cap[0], format!("[image link]({})", &cap[3]).as_str());
+    }
 
-    if !res.is_empty() { res.join("") } else { content }
+    content
 }
 
 pub fn synopsis(description: &String, length: usize) -> String {
