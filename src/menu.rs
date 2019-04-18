@@ -175,6 +175,11 @@ pub fn modify_page(context: &Context, message_id: &MessageId, modifier: &Modifie
         } else { return None },
     };
 
+    if pagination.current_page as usize > pagination.pages.len() - 1 {
+        pagination.current_page -= 1;
+        return None;
+    }
+
     Some(pagination.current_page)
 }
 
