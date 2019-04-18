@@ -8,7 +8,7 @@ use serenity::prelude::*;
 
 use crate::commands::anilist::client;
 use crate::models::anilist::airing_schedule::AiringSchedule;
-use crate::utils::*;
+use crate::core::utils::{next_day, to_midnight, weekday_to_string};
 
 
 pub struct AiringCommand;

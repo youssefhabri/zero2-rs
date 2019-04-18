@@ -2,7 +2,7 @@ use serenity::prelude::*;
 use serenity::model::channel::Message;
 use serenity::framework::standard::{Args, Command, CommandError};
 
-use crate::utils::random_num;
+use crate::core::utils::random_num;
 
 
 pub struct FortuneCommand;

@@ -1,4 +1,4 @@
-use crate::utils::format_time;
+use crate::core::utils::format_time;
 use crate::commands::anilist::utils::synopsis;
 use crate::models::anilist::{
     media::MediaBase,

@@ -1,10 +1,10 @@
-use serenity::framework::StandardFramework;
+use serenity::framework::standard::CreateGroup;
 
 mod golendar;
 mod fortune;
 
-pub fn register(framework: StandardFramework) -> StandardFramework {
-    framework.group("Fun", |cg| cg
+pub fn init_fun() -> CreateGroup {
+    CreateGroup::default()
         .command("fortune", |c| c
             .cmd(fortune::FortuneCommand)
             .desc("Find out you fortune. It just might be you lucky day ...")
@@ -14,5 +14,4 @@ pub fn register(framework: StandardFramework) -> StandardFramework {
             .batch_known_as(vec!["gol"])
             .desc("Find out you fortune. It just might be you lucky day ...")
         )
-    )
 }

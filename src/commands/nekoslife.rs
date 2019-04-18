@@ -1,11 +1,11 @@
-use serenity::framework::StandardFramework;
+use serenity::framework::standard::CreateGroup;
 
 pub mod nlowo;
 pub mod nlimage;
 
 
-pub fn register(framework: StandardFramework) -> StandardFramework {
-    framework.group("Nekos.life", |cg| cg
+pub fn init_nekoslife() -> CreateGroup {
+    CreateGroup::default()
         .command("nekoslife", |c| c
             .cmd(nlimage::NLImageCommand)
             .batch_known_as(vec!["nl", "nlimg"])
@@ -18,6 +18,5 @@ pub fn register(framework: StandardFramework) -> StandardFramework {
             .desc("Get gifs from nekos.life.")
             .usage("owo [text]")
         )
-    )
 }
 

@@ -1,4 +1,4 @@
-use crate::utils::format_time;
+use crate::core::utils::format_time;
 use crate::commands::anilist::utils::synopsis;
 use std::time::SystemTime;
 use std::time::UNIX_EPOCH;

@@ -5,22 +5,20 @@ use urbandictionary::ReqwestUrbanDictionaryRequester;
 use serenity::{
     prelude::*,
     builder::CreateEmbed,
-    framework::StandardFramework,
-    framework::standard::{Args, Command, CommandError},
+    framework::standard::{Args, Command, CommandError, CreateGroup},
     model::channel::Message,
     utils::Colour
 };
 
 
-pub fn register(framework: StandardFramework) -> StandardFramework {
-    framework.group("Knowledge", |cg| cg
+pub fn init_knowledge() -> CreateGroup {
+    CreateGroup::default()
         .command("urban", |c| c
             .cmd(UrbanDictionary)
             .batch_known_as(vec!["ud", "define"])
             .usage("<keyword>")
             .desc("Search for a definition in Urban Dictionary")
         )
-    )
 }
 
 pub struct UrbanDictionary;

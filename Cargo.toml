@@ -15,6 +15,8 @@ log = "0.4"
 env_logger = "0.6"
 pretty_env_logger = "0.3"
 
+lazy_static = "1.0"
+
 regex = "1"
 rand = "0.6"
 chrono = "0.4"
@@ -37,7 +39,12 @@ serenity = "0.5"
 sys-info = "*"
 sysinfo = "0.5"
 
-urbandictionary = { git = "https://github.com/youssefhabri/urbandictionary.rs" }
+[dependencies.fern]
+version = "0.5"
+features = ["colored"]
+
+[dependencies.urbandictionary]
+git = "https://github.com/youssefhabri/urbandictionary.rs"
 
 [patch.crates-io]
 openssl = { git = "https://github.com/ishitatsuyuki/rust-openssl", branch = "0.9.x" }

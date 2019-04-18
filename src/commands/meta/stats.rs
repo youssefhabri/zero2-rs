@@ -5,7 +5,7 @@ use serenity::model::channel::Message;
 use indexmap::IndexMap;
 use serenity::model::id::{UserId, ChannelId};
 use serenity::builder::CreateEmbed;
-use crate::utils::BOT_IDS;
+use crate::core::consts::BOT_IDS;
 
 pub struct Stats;
 

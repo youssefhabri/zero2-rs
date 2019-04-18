@@ -1,4 +1,4 @@
-use serenity::framework::StandardFramework;
+use serenity::framework::standard::CreateGroup;
 
 pub mod utils;
 pub mod client;
@@ -12,8 +12,8 @@ pub mod manga;
 pub mod user;
 
 
-pub fn register(framework: StandardFramework) -> StandardFramework {
-    framework.group("AniList", |cg| cg
+pub fn init_anilist() -> CreateGroup {
+    CreateGroup::default()
         .command("anime", |c| c
             .cmd(anime::AnimeCommand)
             .batch_known_as(vec!["a"])
@@ -50,5 +50,4 @@ pub fn register(framework: StandardFramework) -> StandardFramework {
             .usage("[weekday]")
             .desc("Embed an activity from AniList")
         )
-    )
 }

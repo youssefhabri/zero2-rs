@@ -4,7 +4,7 @@ use serenity::{
     model::channel::Message,
     prelude::*,
 };
-use crate::store::ShardManagerContainer;
+use crate::core::store::ShardManagerContainer;
 
 
 pub struct Ping;

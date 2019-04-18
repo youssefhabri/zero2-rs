@@ -12,8 +12,8 @@ use serenity::{
     prelude::*,
     utils::Colour
 };
-use crate::utils::seconds_to_hrtime;
-use crate::store::BotOwnerContainer;
+use crate::core::utils::seconds_to_hrtime;
+use crate::core::store::BotOwnerContainer;
 
 const BOT_VERSION: &'static str = env!("CARGO_PKG_VERSION");
 

@@ -3,7 +3,7 @@ use serenity::model::channel::Message;
 use serenity::framework::standard::{Args, Command, CommandError};
 
 use chrono::{DateTime, Datelike, Timelike, NaiveDateTime, Utc};
-use crate::utils::{month_to_string, weekday_to_string};
+use crate::core::utils::{month_to_string, weekday_to_string};
 
 const TIMESTAMP_START: i64 = 1_551_312_000_000; //1551308400000;
 

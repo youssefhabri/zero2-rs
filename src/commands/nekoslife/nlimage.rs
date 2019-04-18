@@ -4,7 +4,7 @@ use serenity::builder::CreateEmbed;
 use serenity::prelude::*;
 
 use regex::Regex;
-use crate::utils::random_num;
+use crate::core::utils::random_num;
 
 
 const TYPE_LIST: [&str; 17] = [

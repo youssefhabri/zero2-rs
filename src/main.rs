@@ -1,74 +1,69 @@
-//#![feature(inner_deref)]
-
-#[macro_use] extern crate log;
-#[macro_use] extern crate serde_derive;
-#[macro_use] extern crate rust_embed;
-
-use std::collections::{HashSet, HashMap};
-use std::sync::Arc;
-use serenity::{
-    client::Client,
-    framework::standard::StandardFramework,
-    http,
+use fern::colors::{
+    Color,
+    ColoredLevelConfig
 };
 
-mod commands;
-mod handler;
-mod menu;
-mod models;
-mod monitors;
-mod store;
-mod utils;
-
-use crate::store::{
-    BotOwnerContainer,
-    CommandCounter,
-    MessagePaginator,
-    ShardManagerContainer,
-};
-use crate::handler::Zero2Handler;
+use zero2_rs::Zero2Client;
 
 
 fn main() {
-    // Load token from environment variables or .env file
-    let token: String = dotenv::var("DISCORD_TOKEN").expect("token");
-    let prefix_aliases: String = dotenv::var("BOT_PREFIXES").expect("prefixes");
+    fern_setup().expect("Failed to apply fern settings.");
 
-    pretty_env_logger::init();
-
-    let mut client = Client::new(
-        &token,
-        Zero2Handler
-    ).expect("Error creating client");
-
-    let owner = match http::get_current_application_info() {
-        Ok(info) => info.owner,
-        Err(why) => panic!("Couldn't get application info: {:?}", why),
-    };
-
-    let mut owner_ids_set = HashSet::new();
-    owner_ids_set.insert(owner.id);
-
-    {
-        let mut data = client.data.lock();
-        data.insert::<CommandCounter>(HashMap::default());
-        data.insert::<ShardManagerContainer>(Arc::clone(&client.shard_manager));
-        data.insert::<MessagePaginator>(HashMap::default());
-        data.insert::<BotOwnerContainer>(owner);
-    }
-
-    let mut framework = StandardFramework::new()
-        .before(|_, msg, _| { let _ = msg.channel_id.broadcast_typing(); true })
-        .configure(|c| c
-            .prefixes(prefix_aliases.split(','))
-            .owners(owner_ids_set))
-        ;
-
-    framework = commands::register(framework);
-
-    client.with_framework(framework);
+    let mut client = Zero2Client::new();
 
     if let Err(why) = client.start() {
         println!("An error occurred while running the client: {:?}", why);
     }
+}
+
+// Code from momiji-rust bot
+fn fern_setup() -> Result<(), log::SetLoggerError> {
+    // This is a bit verbose, but it allows for logging to console with colors and to a file
+    // without to avoid ANSI color codes showing up in the log. This is mostly to improve
+    // visibility.
+    let colors = ColoredLevelConfig::new()
+        .trace(Color::Magenta)
+        .debug(Color::Cyan)
+        .info(Color::Green)
+        .warn(Color::Yellow)
+        .error(Color::Red);
+
+    let term_out = fern::Dispatch::new()
+        .format(move |out, message, record| {
+            out.finish(format_args!(
+                "{time}  {level:level_width$}{target:target_width$}> {msg}",
+                time = chrono::Utc::now().format("%F %T"),
+                level = colors.color(record.level()),
+                target = format!("{}:{}", record.target(), record.line().unwrap_or(0)),
+                msg = message,
+                level_width = 8,
+                target_width = 60
+            ))
+        })
+        .chain(std::io::stdout())
+        .into_shared();
+
+    let file_out = fern::Dispatch::new()
+        .format(|out, message, record| {
+            out.finish(format_args!(
+                "{time}  {level:level_width$}{target:target_width$}> {msg}",
+                time = chrono::Utc::now().format("%F %T"),
+                level = record.level(),
+                target = format!("{}:{}", record.target(), record.line().unwrap_or(0)),
+                msg = message,
+                level_width = 8,
+                target_width = 60
+            ))
+        })
+        .chain(fern::log_file("output.log").expect("Failed to load log file"))
+        .into_shared();
+
+    fern::Dispatch::new()
+        .level(log::LevelFilter::Info)
+        .level_for("serenity", log::LevelFilter::Debug)
+        .level_for("zero2_rs", log::LevelFilter::Debug)
+        .level_for("html5ever", log::LevelFilter::Off)
+        .chain(term_out)
+        .chain(file_out)
+        .apply()
 }

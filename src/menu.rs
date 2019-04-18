@@ -6,7 +6,7 @@ use serenity::{
     builder::CreateEmbed
 };
 
-use crate::store::{BotOwnerContainer, MessagePaginator, MessagePagination};
+use crate::core::store::{BotOwnerContainer, MessagePaginator, MessagePagination};
 
 pub mod builders;
 
