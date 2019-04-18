@@ -5,7 +5,7 @@ use serenity::model::channel::Message;
 use indexmap::IndexMap;
 use serenity::model::id::{UserId, ChannelId};
 use serenity::builder::CreateEmbed;
-use crate::core::consts::BOT_IDS;
+use crate::core::consts::AT_BOT_IDS;
 
 pub struct Stats;
 
@@ -71,7 +71,7 @@ fn build_embed(channel_id: ChannelId, stats_list: IndexMap<UserId, u32>) -> Crea
         .iter()
         .take(10)
         .enumerate()
-        .filter(|(_, (user_id, _))| !BOT_IDS.contains(user_id.as_u64()))
+        .filter(|(_, (user_id, _))| !AT_BOT_IDS.contains(user_id.as_u64()))
         .map(|(i, (user_id, msgs_count))|{
             format!("{}. <@{}>: {}", i + 1, user_id, msgs_count)
         })

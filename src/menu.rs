@@ -1,12 +1,14 @@
 use serenity::{
     prelude::*,
-    client::CACHE,
     model::channel::{Reaction, ReactionType},
     model::id::{ChannelId, MessageId, UserId},
     builder::CreateEmbed
 };
 
 use crate::core::store::{BotOwnerContainer, MessagePaginator, MessagePagination};
+use crate::core::consts::BOT_ID;
+use serenity::model::user::User;
+use crate::menu::Error::PaginationError;
 
 pub mod builders;
 
@@ -30,7 +32,9 @@ pub enum Modifier {
 }
 
 #[derive(Debug)]
-pub enum Error {}
+pub enum Error {
+    PaginationError
+}
 
 pub type HandlerFunc = fn(&Context, &Reaction) -> fn(&Context, ChannelId, MessageId) -> Result<(), Error>;
 
@@ -68,42 +72,12 @@ pub fn new_pagination_with_handler(
 /// 
 /// Triggered by serenity's EventHandler
 pub fn handle_reaction(ctx: &Context, reaction: &Reaction) {
-    let cache = CACHE.read();
 
-    let handler = if let Some(_channel) = cache.channels.get(&reaction.channel_id) {
+    let handler = get_handler(ctx, reaction);
 
-        let data = ctx.data.lock();
-        let paginator = data.get::<MessagePaginator>().unwrap();
-        let owner = data.get::<BotOwnerContainer>().unwrap();
+    if handler.is_err() { return; }
 
-        let pagination = match paginator.get(&reaction.message_id) {
-            Some(pagination) => pagination,
-            None => return,
-        };
-
-        let is_paginated_msg = pagination.message_id == reaction.message_id;
-        let is_current_bot = cache.user.id == reaction.user_id;
-        let is_author = pagination.author_id == reaction.user_id;
-        let is_owner = owner.id == reaction.user_id;
-
-        if !is_current_bot {
-            match reaction.delete() {
-                Ok(_) => (),
-                Err(why) => warn!("Err deleting reaction: {:?}", why)
-            }
-        }
-
-        if !(is_paginated_msg && !is_current_bot && (is_author || is_owner)) {
-            return;
-        }
-
-        pagination.handler
-
-    } else {
-        return;
-    };
-
-    let func = match handler {
+    let func = match handler.unwrap() {
         Some(handler) => handler(ctx, reaction),
         None => match reaction.emoji {
             ReactionType::Unicode(ref x) if x == reactions::NEXT => right,
@@ -194,4 +168,33 @@ pub fn get_page_content(context: &Context, message_id: &MessageId, page: u32) ->
     };
 
     Some(pagination.pages[page as usize].clone())
+}
+
+fn get_handler(ctx: &Context, reaction: &Reaction) -> Result<Option<HandlerFunc>, Error> {
+    let data = ctx.data.lock();
+    let paginator = data.get::<MessagePaginator>().unwrap();
+    let owner = data.get::<BotOwnerContainer>().unwrap();
+
+    let pagination = match paginator.get(&reaction.message_id) {
+        Some(_pagination) => _pagination,
+        None => return Err(PaginationError),
+    };
+
+    let is_paginated_msg = pagination.message_id == reaction.message_id;
+    let is_current_bot = &BOT_ID == reaction.user_id.as_u64();
+    let is_author = pagination.author_id == reaction.user_id;
+    let is_owner = owner.id == reaction.user_id;
+
+    if !is_current_bot {
+        match reaction.delete() {
+            Ok(_) => (),
+            Err(why) => warn!("Err deleting reaction: {:?}", why)
+        }
+    }
+
+    if !(is_paginated_msg && !is_current_bot && (is_author || is_owner)) {
+        return Err(PaginationError);
+    }
+
+    Ok(pagination.handler)
 }
