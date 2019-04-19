@@ -1,6 +1,6 @@
 query ($id: Int, $search: String) {
   Page(perPage: 50) {
-    users(id: $id, search: $search, sort: USERNAME) {
+    users(id: $id, search: $search, sort: SEARCH_MATCH) {
       id
       name
       siteUrl
