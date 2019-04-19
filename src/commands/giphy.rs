@@ -13,7 +13,7 @@ pub fn query(query: String) -> GiphyResponse {
     let client = reqwest::Client::new();
 
     let endpoint = if !query.is_empty() {
-        format!("search?q={}", query)
+        format!("search?q={}&", query)
     } else {
         "trending?".to_owned()
     };
