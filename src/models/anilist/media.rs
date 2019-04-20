@@ -49,6 +49,12 @@ pub struct MediaBase {
 
     #[serde(rename = "coverImage")]
     pub cover_image: MediaCoverImage,
+
+    #[serde(rename = "averageScore")]
+    pub average_score: Option<u32>,
+
+    #[serde(rename = "meanScore")]
+    pub mean_score: Option<u32>,
 }
 
 #[derive(Deserialize, Debug)]

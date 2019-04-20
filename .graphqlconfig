@@ -1,11 +1,10 @@
 {
-  "schemaPath": "assets/schema.graphql",
-  "extensions": {
-    "endpoints": {
-      "Default Introspection Endpoint": {
-        "introspect": true,
-        "headers": {
-          "user-agent": "JS GraphQL"
+  "projects": {
+    "AniList": {
+      "schemaPath": "assets/schema.graphql",
+      "extensions": {
+        "endpoints": {
+          "default": "https://graphql.anilist.co"
         }
       }
     }

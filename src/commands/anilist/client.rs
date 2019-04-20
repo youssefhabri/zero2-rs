@@ -10,6 +10,7 @@ use crate::models::anilist::{
     character::Character,
     media::Media,
     user::User,
+    studio::Studio
 };
 
 
@@ -120,4 +121,12 @@ pub fn search_airing_schedule(start_time: i64, end_time: i64) -> Vec<AiringSched
     variables.insert("end".to_owned(), format!("{}", end_time));
 
     query(activity_query, variables).data.page.airing_schedule()
+}
+
+pub fn search_studio(id: String) -> Option<Studio> {
+    let studio_query = load_graphql_with_fragment("StudioQuery", vec!["MediaBase"]);
+    let mut variables = HashMap::new();
+    variables.insert("id".to_owned(), id);
+
+    query(studio_query, variables).data.studio
 }

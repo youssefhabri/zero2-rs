@@ -1,4 +1,4 @@
-use crate::models::anilist::user::MediaConnection;
+use crate::models::anilist::connection::MediaConnection;
 use crate::commands::anilist::utils::synopsis;
 
 #[derive(Deserialize, Debug)]

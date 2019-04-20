@@ -7,6 +7,7 @@ use crate::models::anilist::{
 };
 use crate::models::giphy::Giphy;
 use crate::commands::anilist::utils::synopsis;
+use crate::models::anilist::studio::Studio;
 
 
 pub fn pages_builder<T>(results: Vec<T>, embed_builder: fn(&T, String) -> CreateEmbed) -> Vec<CreateEmbed> {
@@ -69,6 +70,17 @@ pub fn character_embed_builder(character: &Character, prefix: String) -> CreateE
         .thumbnail(&character.cover_image())
         .field("Anime", &character.media_list("ANIME"), true)
         .field("Manga", &character.media_list("MANGA"), true)
+        .footer(|f| f
+            .icon_url("https://anilist.co/img/icons/favicon-32x32.png")
+            .text(format!("{}Powered by AniList", prefix)))
+}
+
+pub fn studio_embed_builder(studio: &Studio, prefix: String) -> CreateEmbed {
+    CreateEmbed::default()
+        .color(3447003)
+        .title(&studio.name())
+        .url(&studio.site_url())
+        .field("Anime", &studio.media(), false)
         .footer(|f| f
             .icon_url("https://anilist.co/img/icons/favicon-32x32.png")
             .text(format!("{}Powered by AniList", prefix)))

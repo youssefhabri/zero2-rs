@@ -1,11 +1,13 @@
+use regex::Regex;
 use serenity::prelude::Context;
 use serenity::model::channel::Message;
-use regex::Regex;
-use crate::models::anilist::media::Media;
+
 use crate::commands::anilist::client;
 use crate::menu::builders;
 use crate::models::anilist::character::Character;
+use crate::models::anilist::media::Media;
 use crate::models::anilist::user::User;
+use crate::models::anilist::studio::Studio;
 
 
 pub fn rem_monitor(_ctx: &Context, message: &Message) {
@@ -27,7 +29,7 @@ pub fn anilist_links_monitor(_ctx: &Context, message: &Message) {
 
     let full_message = message.content_safe();
 
-    let re = Regex::new(r"https://anilist\.co/(anime|manga|character|activity|user)/([0-9]+)?/?([^/]+)?/?").unwrap();
+    let re = Regex::new(r"https://anilist\.co/(anime|manga|character|activity|user|studio)/([0-9]+)?/?([^/]+)?/?").unwrap();
 
     let matches: Vec<_> = re.captures_iter(full_message.as_str()).collect();
 
@@ -49,6 +51,9 @@ pub fn anilist_links_monitor(_ctx: &Context, message: &Message) {
         },
         "user" => {
             handle_user(message, &cap[3]);
+        },
+        "studio" => {
+            handle_studio(message, &cap[2]);
         },
         _ => return
     }
@@ -107,6 +112,22 @@ fn handle_user(message: &Message, username: &str) {
             let _sending = message.channel_id.send_message(
                 |m| m.embed(
                     |_| builders::user_embed_builder(&user, "".into())
+                )
+            );
+        },
+        None => return
+    }
+}
+
+/// Handles studio embeds for the AniList Links Monitor
+fn handle_studio(message: &Message, studio_id: &str) {
+    let studio: Option<Studio> = client::search_studio(studio_id.into());
+
+    match studio {
+        Some(studio) => {
+            let _sending = message.channel_id.send_message(
+                |m| m.embed(
+                    |_| builders::studio_embed_builder(&studio, "".into())
                 )
             );
         },

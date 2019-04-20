@@ -1,9 +1,6 @@
 use crate::core::utils::format_time;
 use crate::commands::anilist::utils::synopsis;
-use crate::models::anilist::{
-    media::MediaBase,
-    character::CharacterBase,
-};
+use crate::models::anilist::connection::{CharacterConnection, MediaConnection};
 
 #[derive(Clone, Deserialize, Debug)]
 pub struct UserAvatar {
@@ -17,16 +14,6 @@ pub struct UserStats {
 
     #[serde(rename = "chaptersRead")]
     pub chapters_read: Option<u32>,
-}
-
-#[derive(Deserialize, Debug)]
-pub struct MediaConnection {
-    pub nodes: Vec<MediaBase>
-}
-
-#[derive(Deserialize, Debug)]
-pub struct CharacterConnection {
-    nodes: Vec<CharacterBase>
 }
 
 #[derive(Deserialize, Debug)]

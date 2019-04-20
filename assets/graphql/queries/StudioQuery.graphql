@@ -1,0 +1,12 @@
+query StudioQuery($id: Int) {
+    Studio(id: $id) {
+        id
+        name
+        siteUrl
+        media(sort: SCORE_DESC) {
+            nodes {
+                ...MediaBase
+            }
+        }
+    }
+}

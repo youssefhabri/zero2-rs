@@ -2,6 +2,8 @@ fragment MediaBase on Media {
     id
     type
     siteUrl
+    averageScore
+    meanScore
     title {
         romaji
         english

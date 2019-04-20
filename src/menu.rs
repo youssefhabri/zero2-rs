@@ -7,7 +7,6 @@ use serenity::{
 
 use crate::core::store::{BotOwnerContainer, MessagePaginator, MessagePagination};
 use crate::core::consts::BOT_ID;
-use serenity::model::user::User;
 use crate::menu::Error::PaginationError;
 
 pub mod builders;

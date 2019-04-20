@@ -3,7 +3,9 @@ use std::collections::HashMap;
 pub mod activity;
 pub mod airing_schedule;
 pub mod character;
+pub mod connection;
 pub mod media;
+pub mod studio;
 pub mod user;
 
 
@@ -83,7 +85,10 @@ pub struct Data {
     pub media: Option<media::Media>,
 
     #[serde(default, rename = "User")]
-    pub user: Option<user::User>
+    pub user: Option<user::User>,
+
+    #[serde(default, rename = "Studio")]
+    pub studio: Option<studio::Studio>
 }
 
 #[derive(Deserialize, Debug)]
