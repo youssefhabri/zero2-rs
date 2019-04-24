@@ -5,6 +5,7 @@ mod avatar;
 mod botinfo;
 mod ping;
 mod stats;
+mod test;
 
 pub fn init_meta() -> CreateGroup {
     CreateGroup::default()
@@ -20,5 +21,8 @@ pub fn init_meta() -> CreateGroup {
         )
         .command("avatar", |c| c
             .cmd(avatar::Avatar)
+        )
+        .command("test", |c| c
+            .cmd(test::Test)
         )
 }
