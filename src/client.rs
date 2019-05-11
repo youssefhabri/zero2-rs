@@ -2,7 +2,6 @@ use std::collections::{HashSet, HashMap};
 use std::sync::Arc;
 use serenity::{
     Client,
-    http,
     prelude::*
 };
 
@@ -25,7 +24,7 @@ impl Zero2Client {
             Zero2Handler
         ).expect("Error creating client");
 
-        let owner = match http::get_current_application_info() {
+        let owner = match client.cache_and_http.http.get_current_application_info() {
             Ok(info) => info.owner,
             Err(why) => panic!("Couldn't get application info: {:?}", why),
         };
@@ -34,7 +33,7 @@ impl Zero2Client {
         owner_ids.insert(owner.id);
 
         {
-            let mut data = client.data.lock();
+            let mut data = client.data.write();
             data.insert::<CommandCounter>(HashMap::default());
             data.insert::<ShardManagerContainer>(Arc::clone(&client.shard_manager));
             data.insert::<MessagePaginator>(HashMap::default());

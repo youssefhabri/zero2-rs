@@ -56,7 +56,7 @@ pub fn new_pagination_with_handler(
     pages: Vec<CreateEmbed>,
     handler: Option<HandlerFunc>
 ) {
-    let mut data = context.data.lock();
+    let mut data = context.data.write();
     let paginator = data.get_mut::<MessagePaginator>().unwrap();
     paginator.insert(message_id, MessagePagination {
         author_id,
@@ -82,7 +82,7 @@ pub fn handle_reaction(ctx: &Context, reaction: &Reaction) {
             ReactionType::Unicode(ref x) if x == reactions::NEXT => right,
             ReactionType::Unicode(ref x) if x == reactions::PREV => left,
             ReactionType::Unicode(ref x) if x == reactions::STOP => {
-                let _ = reaction.message().unwrap().delete_reactions();
+                let _ = reaction.message(&ctx.http).unwrap().delete_reactions(ctx);
 
                 return;
             },
@@ -96,15 +96,20 @@ pub fn handle_reaction(ctx: &Context, reaction: &Reaction) {
 }
 
 pub fn left(ctx: &Context, channel_id: ChannelId, message_id: MessageId) -> Result<(), Error> {
-    let page = match modify_page(ctx, &message_id, &Modifier::Decrement) {
+    let page = match modify_page(ctx, message_id, &Modifier::Decrement) {
         Some(page) => page,
         None => return Ok(())
     };
 
-    let embed_content = get_page_content(ctx, &message_id, page);
+    let embed_content = get_page_content(ctx, message_id, page);
 
     if let Some(embed_content) = embed_content {
-        if let Err(why) = channel_id.edit_message(message_id, |m| m.embed(|_| embed_content)) {
+        if let Err(why) = channel_id.edit_message(
+            &ctx.http, message_id, |m| m.embed(|e| {
+                e.clone_from(&embed_content);
+                e
+            })
+        ) {
             warn!("Err editing message: {:?}", why);
         }
     }
@@ -113,15 +118,20 @@ pub fn left(ctx: &Context, channel_id: ChannelId, message_id: MessageId) -> Resu
 }
 
 pub fn right(ctx: &Context, channel_id: ChannelId, message_id: MessageId) -> Result<(), Error> {
-    let page = match modify_page(ctx, &message_id, &Modifier::Increment) {
+    let page = match modify_page(ctx, message_id, &Modifier::Increment) {
         Some(page) => page,
         None => return Ok(())
     };
 
-    let embed_content = get_page_content(ctx, &message_id, page);
+    let embed_content = get_page_content(ctx, message_id, page);
 
     if let Some(embed_content) = embed_content {
-        if let Err(why) = channel_id.edit_message(message_id, |m| m.embed(|_| embed_content)) {
+        if let Err(why) = channel_id.edit_message(
+            &ctx.http, message_id, |m| m.embed(|e| {
+                e.clone_from(&embed_content);
+                e
+            })
+        ) {
             warn!("Err editing message: {:?}", why);
         }
     }
@@ -129,12 +139,12 @@ pub fn right(ctx: &Context, channel_id: ChannelId, message_id: MessageId) -> Res
     Ok(())
 }
 
-pub fn modify_page(context: &Context, message_id: &MessageId, modifier: &Modifier) -> Option<u32> {
-    let mut data = context.data.lock();
+pub fn modify_page(context: &Context, message_id: MessageId, modifier: &Modifier) -> Option<u32> {
+    let mut data = context.data.write();
 
     let paginator = data.get_mut::<MessagePaginator>().unwrap();
 
-    let pagination = match paginator.get_mut(message_id) {
+    let pagination = match paginator.get_mut(&message_id) {
         Some(pagination) => pagination,
         None => return None,
     };
@@ -156,12 +166,13 @@ pub fn modify_page(context: &Context, message_id: &MessageId, modifier: &Modifie
     Some(pagination.current_page)
 }
 
-pub fn get_page_content(context: &Context, message_id: &MessageId, page: u32) -> Option<CreateEmbed> {
-    let mut data = context.data.lock();
+pub fn get_page_content(context: &Context, message_id: MessageId, page: u32) -> Option<CreateEmbed> {
+    let data = context.data.read();
 
-    let paginator = data.get_mut::<MessagePaginator>().unwrap();
+//    let paginator = data.get_mut::<MessagePaginator>().unwrap();
+    let paginator = data.get::<MessagePaginator>().unwrap();
 
-    let pagination = match paginator.get_mut(message_id) {
+    let pagination = match paginator.get(&message_id) {
         Some(pagination) => pagination,
         None => return None,
     };
@@ -170,7 +181,7 @@ pub fn get_page_content(context: &Context, message_id: &MessageId, page: u32) ->
 }
 
 fn get_handler(ctx: &Context, reaction: &Reaction) -> Result<Option<HandlerFunc>, Error> {
-    let data = ctx.data.lock();
+    let data = ctx.data.read();
     let paginator = data.get::<MessagePaginator>().unwrap();
     let owner = data.get::<BotOwnerContainer>().unwrap();
 
@@ -185,7 +196,7 @@ fn get_handler(ctx: &Context, reaction: &Reaction) -> Result<Option<HandlerFunc>
     let is_owner = owner.id == reaction.user_id;
 
     if !is_current_bot {
-        match reaction.delete() {
+        match reaction.delete(ctx) {
             Ok(_) => (),
             Err(why) => warn!("Err deleting reaction: {:?}", why)
         }

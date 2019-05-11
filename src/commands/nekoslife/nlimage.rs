@@ -1,6 +1,5 @@
-use serenity::framework::standard::{Args, Command, CommandError};
+use serenity::framework::standard::{Args, CommandResult, macros::command};
 use serenity::model::{channel::Message, id::UserId, user::User};
-use serenity::builder::CreateEmbed;
 use serenity::prelude::*;
 
 use regex::Regex;
@@ -23,63 +22,79 @@ pub struct NLImage {
     url: String,
 }
 
-pub struct NLImageCommand;
 
-impl Command for NLImageCommand {
-    fn execute(&self, _context: &mut Context, message: &Message, args: Args) -> Result<(), CommandError> {
+#[command("nlimage")]
+#[aliases("nl", "nlimg")]
+#[usage = "[keyword:optional] [user:optional]"]
+#[description = "Get gifs from nekos.life."]
+fn nlimage_command(context: &mut Context, message: &Message, mut args: Args) -> CommandResult {
 
-        let params = if !args.full().is_empty() {
-            args.multiple::<String>().unwrap()
-        } else { vec![] };
+    let params = if !args.parse::<String>().unwrap_or_else(|_| "".to_string()).is_empty() {
+        let mut list: Vec<String> = Vec::new();
 
-
-        let keyword = if !params.is_empty() { params[0].clone() } else { String::new() };
-        let user: Option<User> = if params.len() > 1 {
-
-            let re = Regex::new(r"^<@!?\d+>$").unwrap();
-            match re.captures(params[1].clone().as_str()) {
-                Some(caps) => {
-                    match caps.get(0) {
-                        Some(user_id) => {
-                            let id = user_id
-                                .as_str()
-                                .replace("<", "")
-                                .replace(">", "")
-                                .replace("@", "")
-                                .replace("!", "")
-                                .parse::<u64>().unwrap();
-                            Some(UserId(id).to_user().unwrap())
-                        },
-                        None => None
-                    }
-                },
-                None => None
+        for arg in args.iter::<String>() {
+            if let Ok(arg) = arg {
+                list.push(arg);
             }
-        } else {
-            None
-        };
-
-        let selection: String = selection(message, keyword.clone());
-
-        let image: NLImage = query(selection.clone());
-        let image_title = selection.replace("_", " ");
-
-        let mut embed = CreateEmbed::default().image(image.url.clone());
-
-        if user.is_some() {
-            let user = user.unwrap();
-            let _ = message.delete();
-            let _ = message.channel_id.send_message(|m| m
-                .content(format!("<@{}>: <@{}> sent you a {}", user.id, message.author.id, image_title))
-            );
-        } else {
-            embed = embed.url(image.url).title(image_title);
         }
 
-        let _ = message.channel_id.send_message(|m| m.embed(|_| embed));
+        list
+    } else { vec![] };
 
-        Ok(())
-    }
+
+    let keyword = if !params.is_empty() { params[0].clone() } else { String::new() };
+    let user: Option<User> = if params.len() > 1 {
+
+        let re = Regex::new(r"^<@!?\d+>$").unwrap();
+        match re.captures(params[1].clone().as_str()) {
+            Some(caps) => {
+                match caps.get(0) {
+                    Some(user_id) => {
+                        let id = user_id
+                            .as_str()
+                            .replace("<", "")
+                            .replace(">", "")
+                            .replace("@", "")
+                            .replace("!", "")
+                            .parse::<u64>().unwrap();
+                        Some(UserId(id).to_user(&context).unwrap())
+                    },
+                    None => None
+                }
+            },
+            None => None
+        }
+    } else {
+        None
+    };
+
+    let selection: String = selection(&context, message, keyword.clone());
+
+    let image: NLImage = query(selection.clone());
+    let image_title = selection.replace("_", " ");
+
+    let _ = message.channel_id.send_message(
+        &context.http,
+        |m| m.embed(|embed| {
+            embed.image(image.url.clone());
+
+            if user.is_some() {
+                let user = user.unwrap();
+                let _ = message.delete(&context);
+                let _ = message.channel_id.send_message(
+                    &context.http,
+                    |m| m
+                        .content(format!("<@{}>: <@{}> sent you a {}", user.id, message.author.id, image_title))
+                );
+            } else {
+                embed.url(image.url).title(image_title);
+            }
+
+            embed
+        })
+    );
+
+    Ok(())
 }
 
 pub fn query(selection: String) -> NLImage {
@@ -93,8 +108,8 @@ pub fn query(selection: String) -> NLImage {
     result
 }
 
-pub fn selection(message: &Message, keyword: String) -> String {
-    let nsfw = message.channel().unwrap().is_nsfw();
+pub fn selection(context: &Context, message: &Message, keyword: String) -> String {
+    let nsfw = message.channel(&context.cache).unwrap().is_nsfw();
 
     if TYPE_LIST.contains(&keyword.as_str()) || (nsfw && NSFW_LIST.contains(&keyword.as_str())) {
         return keyword;

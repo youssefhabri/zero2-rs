@@ -1,18 +1,22 @@
 use serenity::prelude::*;
 use serenity::model::channel::Message;
-use serenity::framework::standard::{Args, Command, CommandError};
+use serenity::framework::standard::{
+    Args, CommandResult,
+    macros::command
+};
 
 use crate::core::utils::random_num;
 
 
-pub struct FortuneCommand;
+#[command("fortune")]
+#[description = "Find out you fortune. It just might be you lucky day ..."]
+fn fortune_command(context: &mut Context, message: &Message, _: Args) -> CommandResult {
 
-impl Command for FortuneCommand {
-    fn execute(&self, _: &mut Context, message: &Message, _: Args) -> Result<(), CommandError> {
-
-        match random_fortune() {
-            Some(fortune) => {
-                let _ = message.channel_id.send_message(|m| m
+    match random_fortune() {
+        Some(fortune) => {
+            let _ = message.channel_id.send_message(
+                &context.http,
+                |m| m
                     .embed(|e| e
                         .field(
                             format!("{}'s fortune!", message.author.name),
@@ -20,15 +24,15 @@ impl Command for FortuneCommand {
                             false
                         )
                     )
-                );
-            },
-            None => {
-                let _ = message.channel_id.say("Couldn't find any fortune for you. Sorry!");
-            }
-        };
+            );
+        },
+        None => {
+            let _ = message.channel_id.say(
+                &context.http, "Couldn't find any fortune for you. Sorry!");
+        }
+    };
 
-        Ok(())
-    }
+    Ok(())
 }
 
 #[derive(Clone, Deserialize, Debug)]
