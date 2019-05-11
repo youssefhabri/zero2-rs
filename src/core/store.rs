@@ -1,6 +1,7 @@
 use std::sync::Arc;
 use std::collections::HashMap;
 
+use chrono::{DateTime, FixedOffset};
 use serenity::{
     builder::CreateEmbed,
     client::bridge::gateway::ShardManager,
@@ -29,12 +30,21 @@ impl TypeMapKey for ShardManagerContainer {
 }
 
 // Command Counter
-pub struct CommandCounter;
+pub struct CommandLogger;
 
-impl TypeMapKey for CommandCounter {
-    type Value = HashMap<String, u64>;
+impl TypeMapKey for CommandLogger {
+    type Value = HashMap<MessageId, Command>;
 }
 
+#[derive(Clone, Debug)]
+pub struct Command {
+    pub message: String,
+    pub name: String,
+    pub user_id: UserId,
+    pub time: DateTime<FixedOffset>,
+}
+
+// Message Pagination
 pub struct MessagePaginator;
 
 impl TypeMapKey for MessagePaginator {

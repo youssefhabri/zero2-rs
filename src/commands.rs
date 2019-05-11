@@ -14,6 +14,7 @@ pub mod giphy;
 pub mod fun;
 pub mod meta;
 pub mod nekoslife;
+pub mod system;
 pub mod urban;
 
 use self::giphy::GIPHY_COMMAND;

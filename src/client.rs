@@ -34,7 +34,7 @@ impl Zero2Client {
 
         {
             let mut data = client.data.write();
-            data.insert::<CommandCounter>(HashMap::default());
+            data.insert::<CommandLogger>(HashMap::default());
             data.insert::<ShardManagerContainer>(Arc::clone(&client.shard_manager));
             data.insert::<MessagePaginator>(HashMap::default());
             data.insert::<BotOwnerContainer>(owner);

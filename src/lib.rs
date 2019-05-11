@@ -3,6 +3,7 @@
 #[macro_use] extern crate serde_derive;
 #[macro_use] extern crate rust_embed;
 
+pub mod checks;
 pub mod client;
 pub mod commands;
 pub mod core;
