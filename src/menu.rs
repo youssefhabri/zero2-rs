@@ -67,7 +67,7 @@ pub fn new_pagination_with_handler(
     });
 }
 
-/// Hanldes menu reactions
+/// Handles menu reactions
 /// 
 /// Triggered by serenity's EventHandler
 pub fn handle_reaction(ctx: &Context, reaction: &Reaction) {

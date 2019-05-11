@@ -1,25 +1,26 @@
-use std::collections::HashSet;
 use serenity::framework::standard::StandardFramework;
 use serenity::model::id::UserId;
+use std::collections::HashSet;
 
-use crate::core::consts::PREFIX;
 use crate::commands::{self, anilist, fun, meta, nekoslife, urban};
+use crate::core::consts::{BOT_ID, PREFIX};
+
 
 pub struct Zero2Framework;
 
 impl Zero2Framework {
     pub fn with_owners(owners: HashSet<UserId>) -> StandardFramework {
         StandardFramework::new()
-            .configure(|c| c
-                .with_whitespace(true)
-                .allow_dm(true)
-                .on_mention(true)
-                .ignore_bots(true)
-                .case_insensitivity(true)
-                .delimiters(vec![",", " "])
-                .owners(owners)
-                .prefix(PREFIX.as_str())
-            )
+            .configure(|c| {
+                c.with_whitespace(true)
+                    .allow_dm(true)
+                    .on_mention(Some(UserId(BOT_ID)))
+                    .ignore_bots(true)
+                    .case_insensitivity(true)
+                    .delimiters(vec![",", " "])
+                    .owners(owners)
+                    .prefix(PREFIX.as_str())
+            })
             .before(|ctx, msg, _| {
                 let _ = msg.channel_id.broadcast_typing(&ctx.http);
                 true
