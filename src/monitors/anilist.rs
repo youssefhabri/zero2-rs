@@ -1,40 +1,54 @@
 use regex::Regex;
-use serenity::prelude::Context;
 use serenity::model::channel::Message;
+use serenity::prelude::Context;
 
 use crate::commands::anilist::client;
 use crate::menu::builders;
 use crate::models::anilist::character::Character;
 use crate::models::anilist::media::Media;
-use crate::models::anilist::user::User;
 use crate::models::anilist::studio::Studio;
+use crate::models::anilist::user::User;
 
+lazy_static! {
+    static ref RE: Regex = Regex::new(
+        r"https://anilist\.co/(anime|manga|character|activity|user|studio)/([0-9]+)?/?([^/]+)?/?",
+    )
+    .unwrap();
+}
 
 pub fn _rem_monitor(context: &Context, message: &Message) {
-    if !message.content_safe(&context.cache).as_str().contains("rem") {
-        return
+    if !message
+        .content_safe(&context.cache)
+        .as_str()
+        .contains("rem")
+    {
+        return;
     }
 
     let _ = message.channel_id.say(&context.http, "Who's rem?");
 }
 
+fn should_embed(message: &str) -> bool {
+    message.contains("https://anilist.co/")
+        || !message.contains("noembed")
+        || !message.contains("-ne")
+}
+
 /// AniList Links Monitor
-/// 
+///
 /// Checks messages for anilist links (containing `https://anilist.co`)
 /// and get the data from AniList and embed it in a message.
 pub fn anilist_links_monitor(context: &Context, message: &Message) {
-    if !message.content_safe(&context.cache).as_str().contains("https://anilist.co/") {
-        return
-    }
-
     let full_message = message.content_safe(&context.cache);
 
-    let re = Regex::new(r"https://anilist\.co/(anime|manga|character|activity|user|studio)/([0-9]+)?/?([^/]+)?/?").unwrap();
+    if !should_embed(&full_message.as_str()) {
+        return;
+    }
 
-    let matches: Vec<_> = re.captures_iter(full_message.as_str()).collect();
+    let matches: Vec<_> = RE.captures_iter(full_message.as_str()).collect();
 
     if matches.len() != 1 {
-        return
+        return;
     }
 
     let cap = &matches[0];
@@ -42,42 +56,39 @@ pub fn anilist_links_monitor(context: &Context, message: &Message) {
     match &cap[1] {
         "anime" | "manga" => {
             handle_media(context, message, &cap[1], &cap[2]);
-        },
+        }
         "activity" => {
             handle_activity(context, message, &cap[2]);
-        },
+        }
         "character" => {
             handle_character(context, message, &cap[2]);
-        },
+        }
         "user" => {
             handle_user(context, message, &cap[3]);
-        },
+        }
         "studio" => {
-            handle_studio(context,message, &cap[2]);
-        },
-        _ => return
+            handle_studio(context, message, &cap[2]);
+        }
+        _ => return,
     }
 }
 
 /// Handles media embeds for the AniList Links Monitor
 fn handle_media(context: &Context, message: &Message, media_type: &str, media_id: &str) {
-    let media: Option<Media> = client::search_media_by_id(
-        media_id.to_string(), media_type.to_uppercase());
+    let media: Option<Media> =
+        client::search_media_by_id(media_id.to_string(), media_type.to_uppercase());
 
     match media {
         Some(media) => {
-            let _sending = message.channel_id.send_message(
-                &context.http,
-                |m| m.embed(|embed| {
-                    embed.clone_from(
-                        &builders::media_embed_builder(&media, "".to_string())
-                    );
+            let _sending = message.channel_id.send_message(&context.http, |m| {
+                m.embed(|embed| {
+                    embed.clone_from(&builders::media_embed_builder(&media, "".to_string()));
 
                     embed
                 })
-            );
-        },
-        None => return
+            });
+        }
+        None => return,
     }
 }
 
@@ -85,18 +96,15 @@ fn handle_media(context: &Context, message: &Message, media_type: &str, media_id
 fn handle_activity(context: &Context, message: &Message, activity_id: &str) {
     match client::search_activity(activity_id.into()) {
         Some(activity) => {
-            let _ = message.channel_id.send_message(
-                &context.http,
-                |m| m.embed(|embed| {
-                    embed.clone_from(
-                        &builders::activity_embed_builder(&activity)
-                    );
+            let _ = message.channel_id.send_message(&context.http, |m| {
+                m.embed(|embed| {
+                    embed.clone_from(&builders::activity_embed_builder(&activity));
 
                     embed
                 })
-            );
-        },
-        None => return
+            });
+        }
+        None => return,
     }
 }
 
@@ -106,18 +114,15 @@ fn handle_character(context: &Context, message: &Message, character_id: &str) {
 
     match character {
         Some(character) => {
-            let _sending = message.channel_id.send_message(
-                &context.http,
-                |m| m.embed(|embed| {
-                    embed.clone_from(
-                        &builders::character_embed_builder(&character, "".into())
-                    );
+            let _sending = message.channel_id.send_message(&context.http, |m| {
+                m.embed(|embed| {
+                    embed.clone_from(&builders::character_embed_builder(&character, "".into()));
 
                     embed
                 })
-            );
-        },
-        None => return
+            });
+        }
+        None => return,
     }
 }
 
@@ -127,18 +132,15 @@ fn handle_user(context: &Context, message: &Message, username: &str) {
 
     match user {
         Some(user) => {
-            let _sending = message.channel_id.send_message(
-                &context.http,
-                |m| m.embed(|embed| {
-                    embed.clone_from(
-                        &builders::user_embed_builder(&user, "".into())
-                    );
+            let _sending = message.channel_id.send_message(&context.http, |m| {
+                m.embed(|embed| {
+                    embed.clone_from(&builders::user_embed_builder(&user, "".into()));
 
                     embed
                 })
-            );
-        },
-        None => return
+            });
+        }
+        None => return,
     }
 }
 
@@ -148,17 +150,14 @@ fn handle_studio(context: &Context, message: &Message, studio_id: &str) {
 
     match studio {
         Some(studio) => {
-            let _sending = message.channel_id.send_message(
-                &context.http,
-                |m| m.embed(|embed| {
-                    embed.clone_from(
-                        &builders::studio_embed_builder(&studio, "".into())
-                    );
+            let _sending = message.channel_id.send_message(&context.http, |m| {
+                m.embed(|embed| {
+                    embed.clone_from(&builders::studio_embed_builder(&studio, "".into()));
 
                     embed
                 })
-            );
-        },
-        None => return
+            });
+        }
+        None => return,
     }
 }
