@@ -4,7 +4,7 @@
 # https://aka.ms/yaml
 
 trigger:
-  - serenity-v0.6.x
+  - master
 
 pool:
   vmImage: 'ubuntu-16.04'
