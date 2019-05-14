@@ -2015,7 +2015,7 @@ dependencies = [
 
 [[package]]
 name = "zero2_rs"
-version = "0.4.0"
+version = "0.4.1"
 dependencies = [
  "chrono 0.4.6 (registry+https://github.com/rust-lang/crates.io-index)",
  "diesel 1.4.2 (registry+https://github.com/rust-lang/crates.io-index)",
