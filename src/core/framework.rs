@@ -1,41 +1,53 @@
-use std::collections::HashSet;
-use serenity::framework::standard::{StandardFramework, help_commands, HelpBehaviour};
+use serenity::framework::standard::StandardFramework;
 use serenity::model::id::UserId;
+use std::collections::HashSet;
 
-use crate::core::consts::PREFIX;
-use crate::commands::{self, anilist, fun, meta, nekoslife, urban};
+use crate::commands::{self, anilist, fun, meta, nekoslife, system, urban};
+use crate::core::consts::{BOT_ID, PREFIX};
+use crate::core::store::{Command, CommandLogger};
 
 pub struct Zero2Framework;
 
 impl Zero2Framework {
     pub fn with_owners(owners: HashSet<UserId>) -> StandardFramework {
         StandardFramework::new()
-            .customised_help(help_commands::with_embeds, |c| c
-                .individual_command_tip("Hello! こんにちは！Hola! Bonjour! 您好!\n\
-                    If you want more information about a specific command, just pass the command as argument.")
-                .command_not_found_text("Could not find: `{}`.")
-                .max_levenshtein_distance(3)
-                .lacking_permissions(HelpBehaviour::Hide)
-                .lacking_role(HelpBehaviour::Nothing)
-                .wrong_channel(HelpBehaviour::Strike)
-            )
-            .configure(|c| c
-                .allow_whitespace(true)
-                .allow_dm(true)
-                .on_mention(true)
-                .ignore_bots(true)
-                .case_insensitivity(true)
-                .delimiters(vec![",", " "])
-                .owners(owners)
-                .prefix(PREFIX.as_str())
-            )
-            .before(|_, msg, _| { let _ = msg.channel_id.broadcast_typing(); true })
-            .simple_bucket("stats_limit", 6 * 3600)
-            .group("AniList",     |_| anilist::init_anilist())
-            .group("Knowledge",   |_| urban::init_knowledge())
-            .group("Fun",         |_| fun::init_fun())
-            .group("Meta",        |_| meta::init_meta())
-            .group("Neko's Life", |_| nekoslife::init_nekoslife())
-            .group("No Category", |_| commands::init_no_category())
+            .configure(|c| {
+                c.with_whitespace(true)
+                    .allow_dm(true)
+                    .on_mention(Some(UserId(BOT_ID)))
+                    .ignore_bots(true)
+                    .case_insensitivity(true)
+                    .delimiters(vec![",", " "])
+                    .owners(owners)
+                    .prefix(PREFIX.as_str())
+            })
+            .before(|ctx, msg, cmd| {
+                let _ = msg.channel_id.broadcast_typing(&ctx.http);
+
+                {
+                    let mut data = ctx.data.write();
+                    let cmd_logger = data.get_mut::<CommandLogger>().unwrap();
+                    cmd_logger.insert(
+                        msg.id,
+                        Command {
+                            name: cmd.to_string(),
+                            message: msg.content.clone(),
+                            user_id: msg.author.id,
+                            time: msg.timestamp,
+                        },
+                    );
+                }
+
+                true
+            })
+            .bucket("stats_limit", |b| b.delay(6 * 3600))
+            .help(&commands::ZERO2_HELP_HELP_COMMAND)
+            .group(&anilist::ANILIST_GROUP)
+            .group(&urban::KNOWLEDGE_GROUP)
+            .group(&fun::FUN_GROUP)
+            .group(&meta::META_GROUP)
+            .group(&nekoslife::NEKOSLIFE_GROUP)
+            .group(&system::SYSTEM_GROUP)
+            .group(&commands::NO_CATEGORY_GROUP)
     }
 }

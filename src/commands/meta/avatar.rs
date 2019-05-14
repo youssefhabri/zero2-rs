@@ -1,52 +1,54 @@
-use serenity::framework::standard::{Args, Command, CommandError};
-use serenity::prelude::*;
-use serenity::model::channel::Message;
+use serenity::framework::standard::{Args, CommandResult, macros::command};
+use serenity::model::{channel::Message, id::UserId, user::User};
 use serenity::utils::parse_mention;
-use serenity::model::id::UserId;
-use serenity::model::user::User;
+use serenity::prelude::*;
 
-pub struct Avatar;
+use std::result::Result;
 
-impl Command for Avatar {
-    fn execute(&self, _: &mut Context, message: &Message, args: Args) -> Result<(), CommandError> {
+#[command("avatar")]
+fn avatar_command(context: &mut Context, message: &Message, mut args: Args) -> CommandResult {
 
-        if args.full().is_empty() {
-            let _ = message.channel_id.say("You need to input a username.");
-            return Ok(());
-        }
+    let user_tags = if args.is_empty() {
+        vec![format!("<@!{}>", message.author.id)]
+    } else {
+        args.iter::<String>().filter(Result::is_ok).map(Result::unwrap).collect::<Vec<_>>()
+    };
 
-        for user_tag in args.multiple::<String>().unwrap() {
-            let user_id = parse_mention(user_tag.as_str());
+    for user_tag in user_tags {
+        let user_id = parse_mention(user_tag.as_str());
 
-            match user_id {
-                Some(uid) => {
-                    let user: User = UserId(uid).to_user().unwrap();
+        match user_id {
+            Some(uid) => {
+                let user: User = UserId(uid).to_user(&context).unwrap();
 
-                    let _ = match user.avatar {
-                        Some(_) => {
+                let _ = match user.avatar {
+                    Some(_) => {
 
-                            message.channel_id.send_message(|m| m
+                        message.channel_id.send_message(
+                            &context.http,
+                            |m| m
                                 .embed(|e| e
                                     .title(format!("{}'s avatar",
                                                    user.nick_in(
+                                                       &context,
                                                        message.guild_id.unwrap()
                                                    ).unwrap_or_else(|| user.name.clone())))
                                     .url(user.avatar_url().unwrap())
                                     .image(user.avatar_url().unwrap())
                                 )
-                            )
-                        },
-                        None => message.channel_id.say("The user doesn't have an avatar.")
-                    };
-                },
-                None => {
-                    let _ = message.channel_id.say(
-                        format!("Something went wrong while fetch {}'s info.", user_tag)
-                    );
-                }
-            };
-        }
-
-        Ok(())
+                        )
+                    },
+                    None => message.channel_id.say(&context.http, "The user doesn't have an avatar.")
+                };
+            },
+            None => {
+                let _ = message.channel_id.say(
+                    &context.http,
+                    format!("Something went wrong while fetching {}'s info.", user_tag)
+                );
+            }
+        };
     }
+
+    Ok(())
 }

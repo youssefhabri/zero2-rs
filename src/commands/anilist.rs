@@ -1,4 +1,5 @@
-use serenity::framework::standard::CreateGroup;
+use serenity::framework::standard::macros::group;
+
 
 pub mod utils;
 pub mod client;
@@ -11,43 +12,14 @@ pub mod character;
 pub mod manga;
 pub mod user;
 
+use self::activity::ACTIVITY_COMMAND;
+use self::airing::AIRING_COMMAND;
+use self::anime::ANIME_COMMAND;
+use self::character::CHARACTER_COMMAND;
+use self::manga::MANGA_COMMAND;
+use self::user::USER_COMMAND;
 
-pub fn init_anilist() -> CreateGroup {
-    CreateGroup::default()
-        .command("anime", |c| c
-            .cmd(anime::AnimeCommand)
-            .batch_known_as(vec!["a"])
-            .usage("<anime>")
-            .desc("Search for an anime in AniList")
-        )
-        .command("manga", |c| c
-            .cmd(manga::MangaCommand)
-            .batch_known_as(vec!["m"])
-            .usage("<manga>")
-            .desc("Search for a manga in AniList")
-        )
-        .command("user", |c| c
-            .cmd(user::UserCommand)
-            .batch_known_as(vec!["u"])
-            .usage("<user>")
-            .desc("Search for a user in AniList")
-        )
-        .command("character", |c| c
-            .cmd(character::CharacterCommand)
-            .batch_known_as(vec!["c"])
-            .usage("<character>")
-            .desc("Search for a character in AniList")
-        )
-        .command("activity", |c| c
-            .cmd(activity::ActivityCommand)
-            .batch_known_as(vec!["act"])
-            .usage("<activity_id|activity_url>")
-            .desc("Embed an activity from AniList")
-        )
-        .command("airing", |c| c
-            .cmd(airing::AiringCommand)
-            .batch_known_as(vec!["airs"])
-            .usage("[weekday]")
-            .desc("Embed an activity from AniList")
-        )
-}
+group!({
+    name: "Anilist",
+    commands: [activity, airing, anime, character, manga, user]
+});

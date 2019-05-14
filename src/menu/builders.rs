@@ -21,7 +21,14 @@ pub fn pages_builder<T>(results: Vec<T>, embed_builder: fn(&T, String) -> Create
 }
 
 pub fn media_embed_builder(media: &Media, prefix: String) -> CreateEmbed {
-    let mut embed = CreateEmbed::default()
+
+    let (field_name, value) = if &media.media_type == "ANIME" {
+        ("Episodes", media.episodes())
+    } else {
+        ("Chapters", media.chapters())
+    };
+
+    CreateEmbed::default()
         .color(3447003)
         .title(&media.title.user_preferred)
         .url(&media.site_url)
@@ -30,18 +37,12 @@ pub fn media_embed_builder(media: &Media, prefix: String) -> CreateEmbed {
         .thumbnail(&media.cover_image.large)
         .field("Score", &media.mean_score(), true)
         .field("Genres", &media.genres(), true)
+        .field(field_name, value, true)
         .field("More info", &media.tracking_sites(), true)
         .footer(|f| f
             .icon_url("https://anilist.co/img/icons/favicon-32x32.png")
-            .text(format!("{}Status: {} | Powered by AniList", prefix, &media.status())));
-    
-    if &media.media_type == "ANIME" {
-        embed = embed.field("Episodes", &media.episodes(), true)
-    } else {
-        embed = embed.field("Chapters", &media.chapters(), true)
-    }
-
-    embed
+            .text(format!("{}Status: {} | Powered by AniList", prefix, &media.status())))
+        .clone()
 }
 
 pub fn user_embed_builder(user: &User, prefix: String) -> CreateEmbed {
@@ -59,6 +60,7 @@ pub fn user_embed_builder(user: &User, prefix: String) -> CreateEmbed {
         .footer(|f| f
             .icon_url("https://anilist.co/img/icons/favicon-32x32.png")
             .text(format!("{}Powered by AniList", prefix)))
+        .clone()
 }
 
 pub fn character_embed_builder(character: &Character, prefix: String) -> CreateEmbed {
@@ -73,6 +75,7 @@ pub fn character_embed_builder(character: &Character, prefix: String) -> CreateE
         .footer(|f| f
             .icon_url("https://anilist.co/img/icons/favicon-32x32.png")
             .text(format!("{}Powered by AniList", prefix)))
+        .clone()
 }
 
 pub fn studio_embed_builder(studio: &Studio, prefix: String) -> CreateEmbed {
@@ -84,10 +87,11 @@ pub fn studio_embed_builder(studio: &Studio, prefix: String) -> CreateEmbed {
         .footer(|f| f
             .icon_url("https://anilist.co/img/icons/favicon-32x32.png")
             .text(format!("{}Powered by AniList", prefix)))
+        .clone()
 }
 
 pub fn activity_embed_builder(activity: &Activity) -> CreateEmbed {
-    let embed = match activity.__typename.as_str() {
+    match activity.__typename.as_str() {
         "TextActivity" => {
             text_activity_embed_builder(activity)
         },
@@ -100,10 +104,9 @@ pub fn activity_embed_builder(activity: &Activity) -> CreateEmbed {
         _ => {
             CreateEmbed::default()
                 .description("No activity was found.")
+                .clone()
         }
-    };
-
-    embed
+    }
 }
 
 fn text_activity_embed_builder(activity: &Activity) -> CreateEmbed {
@@ -120,6 +123,7 @@ fn text_activity_embed_builder(activity: &Activity) -> CreateEmbed {
         .footer(|f| f
             .icon_url("https://anilist.co/img/icons/favicon-32x32.png")
             .text("Powered by AniList"))
+        .clone()
 }
 
 fn list_activity_embed_builder(activity: &Activity) -> CreateEmbed {
@@ -136,6 +140,7 @@ fn list_activity_embed_builder(activity: &Activity) -> CreateEmbed {
         .footer(|f| f
             .icon_url("https://anilist.co/img/icons/favicon-32x32.png")
             .text("Powered by AniList"))
+        .clone()
 }
 
 fn message_activity_embed_builder(activity: &Activity) -> CreateEmbed {
@@ -154,6 +159,7 @@ fn message_activity_embed_builder(activity: &Activity) -> CreateEmbed {
         .footer(|f| f
             .icon_url("https://anilist.co/img/icons/favicon-32x32.png")
             .text("Powered by AniList"))
+        .clone()
 }
 
 // Giphy builders
@@ -177,4 +183,5 @@ pub fn giphy_embed_builder(gif: &Giphy, prefix: String) -> CreateEmbed {
         .footer(|f| f
             .icon_url("https://giphy.com/static/img/giphy_logo_square_social.png")
             .text(format!("{}Powered by Giphy", prefix)))
+        .clone()
 }

@@ -1,22 +1,12 @@
-use serenity::framework::standard::CreateGroup;
+use serenity::framework::standard::macros::group;
 
 pub mod nlowo;
 pub mod nlimage;
 
+use self::nlowo::NLOWO_COMMAND;
+use self::nlimage::NLIMAGE_COMMAND;
 
-pub fn init_nekoslife() -> CreateGroup {
-    CreateGroup::default()
-        .command("nekoslife", |c| c
-            .cmd(nlimage::NLImageCommand)
-            .batch_known_as(vec!["nl", "nlimg"])
-            .desc("Get gifs from nekos.life.")
-            .usage("nl [keyword:optional] [user:optional]")
-        )
-        .command("owo", |c| c
-            .cmd(nlowo::NLOwOCommand)
-            .batch_known_as(vec!["nlowo"])
-            .desc("Get gifs from nekos.life.")
-            .usage("owo [text]")
-        )
-}
-
+group!({
+    name: "NekosLife",
+    commands: [nlowo, nlimage]
+});

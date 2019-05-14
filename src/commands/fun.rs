@@ -1,17 +1,14 @@
-use serenity::framework::standard::CreateGroup;
+use serenity::framework::standard::macros::group;
 
+mod bigtext;
 mod golendar;
 mod fortune;
 
-pub fn init_fun() -> CreateGroup {
-    CreateGroup::default()
-        .command("fortune", |c| c
-            .cmd(fortune::FortuneCommand)
-            .desc("Find out you fortune. It just might be you lucky day ...")
-        )
-        .command("golendar", |c| c
-            .cmd(golendar::GolendarCommand)
-            .batch_known_as(vec!["gol"])
-            .desc("Find out you fortune. It just might be you lucky day ...")
-        )
-}
+use self::bigtext::BIGTEXT_COMMAND;
+use self::golendar::GOLENDAR_COMMAND;
+use self::fortune::FORTUNE_COMMAND;
+
+group!({
+    name: "Fun",
+    commands: [bigtext, golendar, fortune]
+});
