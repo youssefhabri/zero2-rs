@@ -10,11 +10,12 @@ use rand::prelude::*;
 #[usage = "[keyword]"]
 #[description = "OwOfy you text, cause why not."]
 fn nlowo_command(context: &mut Context, message: &Message, args: Args) -> CommandResult {
-    let input = args.parse::<String>().unwrap_or_else(|_| "".to_string());
-    if input.is_empty() {
+    if args.is_empty() {
         let _ = message.channel_id.say(&context.http, "You need to input text to convert.");
         return Ok(());
     }
+
+    let input = args.message().to_string();
 
     let mut rnd = rand::thread_rng();
 

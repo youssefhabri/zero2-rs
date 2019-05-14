@@ -10,10 +10,9 @@ use std::collections::HashMap;
 
 use crate::checks::*;
 
-#[command("cmdlog")]
-#[aliases("log")]
+#[command("log")]
 #[checks(Admin)]
-fn cmdlog_command(context: &mut Context, message: &Message, _: Args) -> CommandResult {
+fn log_command(context: &mut Context, message: &Message, _: Args) -> CommandResult {
     let mut cmds: HashMap<MessageId, Command> = HashMap::default();
 
     {
@@ -38,5 +37,5 @@ fn cmdlog_command(context: &mut Context, message: &Message, _: Args) -> CommandR
 
 group!({
     name: "System",
-    commands: [cmdlog]
+    commands: [log]
 });

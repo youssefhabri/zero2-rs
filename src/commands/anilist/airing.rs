@@ -20,12 +20,10 @@ use crate::core::utils::{next_day, to_midnight, weekday_to_string};
 #[usage = "[weekday]"]
 #[description = "Show airing anime for a given/current day"]
 fn airing_command(context: &mut Context, message: &Message, args: Args) -> CommandResult {
-    let keyword = args.parse::<String>().unwrap_or_else(|_| "".to_string());
-
-    let (start, day) = if keyword.is_empty() {
+    let (start, day) = if args.is_empty() {
         (to_midnight(Local::now()), "Today".to_owned())
     } else {
-        let day = keyword;
+        let day = args.message().to_string();
         match day.parse::<Weekday>() {
             Ok(day) => {
                 (to_midnight(next_day(day)), weekday_to_string(day))

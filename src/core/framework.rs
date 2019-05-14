@@ -4,8 +4,7 @@ use std::collections::HashSet;
 
 use crate::commands::{self, anilist, fun, meta, nekoslife, system, urban};
 use crate::core::consts::{BOT_ID, PREFIX};
-use crate::core::store::{CommandLogger, Command};
-
+use crate::core::store::{Command, CommandLogger};
 
 pub struct Zero2Framework;
 
@@ -28,12 +27,15 @@ impl Zero2Framework {
                 {
                     let mut data = ctx.data.write();
                     let cmd_logger = data.get_mut::<CommandLogger>().unwrap();
-                    cmd_logger.insert(msg.id, Command {
-                        name: cmd.to_string(),
-                        message: msg.content.clone(),
-                        user_id: msg.author.id,
-                        time: msg.timestamp
-                    });
+                    cmd_logger.insert(
+                        msg.id,
+                        Command {
+                            name: cmd.to_string(),
+                            message: msg.content.clone(),
+                            user_id: msg.author.id,
+                            time: msg.timestamp,
+                        },
+                    );
                 }
 
                 true

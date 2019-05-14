@@ -5,15 +5,14 @@ use serenity::prelude::*;
 #[command("bigtext")]
 #[aliases("bt")]
 fn bigtext_command(context: &mut Context, message: &Message, args: Args) -> CommandResult {
-    let full_message: String = args.message().to_string();
-
-    if full_message.is_empty() {
+    if args.is_empty() {
         let _ = message
             .channel_id
             .say(&context.http, "You need to input a message to convert");
         return Ok(());
     }
 
+    let full_message: String = args.message().to_string();
     let bigtext_message: String = text_to_bigtext(full_message);
 
     let _ = message.channel_id.say(&context.http, bigtext_message);

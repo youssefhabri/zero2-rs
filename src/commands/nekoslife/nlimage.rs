@@ -29,7 +29,7 @@ pub struct NLImage {
 #[description = "Get gifs from nekos.life."]
 fn nlimage_command(context: &mut Context, message: &Message, mut args: Args) -> CommandResult {
 
-    let params = if !args.parse::<String>().unwrap_or_else(|_| "".to_string()).is_empty() {
+    let params = if !args.is_empty() {
         let mut list: Vec<String> = Vec::new();
 
         for arg in args.iter::<String>() {

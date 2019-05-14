@@ -1,22 +1,21 @@
 use serenity::framework::standard::{Args, CommandResult, macros::command};
-use serenity::prelude::*;
-use serenity::model::channel::Message;
+use serenity::model::{channel::Message, id::UserId, user::User};
 use serenity::utils::parse_mention;
-use serenity::model::id::UserId;
-use serenity::model::user::User;
+use serenity::prelude::*;
 
+use std::result::Result;
 
 #[command("avatar")]
 fn avatar_command(context: &mut Context, message: &Message, mut args: Args) -> CommandResult {
 
-    if args.parse::<String>().unwrap_or_else(|_| "".to_string()).is_empty() {
-        let _ = message.channel_id.say(&context.http, "You need to input a username.");
-        return Ok(());
-    }
+    let user_tags = if args.is_empty() {
+        vec![format!("<@!{}>", message.author.id)]
+    } else {
+        args.iter::<String>().filter(Result::is_ok).map(Result::unwrap).collect::<Vec<_>>()
+    };
 
-    for user_tag in args.iter::<String>() {
-        let user_id = parse_mention(
-            user_tag.unwrap_or_else(|_| "".to_string()).as_str());
+    for user_tag in user_tags {
+        let user_id = parse_mention(user_tag.as_str());
 
         match user_id {
             Some(uid) => {
@@ -45,11 +44,7 @@ fn avatar_command(context: &mut Context, message: &Message, mut args: Args) -> C
             None => {
                 let _ = message.channel_id.say(
                     &context.http,
-                    format!(
-                        // TODO Find a solution to this issue
-                        // "Something went wrong while fetching {}'s info.", user_tag.unwrap()
-                        "Something went wrong while fetching the user's info."
-                    )
+                    format!("Something went wrong while fetching {}'s info.", user_tag)
                 );
             }
         };

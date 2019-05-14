@@ -17,12 +17,12 @@ use crate::menu::builders;
 #[usage = "<anime title>"]
 #[description = "Search for an anime in AniList"]
 pub fn anime_command(context: &mut Context, message: &Message, args: Args) -> CommandResult {
-    let keyword = args.parse::<String>().unwrap_or_else(|_| "".to_string());
-
-    if keyword.is_empty() {
+    if args.is_empty() {
         let _ = message.channel_id.say(&context.http, "You need to input a anime title.");
         return Ok(());
     }
+
+    let keyword = args.message().to_string();
 
     let results: Vec<Media> = client::search_media(keyword.clone(), "ANIME".to_owned());
 

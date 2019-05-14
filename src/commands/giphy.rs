@@ -34,7 +34,7 @@ pub fn query(query: String) -> GiphyResponse {
 #[aliases("gif")]
 #[usage = "[keyword]"]
 fn giphy_command(context: &mut Context, message: &Message, args: Args) -> CommandResult {
-    let keyword = args.parse::<String>().unwrap_or_else(|_| "".to_string());
+    let keyword = args.message().to_string();
     let results = query(keyword.clone()).data;
 
     if !results.is_empty() {

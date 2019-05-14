@@ -17,12 +17,12 @@ use crate::menu::builders;
 #[usage = "<username>"]
 #[description = "Search for a user in AniList"]
 fn user_command(context: &mut Context, message: &Message, args: Args) -> CommandResult {
-    let keyword = args.parse::<String>().unwrap_or_else(|_| "".to_string());
-
-    if keyword.is_empty() {
+    if args.is_empty() {
         let _ = message.channel_id.say(&context.http, "You need to input a username.");
         return Ok(());
     }
+
+    let keyword = args.message().to_string();
 
     let results: Vec<User> = client::search_users(keyword.clone());
 

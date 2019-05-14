@@ -16,12 +16,13 @@ use crate::menu::builders;
 #[usage = "<activity_id|activity_url>"]
 #[description = "Embed an activity from AniList"]
 fn activity_command(context: &mut Context, message: &Message, args: Args) -> CommandResult {
-    let keyword = args.parse::<String>().unwrap_or_else(|_| "".to_string());
 
-    if keyword.is_empty() {
+    if args.is_empty() {
         let _ = message.channel_id.say(&context.http, "You need to input a activity url or ID.");
         return Ok(());
     }
+
+    let keyword = args.message().to_string();
 
     let re = Regex::new(r"\d+/?>?$").unwrap();
 
