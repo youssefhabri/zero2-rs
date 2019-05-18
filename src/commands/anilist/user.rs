@@ -8,7 +8,7 @@ use crate::menu::builders;
 use crate::models::anilist::user::User;
 
 #[command("user")]
-#[aliases("c")]
+#[aliases("u")]
 #[usage = "<username>"]
 #[description = "Search for a user in AniList"]
 fn user_command(context: &mut Context, message: &Message, args: Args) -> CommandResult {
