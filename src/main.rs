@@ -1,10 +1,6 @@
-use fern::colors::{
-    Color,
-    ColoredLevelConfig
-};
+use fern::colors::{Color, ColoredLevelConfig};
 
 use zero2_rs::Zero2Client;
-
 
 fn main() {
     fern_setup().expect("Failed to apply fern settings.");

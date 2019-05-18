@@ -3,15 +3,14 @@ use urbandictionary::model::Definition;
 use urbandictionary::ReqwestUrbanDictionaryRequester;
 
 use serenity::{
-    prelude::*,
     framework::standard::{
+        macros::{command, group},
         Args, CommandResult,
-        macros::{command, group}
     },
     model::channel::Message,
-    utils::Colour
+    prelude::*,
+    utils::Colour,
 };
-
 
 group!({
     name: "Knowledge",
@@ -24,7 +23,9 @@ group!({
 #[description = "Search for a definition in Urban Dictionary"]
 fn urban(context: &mut Context, message: &Message, args: Args) -> CommandResult {
     if args.is_empty() {
-        let _ = message.channel_id.say(&context.http, "You need to input a anime title.");
+        let _ = message
+            .channel_id
+            .say(&context.http, "You need to input a anime title.");
         return Ok(());
     }
 
@@ -37,7 +38,9 @@ fn urban(context: &mut Context, message: &Message, args: Args) -> CommandResult 
         Ok(res) => res,
         Err(why) => {
             error!("Err requesting UB definition: {:#?}", why);
-            let _ = message.channel_id.say(&context.http, "Error requesting UB definition!");
+            let _ = message
+                .channel_id
+                .say(&context.http, "Error requesting UB definition!");
             None
         }
     };
@@ -51,38 +54,50 @@ fn urban(context: &mut Context, message: &Message, args: Args) -> CommandResult 
                 s.truncate(1800);
             }
 
-            match message.channel_id.send_message(&context.http, |f| f.embed(|embed| {
-                embed.color(Colour::FOOYOO)
-                    .title(&format!("Definition of {}", &def.word))
-                    .url(&def.permalink)
-                    .description(s)
-                    .footer(|f| f
-                        .text(&format!("Defined by {}", def.author)));
+            match message.channel_id.send_message(&context.http, |f| {
+                f.embed(|embed| {
+                    embed
+                        .color(Colour::FOOYOO)
+                        .title(&format!("Definition of {}", &def.word))
+                        .url(&def.permalink)
+                        .description(s)
+                        .footer(|f| f.text(&format!("Defined by {}", def.author)));
 
-                // Only add example field if there's an example
-                let example = def.example.clone();
-                if !example.is_empty() {
-                    embed.field("Example", example, true);
-                }
+                    // Only add example field if there's an example
+                    let example = def.example.clone();
+                    if !example.is_empty() {
+                        embed.field("Example", example, true);
+                    }
 
-                // This is a workaround since we can't order fields
-                embed.field("Votes", format!("👍: **{}** 👎: **{}**",
-                                                     &def.thumbs_up, &def.thumbs_down), true);
+                    // This is a workaround since we can't order fields
+                    embed.field(
+                        "Votes",
+                        format!(
+                            "👍: **{}** 👎: **{}**",
+                            &def.thumbs_up, &def.thumbs_down
+                        ),
+                        true,
+                    );
 
-                embed
-            })) {
-                Ok(_) => {},
-                Err(why) => error!("Sending UB failed: {:#?}", why)
+                    embed
+                })
+            }) {
+                Ok(_) => {}
+                Err(why) => error!("Sending UB failed: {:#?}", why),
             }
-        },
+        }
         None => {
-            let _ = message.channel_id.send_message(&context.http, |f| f.embed(|m| m
-                .color(Colour::GOLD)
-                .title(format!("Could not find \"{}\"", keyword))
-                .description(format!(
-                    "Could not find \"{}\" on Urban Dictionary. Are you \
-                sure you wrote it correctly?",
-                    keyword))));
+            let _ = message.channel_id.send_message(&context.http, |f| {
+                f.embed(|m| {
+                    m.color(Colour::GOLD)
+                        .title(format!("Could not find \"{}\"", keyword))
+                        .description(format!(
+                            "Could not find \"{}\" on Urban Dictionary. Are you \
+                             sure you wrote it correctly?",
+                            keyword
+                        ))
+                })
+            });
         }
     }
 

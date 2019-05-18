@@ -1,17 +1,17 @@
 use serenity::framework::standard::{
-    Args, CommandResult, CommandGroup,
-    HelpOptions, help_commands,
+    help_commands,
     macros::{group, help},
+    Args, CommandGroup, CommandResult, HelpOptions,
 };
 
-use serenity::prelude::Context;
 use serenity::model::prelude::*;
+use serenity::prelude::Context;
 use std::collections::HashSet;
 use std::hash::BuildHasher;
 
 pub mod anilist;
-pub mod giphy;
 pub mod fun;
+pub mod giphy;
 pub mod meta;
 pub mod nekoslife;
 pub mod system;
@@ -25,8 +25,7 @@ group!({
 });
 
 #[help]
-#[individual_command_tip =
-"Hello! こんにちは！Hola! Bonjour! 您好!\n\
+#[individual_command_tip = "Hello! こんにちは！Hola! Bonjour! 您好!\n\
 If you want more information about a specific command, just pass the command as argument."]
 #[command_not_found_text = "Could not find: `{}`."]
 #[max_levenshtein_distance(3)]
@@ -40,7 +39,7 @@ pub fn zero2_help(
     args: Args,
     help_options: &'static HelpOptions,
     groups: &[&'static CommandGroup],
-    owners: HashSet<UserId, impl BuildHasher>
+    owners: HashSet<UserId, impl BuildHasher>,
 ) -> CommandResult {
     help_commands::with_embeds(context, msg, args, help_options, groups, owners)
 }

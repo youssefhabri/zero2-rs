@@ -1,11 +1,10 @@
+use crate::core::store::ShardManagerContainer;
 use serenity::{
     client::bridge::gateway::ShardId,
-    framework::standard::{Args, CommandResult, macros::command},
+    framework::standard::{macros::command, Args, CommandResult},
     model::channel::Message,
     prelude::*,
 };
-use crate::core::store::ShardManagerContainer;
-
 
 #[command("ping")]
 fn ping_command(context: &mut Context, message: &Message, _: Args) -> CommandResult {
@@ -19,7 +18,7 @@ fn ping_command(context: &mut Context, message: &Message, _: Args) -> CommandRes
             let _ = message.reply(context, "There was a problem getting the shard manager");
 
             return Ok(());
-        },
+        }
     };
 
     let manager = shard_manager.lock();
@@ -34,14 +33,16 @@ fn ping_command(context: &mut Context, message: &Message, _: Args) -> CommandRes
             let _ = message.reply(context, "No shard found");
 
             return Ok(());
-        },
+        }
     };
 
     let _ = message.reply(
         context,
-        &format!("The shard latency is {}ms", runner.latency.unwrap().as_millis())
+        &format!(
+            "The shard latency is {}ms",
+            runner.latency.unwrap().as_millis()
+        ),
     );
 
     Ok(())
 }
-

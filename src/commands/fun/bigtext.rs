@@ -21,31 +21,31 @@ fn bigtext_command(context: &mut Context, message: &Message, args: Args) -> Comm
 }
 
 fn text_to_bigtext(text: String) -> String {
-    text.chars().map(|c| {
-        match c {
+    text.chars()
+        .map(|c| match c {
             'a'...'z' | 'A'...'Z' => format!(":regional_indicator_{}:", c.to_lowercase()),
-            '0'...'9' => {
-                match c {
-                    '0' => ":zero:",
-                    '1' => ":one:",
-                    '2' => ":two:",
-                    '3' => ":three:",
-                    '4' => ":four:",
-                    '5' => ":five:",
-                    '6' => ":six:",
-                    '7' => ":seven:",
-                    '8' => ":eight:",
-                    '9' => ":nine:",
-                    _ => ""
-                }.to_string()
-            },
+            '0'...'9' => match c {
+                '0' => ":zero:",
+                '1' => ":one:",
+                '2' => ":two:",
+                '3' => ":three:",
+                '4' => ":four:",
+                '5' => ":five:",
+                '6' => ":six:",
+                '7' => ":seven:",
+                '8' => ":eight:",
+                '9' => ":nine:",
+                _ => "",
+            }
+            .to_string(),
             ' ' => "  ".to_string(),
             '!' => ":exclamation:".to_string(),
             '?' => ":question:".to_string(),
             '+' => ":heavy_plus_sign:".to_string(),
             '-' => ":heavy_minus_sign:".to_string(),
             '.' => ":small_blue_diamond:".to_string(),
-            _ => c.to_string()
-        }
-    }).collect::<Vec<String>>().join("")
+            _ => c.to_string(),
+        })
+        .collect::<Vec<String>>()
+        .join("")
 }

@@ -1,18 +1,9 @@
-use std::collections::HashMap;
 use std::str;
 
 use crate::models::anilist::{
-    Variables,
-    QueryBody,
-    Response,
-    activity::Activity,
-    airing_schedule::AiringSchedule,
-    character::Character,
-    media::Media,
-    user::User,
-    studio::Studio
+    activity::Activity, airing_schedule::AiringSchedule, character::Character, media::Media,
+    studio::Studio, user::User, QueryBody, Response,
 };
-
 
 #[derive(RustEmbed)]
 #[folder = "assets/graphql"]
@@ -21,7 +12,7 @@ struct GraphQL;
 fn load_graphql(file: &str) -> String {
     let asset = match GraphQL::get(file) {
         Some(asset) => asset,
-        None => panic!("Error loading query: {}", file)
+        None => panic!("Error loading query: {}", file),
     };
     str::from_utf8(&asset).expect(file).to_owned()
 }
@@ -31,102 +22,122 @@ fn load_graphql_with_fragment(query_file: &str, fragment_files: Vec<&str>) -> St
 
     let mut fragments: Vec<String> = vec![];
     for fragment in fragment_files {
-        fragments.push(
-            load_graphql(&format!("fragments/{}.graphql", fragment))
-        );
+        fragments.push(load_graphql(&format!("fragments/{}.graphql", fragment)));
     }
 
-    format!("{}\n{}",
-            query,
-            fragments.join("\n"))
+    format!("{}\n{}", query, fragments.join("\n"))
 }
 
+type Var<'a> = (&'a str, &'a str);
 
-pub fn query(query: String, variables: Variables) -> Response {
+pub fn query(query: &str, variables: Vec<Var>, fragments: Vec<&str>) -> Response {
     let body = QueryBody {
-        query, variables
+        query: load_graphql_with_fragment(query, fragments),
+        variables: variables
+            .into_iter()
+            .map(|(k, v)| (k.to_string(), v.to_string()))
+            .collect(),
     };
 
     let client = reqwest::Client::new();
-    let mut res = client.post("https://graphql.anilist.co")
+    let mut res = client
+        .post("https://graphql.anilist.co")
         .json(&body)
-        .send().expect("response");
-    let response: Response = res.json().expect("json");
+        .send()
+        .expect("response");
 
-    response
+    res.json::<Response>().expect("json")
 }
 
 pub fn search_media(keyword: String, media_type: String) -> Vec<Media> {
-    let media_query = load_graphql("queries/Search/MediaSearch.graphql");
-    let mut variables = HashMap::new();
-    variables.insert("search".to_owned(), keyword);
-    variables.insert("type".to_owned(), media_type);
-
-    query(media_query, variables).data.page.media()
+    query(
+        "Search/MediaSearch",
+        vec![("search", keyword.as_str()), ("type", media_type.as_str())],
+        vec!["MediaBase"],
+    )
+    .data
+    .page
+    .media()
 }
 
 pub fn search_media_by_id(media_id: String, media_type: String) -> Option<Media> {
-    let media_query = load_graphql("queries/MediaQuery.graphql");
-    let mut variables = HashMap::new();
-    variables.insert("id".to_owned(), media_id);
-    variables.insert("type".to_owned(), media_type);
-
-    query(media_query, variables).data.media
+    query(
+        "MediaQuery",
+        vec![("id", media_id.as_str()), ("type", media_type.as_str())],
+        vec!["MediaBase"],
+    )
+    .data
+    .media
 }
 
 pub fn search_users(keyword: String) -> Vec<User> {
-    let user_query = load_graphql_with_fragment("Search/UserSearch", vec!["MediaBase"]);
-    let mut variables = HashMap::new();
-    variables.insert("search".to_owned(), keyword);
-
-    query(user_query, variables).data.page.users()
+    query(
+        "Search/UserSearch",
+        vec![("search", keyword.as_str())],
+        vec!["MediaBase"],
+    )
+    .data
+    .page
+    .users()
 }
 
 pub fn search_user(username: String) -> Option<User> {
-    let user_query = load_graphql_with_fragment("UserQuery", vec!["MediaBase"]);
-    let mut variables = HashMap::new();
-    variables.insert("username".to_owned(), username);
-
-    query(user_query, variables).data.user
+    query(
+        "UserQuery",
+        vec![("username", username.as_str())],
+        vec!["MediaBase"],
+    )
+    .data
+    .user
 }
 
 pub fn search_characters(keyword: String) -> Vec<Character> {
-    let character_query = load_graphql_with_fragment("Search/CharacterSearch", vec!["MediaBase"]);
-    let mut variables = HashMap::new();
-    variables.insert("search".to_owned(), keyword);
-
-    query(character_query, variables).data.page.characters()
+    query(
+        "Search/CharacterSearch",
+        vec![("search", keyword.as_str())],
+        vec!["MediaBase"],
+    )
+    .data
+    .page
+    .characters()
 }
 
 pub fn search_character_by_id(character_id: String) -> Option<Character> {
-    let character_query = load_graphql_with_fragment("CharacterQuery", vec!["MediaBase"]);
-    let mut variables = HashMap::new();
-    variables.insert("id".to_owned(), character_id);
-
-    query(character_query, variables).data.character
+    query(
+        "CharacterQuery",
+        vec![("id", character_id.as_str())],
+        vec!["MediaBase"],
+    )
+    .data
+    .character
 }
 
 pub fn search_activity(activity_id: String) -> Option<Activity> {
-    let activity_query = load_graphql_with_fragment("ActivityQuery", vec!["MediaBase", "UserBase"]);
-    let mut variables = HashMap::new();
-    variables.insert("id".to_owned(), activity_id);
-
-    query(activity_query, variables).data.activity
+    query(
+        "ActivityQuery",
+        vec![("id", activity_id.as_str())],
+        vec!["MediaBase", "UserBase"],
+    )
+    .data
+    .activity
 }
 
 pub fn search_airing_schedule(start_time: i64, end_time: i64) -> Vec<AiringSchedule> {
-    let activity_query = load_graphql_with_fragment("AiringSchedule", vec!["MediaBase"]);
-    let mut variables = HashMap::new();
-    variables.insert("start".to_owned(), format!("{}", start_time));
-    variables.insert("end".to_owned(), format!("{}", end_time));
-
-    query(activity_query, variables).data.page.airing_schedule()
+    query(
+        "AiringSchedule",
+        vec![
+            ("start", start_time.to_string().as_str()),
+            ("end", end_time.to_string().as_str()),
+        ],
+        vec!["MediaBase"],
+    )
+    .data
+    .page
+    .airing_schedule()
 }
 
 pub fn search_studio(id: String) -> Option<Studio> {
-    let studio_query = load_graphql_with_fragment("StudioQuery", vec!["MediaBase"]);
-    let mut variables = HashMap::new();
-    variables.insert("id".to_owned(), id);
-
-    query(studio_query, variables).data.studio
+    query("StudioQuery", vec![("id", id.as_str())], vec!["MediaBase"])
+        .data
+        .studio
 }

@@ -1,16 +1,8 @@
-use std::collections::{HashSet, HashMap};
+use serenity::{prelude::*, Client};
+use std::collections::{HashMap, HashSet};
 use std::sync::Arc;
-use serenity::{
-    Client,
-    prelude::*
-};
 
-use crate::core::{
-    handler::Zero2Handler,
-    framework::Zero2Framework,
-    store::*
-};
-
+use crate::core::{framework::Zero2Framework, handler::Zero2Handler, store::*};
 
 pub struct Zero2Client(Client);
 
@@ -19,10 +11,7 @@ impl Zero2Client {
         // Load token from environment variables or .env file
         let token: String = dotenv::var("DISCORD_TOKEN").expect("token");
 
-        let mut client = Client::new(
-            &token,
-            Zero2Handler
-        ).expect("Error creating client");
+        let mut client = Client::new(&token, Zero2Handler).expect("Error creating client");
 
         let owner = match client.cache_and_http.http.get_current_application_info() {
             Ok(info) => info.owner,
@@ -45,6 +34,10 @@ impl Zero2Client {
         Zero2Client(client)
     }
 
-    pub fn start(&mut self) -> Result<(), SerenityError> { self.0.start() }
-    pub fn start_autosharded(&mut self) -> Result<(), SerenityError> { self.0.start_autosharded() }
+    pub fn start(&mut self) -> Result<(), SerenityError> {
+        self.0.start()
+    }
+    pub fn start_autosharded(&mut self) -> Result<(), SerenityError> {
+        self.0.start_autosharded()
+    }
 }

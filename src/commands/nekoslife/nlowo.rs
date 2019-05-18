@@ -1,9 +1,8 @@
-use serenity::framework::standard::{Args, CommandResult, macros::command};
+use rand::prelude::*;
+use regex::Regex;
+use serenity::framework::standard::{macros::command, Args, CommandResult};
 use serenity::model::channel::Message;
 use serenity::prelude::*;
-use regex::Regex;
-use rand::prelude::*;
-
 
 #[command("nlowo")]
 #[aliases("owo")]
@@ -11,7 +10,9 @@ use rand::prelude::*;
 #[description = "OwOfy you text, cause why not."]
 fn nlowo_command(context: &mut Context, message: &Message, args: Args) -> CommandResult {
     if args.is_empty() {
-        let _ = message.channel_id.say(&context.http, "You need to input text to convert.");
+        let _ = message
+            .channel_id
+            .say(&context.http, "You need to input text to convert.");
         return Ok(());
     }
 
@@ -25,15 +26,23 @@ fn nlowo_command(context: &mut Context, message: &Message, args: Args) -> Comman
         .replace("n", "ny")
         .replace("N", "NY")
         .to_owned();
-    text = Regex::new(r"[rl]").unwrap().replace_all(text.as_str(), "w").into();
-    text = Regex::new(r"[RL]").unwrap().replace_all(text.as_str(), "W").into();
-    text = Regex::new(r"[!]").unwrap().replace_all(text.as_str(), faces[rnd.gen_range(0, 3)]).into();
+    text = Regex::new(r"[rl]")
+        .unwrap()
+        .replace_all(text.as_str(), "w")
+        .into();
+    text = Regex::new(r"[RL]")
+        .unwrap()
+        .replace_all(text.as_str(), "W")
+        .into();
+    text = Regex::new(r"[!]")
+        .unwrap()
+        .replace_all(text.as_str(), faces[rnd.gen_range(0, 3)])
+        .into();
 
     let _ = message.delete(&context);
-    let _ = message.channel_id.send_message(
-        &context.http,
-        |m| m.content(format!("<@{}> said: {}", message.author.id, text))
-    );
+    let _ = message.channel_id.send_message(&context.http, |m| {
+        m.content(format!("<@{}> said: {}", message.author.id, text))
+    });
 
     Ok(())
 }

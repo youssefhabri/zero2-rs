@@ -42,7 +42,7 @@ pub struct Activity {
 
     pub messenger: Option<UserBase>,
 
-    pub message: Option<String>
+    pub message: Option<String>,
 }
 
 impl Default for Activity {
@@ -60,7 +60,7 @@ impl Default for Activity {
             media: None,
             recipient: None,
             messenger: None,
-            message: None
+            message: None,
         }
     }
 }
@@ -69,12 +69,12 @@ impl Activity {
     pub fn status(&self) -> String {
         let status = match &self.status {
             Some(status) => status.clone(),
-            None => String::new()
+            None => String::new(),
         };
 
         let progress = match &self.progress {
             Some(progress) => format!("{} of", progress.clone()),
-            None => String::new()
+            None => String::new(),
         };
 
         format!("{} {}", status, progress)

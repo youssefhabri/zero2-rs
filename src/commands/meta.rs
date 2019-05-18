@@ -1,6 +1,5 @@
 use serenity::framework::standard::macros::group;
 
-
 mod avatar;
 mod botinfo;
 mod ping;
