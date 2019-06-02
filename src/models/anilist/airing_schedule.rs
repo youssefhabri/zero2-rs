@@ -16,9 +16,12 @@ impl AiringSchedule {
     pub fn to_url(&self) -> String {
         let episode = match &self.episode {
             Some(episode) => format!("Ep. {}", episode),
-            None => String::from("Ep. N/A")
+            None => String::from("Ep. N/A"),
         };
 
-        format!("[{0}] [{1}]({2})", episode, &self.media.title.user_preferred, &self.media.site_url)
+        format!(
+            "[{0}] [{1}]({2})",
+            episode, &self.media.title.user_preferred, &self.media.site_url
+        )
     }
 }

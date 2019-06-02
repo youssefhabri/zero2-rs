@@ -1,6 +1,6 @@
 [package]
 name = "zero2_rs"
-version = "0.4.1"
+version = "0.4.2"
 authors = ["Youssef Habri <youssef.habri@gmail.com>"]
 edition = "2018"
 

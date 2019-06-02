@@ -1,5 +1,6 @@
 fragment MediaBase on Media {
     id
+    idMal
     type
     siteUrl
     averageScore

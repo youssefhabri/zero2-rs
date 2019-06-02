@@ -1,19 +1,17 @@
-use serenity::framework::standard::{Args, CommandResult, macros::command};
-use serenity::prelude::*;
+use serenity::framework::standard::{macros::command, Args, CommandResult};
 use serenity::model::channel::Message;
+use serenity::prelude::*;
 
-use indexmap::IndexMap;
-use serenity::model::id::UserId;
-use serenity::builder::CreateEmbed;
 use crate::core::consts::AT_BOT_IDS;
-
+use indexmap::IndexMap;
+use serenity::builder::CreateEmbed;
+use serenity::model::id::UserId;
 
 #[command("stats")]
 fn stats_command(context: &mut Context, message: &Message, _: Args) -> CommandResult {
-    let sending = message.channel_id.say(
-        &context.http,
-        "_Crunching numbers, please be patient ..._"
-    );
+    let sending = message
+        .channel_id
+        .say(&context.http, "_Crunching numbers, please be patient ..._");
 
     let messages = get_all_messages(&context, message);
 
@@ -33,14 +31,14 @@ fn stats_command(context: &mut Context, message: &Message, _: Args) -> CommandRe
 
             let _ = sending.unwrap().delete(&context);
 
-            let _ = message.channel_id.send_message(&context.http,
-                |m| m
-                    .embed(|embed| build_embed(
-                        embed, message.channel_id.name(&context), stats))
-            );
-        },
+            let _ = message.channel_id.send_message(&context.http, |m| {
+                m.embed(|embed| build_embed(embed, message.channel_id.name(&context), stats))
+            });
+        }
         None => {
-            let _ = message.channel_id.say(&context.http, "Error getting the channel messages.");
+            let _ = message
+                .channel_id
+                .say(&context.http, "Error getting the channel messages.");
         }
     }
 
@@ -52,34 +50,38 @@ fn get_all_messages(context: &Context, message: &Message) -> Option<Vec<Message>
 
     let limit = 100;
 
-    let mut messages = message.channel_id.messages(
-        &context.http,
-        |g| g.before(message.id).limit(limit)
-    ).unwrap();
+    let mut messages = message
+        .channel_id
+        .messages(&context.http, |g| g.before(message.id).limit(limit))
+        .unwrap();
 
     while !messages.is_empty() {
         all_messages.extend(messages.clone());
         let last_message_id = messages[messages.len() - 1].id;
-        messages = message.channel_id.messages(
-            &context.http,
-            |g| g.before(last_message_id).limit(limit)
-        ).unwrap();
+        messages = message
+            .channel_id
+            .messages(&context.http, |g| g.before(last_message_id).limit(limit))
+            .unwrap();
     }
 
-    if !all_messages.is_empty() { Some(all_messages) }
-    else { None }
+    if !all_messages.is_empty() {
+        Some(all_messages)
+    } else {
+        None
+    }
 }
 
-fn build_embed(embed: &mut CreateEmbed, channel_name: Option<String>, stats_list: IndexMap<UserId, u32>) -> &mut CreateEmbed {
-
+fn build_embed(
+    embed: &mut CreateEmbed,
+    channel_name: Option<String>,
+    stats_list: IndexMap<UserId, u32>,
+) -> &mut CreateEmbed {
     let content = stats_list
         .iter()
         .take(10)
         .enumerate()
         .filter(|(_, (user_id, _))| !AT_BOT_IDS.contains(user_id.as_u64()))
-        .map(|(i, (user_id, msgs_count))|{
-            format!("{}. <@{}>: {}", i + 1, user_id, msgs_count)
-        })
+        .map(|(i, (user_id, msgs_count))| format!("{}. <@{}>: {}", i + 1, user_id, msgs_count))
         .collect::<Vec<String>>()
         .join("\n\n");
 

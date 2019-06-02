@@ -1,10 +1,10 @@
 use serenity::framework::standard::macros::group;
 
-pub mod nlowo;
 pub mod nlimage;
+pub mod nlowo;
 
-use self::nlowo::NLOWO_COMMAND;
 use self::nlimage::NLIMAGE_COMMAND;
+use self::nlowo::NLOWO_COMMAND;
 
 group!({
     name: "NekosLife",

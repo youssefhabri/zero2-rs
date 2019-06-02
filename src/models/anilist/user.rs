@@ -1,5 +1,5 @@
-use crate::core::utils::format_time;
 use crate::commands::anilist::utils::synopsis;
+use crate::core::utils::format_time;
 use crate::models::anilist::connection::{CharacterConnection, MediaConnection};
 
 #[derive(Clone, Deserialize, Debug)]
@@ -20,7 +20,7 @@ pub struct UserStats {
 pub struct Favourites {
     pub anime: MediaConnection,
     pub manga: MediaConnection,
-    pub characters: CharacterConnection
+    pub characters: CharacterConnection,
 }
 
 #[derive(Deserialize, Debug)]
@@ -40,28 +40,28 @@ pub struct User {
 
     pub stats: UserStats,
 
-    pub favourites: Favourites
+    pub favourites: Favourites,
 }
 
 impl User {
     pub fn about(&self) -> String {
         match &self.about {
             Some(about) => synopsis(about, 300),
-            None => String::new()
+            None => String::new(),
         }
     }
 
     pub fn watched_time(&self) -> String {
         match &self.stats.watched_time {
             Some(watched_time) => format_time(*watched_time as f64),
-            None => String::from("N/A")
+            None => String::from("N/A"),
         }
     }
 
     pub fn chapters_read(&self) -> String {
         match &self.stats.chapters_read {
             Some(chapters_read) => format!("{}", chapters_read),
-            None => String::from("N/A")
+            None => String::from("N/A"),
         }
     }
 
@@ -69,24 +69,24 @@ impl User {
         let media_list = match fav_type {
             "ANIME" => &self.favourites.anime.nodes,
             "MANGA" => &self.favourites.manga.nodes,
-            _ => return String::from("N/A")
+            _ => return String::from("N/A"),
         };
 
         let mut fav_list: Vec<String> = vec![];
 
         if !media_list.is_empty() {
             for (i, media) in media_list.iter().enumerate() {
-                if i == 5 { break; }
-                fav_list.push(
-                    format!("[{}]({})", media.title.user_preferred, media.site_url))
+                if i == 5 {
+                    break;
+                }
+                fav_list.push(format!(
+                    "[{}]({})",
+                    media.title.user_preferred, media.site_url
+                ))
             }
 
             if media_list.len() > 5 {
-                return format!(
-                    "{}\n + {} more",
-                    fav_list.join("\n"),
-                    media_list.len() - 5
-                )
+                return format!("{}\n + {} more", fav_list.join("\n"), media_list.len() - 5);
             }
 
             return fav_list.join("\n");
@@ -110,9 +110,14 @@ impl User {
 
         if !character_list.is_empty() {
             for (i, character) in character_list.iter().enumerate() {
-                if i == 5 { break; }
-                fav_list.push(
-                    format!("[{}]({})", character.full_name(), character.site_url))
+                if i == 5 {
+                    break;
+                }
+                fav_list.push(format!(
+                    "[{}]({})",
+                    character.full_name(),
+                    character.site_url
+                ))
             }
 
             if character_list.len() > 5 {
@@ -120,7 +125,7 @@ impl User {
                     "{}\n + {} more",
                     fav_list.join("\n"),
                     character_list.len() - 5
-                )
+                );
             }
 
             return fav_list.join("\n");

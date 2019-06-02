@@ -1,18 +1,18 @@
-use crate::models::anilist::connection::MediaConnection;
 use crate::commands::anilist::utils::synopsis;
+use crate::models::anilist::connection::MediaConnection;
 
 #[derive(Deserialize, Debug)]
 pub struct CharacterName {
     pub first: Option<String>,
     pub last: Option<String>,
     pub native: Option<String>,
-    pub alternative: Vec<String>
+    pub alternative: Vec<String>,
 }
 
 #[derive(Deserialize, Debug)]
 pub struct CharacterImage {
     pub large: Option<String>,
-    pub medium: Option<String>
+    pub medium: Option<String>,
 }
 
 #[derive(Deserialize, Debug)]
@@ -22,7 +22,7 @@ pub struct CharacterBase {
     #[serde(rename = "siteUrl")]
     pub site_url: String,
 
-    pub name: CharacterName
+    pub name: CharacterName,
 }
 
 impl CharacterBase {
@@ -31,12 +31,12 @@ impl CharacterBase {
 
         match &self.name.first {
             Some(first) => name_list.push(first.clone()),
-            None => {},
+            None => {}
         }
 
         match &self.name.last {
             Some(last) => name_list.push(last.clone()),
-            None => {},
+            None => {}
         }
 
         name_list.join(" ")
@@ -56,7 +56,7 @@ pub struct Character {
 
     pub image: CharacterImage,
 
-    pub media: MediaConnection
+    pub media: MediaConnection,
 }
 
 impl Character {
@@ -65,12 +65,12 @@ impl Character {
 
         match &self.name.first {
             Some(first) => name_list.push(first.clone()),
-            None => {},
+            None => {}
         }
 
         match &self.name.last {
             Some(last) => name_list.push(last.clone()),
-            None => {},
+            None => {}
         }
 
         name_list.join(" ")
@@ -79,14 +79,14 @@ impl Character {
     pub fn about(&self) -> String {
         match &self.description {
             Some(description) => synopsis(description, 300),
-            None => String::new()
+            None => String::new(),
         }
     }
 
     pub fn cover_image(&self) -> String {
         match &self.image.large {
             Some(image) => image.to_string(),
-            None => String::new()
+            None => String::new(),
         }
     }
 
@@ -99,11 +99,15 @@ impl Character {
             let mut count = 0;
             for media in media_list {
                 if media.media_type == media_type {
-                    fav_list.push(
-                        format!("[{}]({})", media.title.user_preferred, media.site_url));
+                    fav_list.push(format!(
+                        "[{}]({})",
+                        media.title.user_preferred, media.site_url
+                    ));
                     count += 1;
                 }
-                if count >= 5 { break }
+                if count >= 5 {
+                    break;
+                }
             }
         }
 

@@ -1,5 +1,5 @@
-use std::sync::Arc;
 use std::collections::HashMap;
+use std::sync::Arc;
 
 use chrono::{DateTime, FixedOffset};
 use serenity::{
@@ -9,11 +9,10 @@ use serenity::{
         id::{MessageId, UserId},
         user::User,
     },
-    prelude::*
+    prelude::*,
 };
 
 use crate::menu::HandlerFunc;
-
 
 // Bot ownerId Container
 pub struct BotOwnerContainer;

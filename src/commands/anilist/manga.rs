@@ -1,16 +1,11 @@
-use serenity::framework::standard::{
-    Args,
-    CommandResult,
-    macros::command
-};
+use serenity::framework::standard::{macros::command, Args, CommandResult};
 use serenity::model::channel::Message;
 use serenity::prelude::*;
 
 use crate::commands::anilist::client;
-use crate::models::anilist::media::Media;
 use crate::menu;
 use crate::menu::builders;
-
+use crate::models::anilist::media::Media;
 
 #[command("manga")]
 #[aliases("m")]
@@ -18,7 +13,9 @@ use crate::menu::builders;
 #[description = "Search for a manga in AniList"]
 fn manga_command(context: &mut Context, message: &Message, args: Args) -> CommandResult {
     if args.is_empty() {
-        let _ = message.channel_id.say(&context.http, "You need to input a manga title.");
+        let _ = message
+            .channel_id
+            .say(&context.http, "You need to input a manga title.");
         return Ok(());
     }
 
@@ -28,30 +25,31 @@ fn manga_command(context: &mut Context, message: &Message, args: Args) -> Comman
 
     if !results.is_empty() {
         let manga: &Media = &results[0];
-        let sending = message.channel_id.send_message(
-            &context.http,
-            |m| m.embed(
-                |e| {
-                    e.clone_from(
-                        &builders::media_embed_builder(manga, format!("Page: {}/{} | ", 1, results.len()))
-                    );
+        let sending = message.channel_id.send_message(&context.http, |m| {
+            m.embed(|e| {
+                e.clone_from(&builders::media_embed_builder(
+                    manga,
+                    format!("Page: {}/{} | ", 1, results.len()),
+                ));
 
-                    e
-                }
-            ).reactions(menu::reactions::default())
-        );
+                e
+            })
+            .reactions(menu::reactions::default())
+        });
 
         if let Ok(sending_msg) = sending {
             menu::new_pagination(
                 context,
                 sending_msg.id,
                 message.author.id,
-                builders::pages_builder::<Media>(results, builders::media_embed_builder)
+                builders::pages_builder::<Media>(results, builders::media_embed_builder),
             )
         }
-
     } else {
-        let _ = message.channel_id.say(&context.http, format!("No manga was found for: `{}`", keyword));
+        let _ = message.channel_id.say(
+            &context.http,
+            format!("No manga was found for: `{}`", keyword),
+        );
     }
 
     Ok(())

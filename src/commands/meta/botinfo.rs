@@ -1,17 +1,12 @@
-use sysinfo::{
-    ProcessExt,
-    SystemExt,
-    System,
-    get_current_pid
-};
+use crate::core::store::BotOwnerContainer;
+use crate::core::utils::seconds_to_hrtime;
 use serenity::{
-    framework::standard::{Args, CommandResult, macros::command},
+    framework::standard::{macros::command, Args, CommandResult},
     model::channel::Message,
     prelude::*,
-    utils::Colour
+    utils::Colour,
 };
-use crate::core::utils::seconds_to_hrtime;
-use crate::core::store::BotOwnerContainer;
+use sysinfo::{get_current_pid, ProcessExt, System, SystemExt};
 
 const BOT_VERSION: &str = env!("CARGO_PKG_VERSION");
 
@@ -26,7 +21,9 @@ fn bot_info_command(context: &mut Context, message: &Message, _: Args) -> Comman
         let cache = context.cache.read();
         (cache.guilds.len(), cache.shard_count, cache.user.face())
     };
-    let owner = data.get::<BotOwnerContainer>().expect("Failed to get owner");
+    let owner = data
+        .get::<BotOwnerContainer>()
+        .expect("Failed to get owner");
     let sys = System::new();
 
     message.channel_id.send_message(

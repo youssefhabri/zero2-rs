@@ -1,21 +1,20 @@
-use serenity::prelude::*;
+use serenity::framework::standard::{macros::command, Args, CommandResult};
 use serenity::model::channel::Message;
-use serenity::framework::standard::{Args, CommandResult, macros::command};
+use serenity::prelude::*;
 
-use chrono::{DateTime, Datelike, Timelike, NaiveDateTime, Utc};
 use crate::core::utils::{month_to_string, weekday_to_string};
+use chrono::{DateTime, Datelike, NaiveDateTime, Timelike, Utc};
 
 const TIMESTAMP_START: i64 = 1_551_312_000_000; //1551308400000;
 
-
 #[command("golendar")]
 fn golendar_command(context: &mut Context, message: &Message, _: Args) -> CommandResult {
-
     let now = Utc::now();
     let difference = now.timestamp_millis() - TIMESTAMP_START;
 
     let date = DateTime::<Utc>::from_utc(
-        NaiveDateTime::from_timestamp(difference / 1000, (difference % 1000) as u32), Utc
+        NaiveDateTime::from_timestamp(difference / 1000, (difference % 1000) as u32),
+        Utc,
     );
 
     // TODO Add a `since` command?
@@ -33,8 +32,10 @@ fn golendar_command(context: &mut Context, message: &Message, _: Args) -> Comman
             date.day(),
             month_to_string(date.month()),
             date.year() - 1970,
-            date.hour(), date.minute(), date.second()
-        )
+            date.hour(),
+            date.minute(),
+            date.second()
+        ),
     );
 
     Ok(())

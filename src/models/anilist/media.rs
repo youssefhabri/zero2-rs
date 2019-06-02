@@ -1,5 +1,5 @@
-use crate::core::utils::format_time;
 use crate::commands::anilist::utils::synopsis;
+use crate::core::utils::format_time;
 use std::time::SystemTime;
 use std::time::UNIX_EPOCH;
 
@@ -22,7 +22,7 @@ pub struct AiringSchedule {
 }
 
 #[derive(Deserialize, Debug)]
-pub struct  MediaExternalLink {
+pub struct MediaExternalLink {
     pub url: String,
 
     pub site: String,
@@ -105,42 +105,46 @@ impl Media {
     pub fn mean_score(&self) -> String {
         match self.mean_score {
             Some(score) => format!("{}", score),
-            None => String::from("N/A")
+            None => String::from("N/A"),
         }
     }
 
     pub fn episodes(&self) -> String {
         match self.episodes {
             Some(episodes) => format!("{}", episodes),
-            None => String::from("N/A")
+            None => String::from("N/A"),
         }
     }
 
     pub fn chapters(&self) -> String {
         match self.chapters {
             Some(chapters) => format!("{}", chapters),
-            None => String::from("N/A")
+            None => String::from("N/A"),
         }
     }
 
     pub fn banner_image(&self) -> String {
         match &self.banner_image {
             Some(banner_image) => banner_image.to_string(),
-            None => "".to_string()
+            None => "".to_string(),
         }
     }
 
     pub fn genres(&self) -> String {
         if !self.genres.is_empty() {
             let mut genres = vec![];
-            let url = |genre: &String|
-                format!("https://anilist.co/search/anime?includedGenres={}", genre.replace(" ", "+"));
+            let url = |genre: &String| {
+                format!(
+                    "https://anilist.co/search/anime?includedGenres={}",
+                    genre.replace(" ", "+")
+                )
+            };
 
             for genre in &self.genres {
                 genres.push(format!("[{0}]({1})", genre, url(genre)));
             }
 
-            return genres.join(", ")
+            return genres.join(", ");
         }
 
         "N/A".to_string()
@@ -162,7 +166,7 @@ impl Media {
         let anilist = format!("[AniList](https://anilist.co/anime/{})", self.id);
         let mal = match self.id_mal {
             Some(id_mal) => format!("[MyAnimeList](https://myanimelist.com/anime/{})", id_mal),
-            None => "".to_owned()
+            None => "".to_owned(),
         };
 
         format!("{}, {}", anilist, mal)
@@ -171,7 +175,7 @@ impl Media {
     pub fn synopsis(&self) -> String {
         match &self.description {
             Some(description) => synopsis(description, 300),
-            None => "".to_string()
+            None => "".to_string(),
         }
     }
 
@@ -183,13 +187,17 @@ impl Media {
                     match &self.next_airing_episode {
                         Some(next) => {
                             let start = SystemTime::now();
-                            let since_the_epoch = start.duration_since(UNIX_EPOCH)
+                            let since_the_epoch = start
+                                .duration_since(UNIX_EPOCH)
                                 .expect("Time went backwards");
                             let delta_time = next.airing_at - since_the_epoch.as_secs();
 
-                            format!("Airing | Next episode: {}", format_time((delta_time / 60) as f64))
-                        },
-                        None => "Airing".to_string()
+                            format!(
+                                "Airing | Next episode: {}",
+                                format_time((delta_time / 60) as f64)
+                            )
+                        }
+                        None => "Airing".to_string(),
                     }
                 } else {
                     "Releasing".to_string()
@@ -197,7 +205,7 @@ impl Media {
             }
             "NOT_YET_RELEASED" => "Not Yet Released".to_string(),
             "CANCELLED" => "Cancelled".to_string(),
-            _ => "Unknown Status".to_string()
+            _ => "Unknown Status".to_string(),
         };
 
         status

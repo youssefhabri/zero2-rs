@@ -1,9 +1,8 @@
 use chrono::prelude::*;
-use time::Duration;
-use std::ops::Add;
-use rand::prelude::*;
 use math::round::floor;
-
+use rand::prelude::*;
+use std::ops::Add;
+use time::Duration;
 
 /// Get the DateTime<Local> for the next Weekday
 pub fn next_day(target: Weekday) -> DateTime<Local> {
@@ -20,7 +19,10 @@ pub fn next_day(target: Weekday) -> DateTime<Local> {
 pub fn to_midnight(datetime: DateTime<Local>) -> DateTime<FixedOffset> {
     let midnight = format!(
         "{}-{:02}-{}T00:00:00{}",
-        datetime.date().year(), datetime.date().month(), datetime.date().day(), "+01:00"
+        datetime.date().year(),
+        datetime.date().month(),
+        datetime.date().day(),
+        "+01:00"
     );
 
     DateTime::parse_from_rfc3339(midnight.as_str()).unwrap()
@@ -56,7 +58,7 @@ pub fn month_to_string<'a>(month: u32) -> &'a str {
         10 => "Oct",
         11 => "Nov",
         12 => "Dec",
-        _ => unreachable!()
+        _ => unreachable!(),
     }
 }
 
@@ -97,10 +99,10 @@ pub fn random_num(min: usize, max: usize) -> usize {
 /// Converts a time in seconds to a human readable string
 /// Taken from https://gitlab.com/Mishio595/momiji-rust
 /// under the MIT license
-const WEEK: usize = 60*60*24*7;
-const DAY:  usize = 60*60*24;
-const HOUR: usize = 60*60;
-const MIN:  usize = 60;
+const WEEK: usize = 60 * 60 * 24 * 7;
+const DAY: usize = 60 * 60 * 24;
+const HOUR: usize = 60 * 60;
+const MIN: usize = 60;
 
 pub fn seconds_to_hrtime(secs: usize) -> String {
     let word = ["week", "day", "hour", "min", "sec"];
@@ -110,10 +112,10 @@ pub fn seconds_to_hrtime(secs: usize) -> String {
             Some((s, steps)) => {
                 accum.push(t / *s);
                 make_parts(t % *s, steps, accum)
-            },
+            }
         }
     }
-    
+
     make_parts(secs, &[WEEK, DAY, HOUR, MIN, 1], Vec::new())
         .iter()
         .enumerate()

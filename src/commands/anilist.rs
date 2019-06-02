@@ -1,8 +1,7 @@
 use serenity::framework::standard::macros::group;
 
-
-pub mod utils;
 pub mod client;
+pub mod utils;
 
 // command modules
 pub mod activity;

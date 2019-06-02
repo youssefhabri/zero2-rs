@@ -9,7 +9,7 @@ pub struct Studio {
     #[serde(rename = "siteUrl")]
     site_url: String,
 
-    media: MediaConnection
+    media: MediaConnection,
 }
 
 impl Studio {
@@ -31,13 +31,17 @@ impl Studio {
         let unwrap_score = |score: Option<u32>| -> String {
             match score {
                 Some(score) => format!("{}", score),
-                None => format!("N/A")
+                None => format!("N/A"),
             }
         };
 
         for media in self.media.nodes.iter().take(10) {
-            media_list.push(
-                format!("[{}]({}) [Score: {}]", media.title.user_preferred, media.site_url, unwrap_score(media.mean_score)))
+            media_list.push(format!(
+                "[{}]({}) [Score: {}]",
+                media.title.user_preferred,
+                media.site_url,
+                unwrap_score(media.mean_score)
+            ))
         }
 
         media_list.join("\n")
