@@ -22,7 +22,9 @@ impl Zero2Framework {
                     .prefix(PREFIX.as_str())
             })
             .before(|ctx, msg, cmd| {
-                let _ = msg.channel_id.broadcast_typing(&ctx.http);
+                if cmd != "shutdown" {
+                    let _ = msg.channel_id.broadcast_typing(&ctx.http);
+                }
 
                 {
                     let mut data = ctx.data.write();
