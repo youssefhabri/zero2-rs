@@ -32,7 +32,7 @@ fn embed(context: &mut Context, message: &Message, args: Args) -> CommandResult 
     };
 
     let _ = channel.send_message(&context.http, |m| {
-        m.embed(|e| e.title(segments[1]).description(segments[1..].join(" ")))
+        m.embed(|e| e.title(segments[1]).description(segments[2..].join(" ")))
     });
 
     Ok(())
