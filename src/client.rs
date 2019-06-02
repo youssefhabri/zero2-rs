@@ -11,7 +11,8 @@ impl Zero2Client {
         // Load token from environment variables or .env file
         let token: String = dotenv::var("DISCORD_TOKEN").expect("token");
 
-        let mut client = Client::new(&token, Zero2Handler).expect("Error creating client");
+        let mut client =
+            Client::new(&token, Zero2Handler::default()).expect("Error creating client");
 
         let owner = match client.cache_and_http.http.get_current_application_info() {
             Ok(info) => info.owner,

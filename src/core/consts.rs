@@ -1,5 +1,8 @@
+use crate::db::Database;
+
 lazy_static! {
     pub static ref PREFIX: String = dotenv::var("BOT_PREFIX").expect("token");
+    pub static ref DB: Database = Database::connect();
 }
 
 pub const BOT_ID: u64 = 453773001805135883;

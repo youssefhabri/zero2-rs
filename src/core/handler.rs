@@ -1,12 +1,18 @@
+use std::collections::HashSet;
+
 use serenity::model::{
     channel::Message, channel::Reaction, event::ResumedEvent, gateway::Activity, gateway::Ready,
     guild::Member, id::GuildId,
 };
 use serenity::prelude::{Context, EventHandler};
 
+use crate::core::consts::DB as db;
 use crate::{menu, monitors};
 
-pub struct Zero2Handler;
+#[derive(Default)]
+pub struct Zero2Handler {
+    blacklist: HashSet<String>,
+}
 
 impl EventHandler for Zero2Handler {
     fn guild_member_addition(&self, context: Context, guild_id: GuildId, new_member: Member) {
@@ -14,6 +20,8 @@ impl EventHandler for Zero2Handler {
     }
 
     fn message(&self, context: Context, message: Message) {
+        // TODO check for blacklisted commands
+
         monitors::message_monitors(&context, &message);
     }
 
