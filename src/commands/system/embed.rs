@@ -10,29 +10,40 @@ use crate::checks::*;
 fn embed(context: &mut Context, message: &Message, args: Args) -> CommandResult {
     let full_message: String = args.message().to_string();
 
-    let segments: Vec<&str> = full_message.split(" | ").collect();
+    let split_pattern = " | ";
 
-    if segments.len() < 3 {
+    let mut segments: Vec<&str> = full_message
+        .split(split_pattern)
+        .filter(|seg| !seg.is_empty())
+        .collect();
+
+    if segments.len() < 1 {
         let _ = message
             .channel_id
-            .say(&context.http, "This commands need 3 arguments");
+            .say(&context.http, "_Echo echo. Test 1 2 3, test A B C ..._");
         return Ok(());
     }
 
     let channel = match parse_channel(segments[0]) {
-        Some(cid) => ChannelId(cid),
-        None => {
-            let _ = message.channel_id.say(
-                &context.http,
-                format!("{} is not a valid channel.", segments[0]),
-            );
+        Some(cid) => {
+            segments = segments[1..].to_vec();
 
-            return Ok(());
+            ChannelId(cid)
         }
+        None => message.channel_id,
     };
 
     let _ = channel.send_message(&context.http, |m| {
-        m.embed(|e| e.title(segments[1]).description(segments[2..].join(" ")))
+        m.embed(|embed| {
+            if segments.len() >= 2 {
+                embed.title(segments[0]);
+                embed.description(segments[1..].join(split_pattern));
+            } else {
+                embed.description(segments.join(split_pattern));
+            }
+
+            embed
+        })
     });
 
     Ok(())
