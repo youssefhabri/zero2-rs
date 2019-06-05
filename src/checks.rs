@@ -21,3 +21,22 @@ fn admin_check(ctx: &mut Context, msg: &Message, _: &mut Args, _: &CommandOption
 
     false.into()
 }
+
+#[check]
+#[name = "EAP"]
+fn eap_check(ctx: &mut Context, msg: &Message, _: &mut Args, _: &CommandOptions) -> CheckResult {
+    if let Some(member) = msg.member(&ctx.cache) {
+        if let Some(roles) = member.roles(&ctx.cache) {
+            return roles
+                .iter()
+                .any(|role| {
+                    role.name == "Nitro Booster"
+                        || role.name == "Donator"
+                        || role.name == "Early Access"
+                })
+                .into();
+        }
+    }
+
+    false.into()
+}
