@@ -2,7 +2,7 @@ use std::str;
 
 use crate::models::anilist::{
     activity::Activity, airing_schedule::AiringSchedule, character::Character, media::Media,
-    studio::Studio, user::User, QueryBody, Response,
+    staff::Staff, studio::Studio, user::User, QueryBody, Response,
 };
 
 #[derive(RustEmbed)]
@@ -74,7 +74,7 @@ pub fn search_users(keyword: String) -> Vec<User> {
     query(
         "Search/UserSearch",
         vec![("search", keyword.as_str())],
-        vec!["MediaBase"],
+        vec!["CharacterBase", "MediaBase"],
     )
     .data
     .page
@@ -85,7 +85,7 @@ pub fn search_user(username: String) -> Option<User> {
     query(
         "UserQuery",
         vec![("username", username.as_str())],
-        vec!["MediaBase"],
+        vec!["CharacterBase", "MediaBase"],
     )
     .data
     .user
@@ -95,7 +95,7 @@ pub fn search_characters(keyword: String) -> Vec<Character> {
     query(
         "Search/CharacterSearch",
         vec![("search", keyword.as_str())],
-        vec!["MediaBase"],
+        vec!["CharacterBase", "MediaBase"],
     )
     .data
     .page
@@ -106,7 +106,7 @@ pub fn search_character_by_id(character_id: String) -> Option<Character> {
     query(
         "CharacterQuery",
         vec![("id", character_id.as_str())],
-        vec!["MediaBase"],
+        vec!["CharacterBase", "MediaBase"],
     )
     .data
     .character
@@ -140,4 +140,25 @@ pub fn search_studio(id: String) -> Option<Studio> {
     query("StudioQuery", vec![("id", id.as_str())], vec!["MediaBase"])
         .data
         .studio
+}
+
+pub fn search_staff(keyword: String) -> Vec<Staff> {
+    query(
+        "Search/StaffSearch",
+        vec![("search", keyword.as_str())],
+        vec!["CharacterBase", "MediaBase"],
+    )
+    .data
+    .page
+    .staff()
+}
+
+pub fn search_staff_by_id(staff_id: String) -> Option<Staff> {
+    query(
+        "StaffQuery",
+        vec![("id", staff_id.as_str())],
+        vec!["CharacterBase", "MediaBase"],
+    )
+    .data
+    .staff
 }

@@ -1,8 +1,15 @@
 use crate::commands::anilist::utils::synopsis;
-use crate::models::anilist::connection::MediaConnection;
+use crate::models::anilist::connection::{CharacterConnection, MediaConnection};
+
+// TODO unify all image structs
+#[derive(Clone, Deserialize, Debug)]
+pub struct StaffImage {
+    pub large: Option<String>,
+    pub medium: Option<String>,
+}
 
 #[derive(Clone, Deserialize, Debug)]
-pub struct CharacterName {
+pub struct StaffName {
     pub first: Option<String>,
     pub last: Option<String>,
     pub native: Option<String>,
@@ -10,58 +17,18 @@ pub struct CharacterName {
 }
 
 #[derive(Clone, Deserialize, Debug)]
-pub struct CharacterImage {
-    pub large: Option<String>,
-    pub medium: Option<String>,
-}
-
-#[derive(Clone, Deserialize, Debug)]
-pub struct CharacterBase {
+#[serde(rename_all = "camelCase")]
+pub struct Staff {
     pub id: u32,
-
-    #[serde(rename = "siteUrl")]
     pub site_url: String,
-
-    pub name: CharacterName,
-
-    pub image: CharacterImage,
-}
-
-impl CharacterBase {
-    pub fn full_name(&self) -> String {
-        let mut name_list = vec![];
-
-        match &self.name.first {
-            Some(first) => name_list.push(first.clone()),
-            None => {}
-        }
-
-        match &self.name.last {
-            Some(last) => name_list.push(last.clone()),
-            None => {}
-        }
-
-        name_list.join(" ")
-    }
-}
-
-#[derive(Deserialize, Debug)]
-pub struct Character {
-    pub id: u32,
-
-    #[serde(rename = "siteUrl")]
-    pub site_url: String,
-
+    pub name: StaffName,
+    pub image: StaffImage,
     pub description: Option<String>,
-
-    pub name: CharacterName,
-
-    pub image: CharacterImage,
-
-    pub media: MediaConnection,
+    pub characters: CharacterConnection,
+    pub staff_media: MediaConnection,
 }
 
-impl Character {
+impl Staff {
     pub fn full_name(&self) -> String {
         let mut name_list = vec![];
 
@@ -85,7 +52,7 @@ impl Character {
         }
     }
 
-    pub fn cover_image(&self) -> String {
+    pub fn image(&self) -> String {
         match &self.image.large {
             Some(image) => image.to_string(),
             None => String::new(),
@@ -93,7 +60,7 @@ impl Character {
     }
 
     pub fn media_list(&self, media_type: &str) -> String {
-        let media_list = &self.media.nodes;
+        let media_list = &self.staff_media.nodes;
 
         let mut fav_list: Vec<String> = vec![];
 
@@ -114,6 +81,16 @@ impl Character {
         }
 
         if !fav_list.is_empty() {
+            if media_list
+                .iter()
+                .filter(|media| media.media_type == media_type)
+                .collect::<Vec<_>>()
+                .len()
+                > 5
+            {
+                return format!("{}\n + {} more", fav_list.join("\n"), media_list.len() - 5);
+            }
+
             return fav_list.join("\n");
         }
 

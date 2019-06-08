@@ -1,40 +1,33 @@
-query ($username: String) {
-    User(name: $username) {
-        id
-        name
-        siteUrl
-        avatar {
-            large
-        }
-        bannerImage
-        about(asHtml: false)
-        stats {
-            watchedTime
-            chaptersRead
-        }
-        favourites {
-            manga {
-                nodes {
-                    ...MediaBase
-                }
-            }
-            characters {
-                nodes {
-                    id
-                    siteUrl
-                    name {
-                        first
-                        last
-                        native
-                        alternative
-                    }
-                }
-            }
-            anime {
-                nodes {
-                    ...MediaBase
-                }
-            }
-        }
+query($username: String) {
+  User(name: $username) {
+    id
+    name
+    siteUrl
+    avatar {
+      large
     }
+    bannerImage
+    about(asHtml: false)
+    stats {
+      watchedTime
+      chaptersRead
+    }
+    favourites {
+      manga {
+        nodes {
+          ...MediaBase
+        }
+      }
+      characters {
+        nodes {
+          ...CharacterBase
+        }
+      }
+      anime {
+        nodes {
+          ...MediaBase
+        }
+      }
+    }
+  }
 }

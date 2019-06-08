@@ -1,6 +1,8 @@
 use crate::commands::anilist::utils::synopsis;
 use crate::models::anilist::studio::Studio;
-use crate::models::anilist::{activity::Activity, character::Character, media::Media, user::User};
+use crate::models::anilist::{
+    activity::Activity, character::Character, media::Media, staff::Staff, user::User,
+};
 use crate::models::giphy::Giphy;
 use serenity::builder::CreateEmbed;
 
@@ -72,6 +74,22 @@ pub fn character_embed_builder(character: &Character, prefix: String) -> CreateE
         .thumbnail(&character.cover_image())
         .field("Anime", &character.media_list("ANIME"), true)
         .field("Manga", &character.media_list("MANGA"), true)
+        .footer(|f| {
+            f.icon_url("https://anilist.co/img/icons/favicon-32x32.png")
+                .text(format!("{}Powered by AniList", prefix))
+        })
+        .clone()
+}
+
+pub fn staff_embed_builder(staff: &Staff, prefix: String) -> CreateEmbed {
+    CreateEmbed::default()
+        .color(3447003)
+        .title(&staff.full_name())
+        .url(&staff.site_url)
+        .description(&staff.about())
+        .thumbnail(&staff.image())
+        .field("Anime", &staff.media_list("ANIME"), true)
+        .field("Manga", &staff.media_list("MANGA"), true)
         .footer(|f| {
             f.icon_url("https://anilist.co/img/icons/favicon-32x32.png")
                 .text(format!("{}Powered by AniList", prefix))

@@ -1,0 +1,26 @@
+query($id: Int) {
+  Staff(id: $id) {
+    id
+    siteUrl
+    name {
+      first
+      last
+      native
+      alternative
+    }
+    image {
+      large
+    }
+    description
+    characters {
+      nodes {
+        ...CharacterBase
+      }
+    }
+    staffMedia(sort: SCORE_DESC) {
+      nodes {
+        ...MediaBase
+      }
+    }
+  }
+}

@@ -1,4 +1,4 @@
-query ($id: Int, $search: String) {
+query($id: Int, $search: String) {
   Page(perPage: 50) {
     users(id: $id, search: $search, sort: SEARCH_MATCH) {
       id
@@ -21,14 +21,7 @@ query ($id: Int, $search: String) {
         }
         characters {
           nodes {
-            id
-            siteUrl
-            name {
-              first
-              last
-              native
-              alternative
-            }
+            ...CharacterBase
           }
         }
         anime {

@@ -1,24 +1,13 @@
-query ($id: Int,$search: String) {
-    Page(perPage: 50) {
-        characters(id: $id, search: $search) {
-            id
-            siteUrl
-            description(asHtml: false)
-            name {
-                first
-                last
-                native
-                alternative
-            }
-            image {
-                large
-                medium
-            }
-            media(sort: SCORE_DESC) {
-                nodes {
-                    ...MediaBase
-                }
-            }
+query($id: Int, $search: String) {
+  Page(perPage: 50) {
+    characters(id: $id, search: $search) {
+      ...CharacterBase
+      description(asHtml: false)
+      media(sort: SCORE_DESC) {
+        nodes {
+          ...MediaBase
         }
+      }
     }
+  }
 }

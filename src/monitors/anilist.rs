@@ -4,14 +4,13 @@ use serenity::prelude::Context;
 
 use crate::commands::anilist::client;
 use crate::menu::builders;
-use crate::models::anilist::character::Character;
-use crate::models::anilist::media::Media;
-use crate::models::anilist::studio::Studio;
-use crate::models::anilist::user::User;
+use crate::models::anilist::{
+    character::Character, media::Media, staff::Staff, studio::Studio, user::User,
+};
 
 lazy_static! {
     static ref RE: Regex = Regex::new(
-        r"https://anilist\.co/(anime|manga|character|activity|user|studio)/([0-9]+)?/?([^/]+)?/?",
+        r"https://anilist\.co/(anime|manga|character|activity|user|studio|staff)/([0-9]+)?/?([^/]+)?/?",
     )
     .unwrap();
 }
@@ -68,6 +67,9 @@ pub fn anilist_links_monitor(context: &Context, message: &Message) {
         }
         "studio" => {
             handle_studio(context, message, &cap[2]);
+        }
+        "staff" => {
+            handle_staff(context, message, &cap[2]);
         }
         _ => return,
     }
@@ -153,6 +155,24 @@ fn handle_studio(context: &Context, message: &Message, studio_id: &str) {
             let _sending = message.channel_id.send_message(&context.http, |m| {
                 m.embed(|embed| {
                     embed.clone_from(&builders::studio_embed_builder(&studio, "".into()));
+
+                    embed
+                })
+            });
+        }
+        None => return,
+    }
+}
+
+/// Handles staff embeds for the AniList Links Monitor
+fn handle_staff(context: &Context, message: &Message, staff_id: &str) {
+    let staff: Option<Staff> = client::search_staff_by_id(staff_id.into());
+
+    match staff {
+        Some(staff) => {
+            let _sending = message.channel_id.send_message(&context.http, |m| {
+                m.embed(|embed| {
+                    embed.clone_from(&builders::staff_embed_builder(&staff, "".into()));
 
                     embed
                 })
