@@ -1,5 +1,5 @@
-use std::collections::HashMap;
 use std::sync::Arc;
+use std::{collections::HashMap, fmt};
 
 use chrono::{DateTime, FixedOffset};
 use serenity::{
@@ -56,4 +56,5 @@ pub struct MessagePagination {
     pub handler: Option<HandlerFunc>,
     pub message_id: MessageId,
     pub pages: Vec<CreateEmbed>,
+    pub deleted: bool,
 }
