@@ -7,11 +7,11 @@ use crate::menu;
 use crate::menu::builders;
 use crate::models::anilist::staff::Staff;
 
-#[command("staff")]
+#[command]
 #[aliases("s")]
 #[usage = "<staff name>"]
 #[description = "Search for a staff in AniList"]
-fn staff_command(context: &mut Context, message: &Message, args: Args) -> CommandResult {
+fn staff(context: &mut Context, message: &Message, args: Args) -> CommandResult {
     if args.is_empty() {
         let _ = message
             .channel_id

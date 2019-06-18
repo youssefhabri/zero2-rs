@@ -4,9 +4,9 @@ use serenity::prelude::*;
 
 use crate::core::utils::random_num;
 
-#[command("fortune")]
+#[command]
 #[description = "Find out you fortune. It just might be you lucky day ..."]
-fn fortune_command(context: &mut Context, message: &Message, _: Args) -> CommandResult {
+fn fortune(context: &mut Context, message: &Message, _: Args) -> CommandResult {
     match random_fortune() {
         Some(fortune) => {
             let _ = message.channel_id.send_message(&context.http, |m| {

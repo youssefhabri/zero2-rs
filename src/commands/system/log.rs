@@ -7,9 +7,9 @@ use serenity::prelude::*;
 use crate::checks::*;
 use crate::core::store::{Command, CommandLogger};
 
-#[command("log")]
+#[command]
 #[checks(Admin)]
-fn log_command(context: &mut Context, message: &Message, _: Args) -> CommandResult {
+fn log(context: &mut Context, message: &Message, _: Args) -> CommandResult {
     let mut cmds: HashMap<MessageId, Command> = HashMap::default();
 
     {

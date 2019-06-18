@@ -1,5 +1,5 @@
+use std::collections::HashMap;
 use std::sync::Arc;
-use std::{collections::HashMap, fmt};
 
 use chrono::{DateTime, FixedOffset};
 use serenity::{

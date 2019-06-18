@@ -7,11 +7,11 @@ use crate::menu;
 use crate::menu::builders;
 use crate::models::anilist::user::User;
 
-#[command("user")]
+#[command]
 #[aliases("u")]
 #[usage = "<username>"]
 #[description = "Search for a user in AniList"]
-fn user_command(context: &mut Context, message: &Message, args: Args) -> CommandResult {
+fn user(context: &mut Context, message: &Message, args: Args) -> CommandResult {
     if args.is_empty() {
         let _ = message
             .channel_id

@@ -17,7 +17,7 @@ group!({
     commands: [urban]
 });
 
-#[command("urban")]
+#[command]
 #[aliases("ud", "define")]
 #[usage = "<keyword>"]
 #[description = "Search for a definition in Urban Dictionary"]

@@ -5,8 +5,8 @@ use serenity::utils::parse_mention;
 
 use std::result::Result;
 
-#[command("avatar")]
-fn avatar_command(context: &mut Context, message: &Message, mut args: Args) -> CommandResult {
+#[command]
+fn avatar(context: &mut Context, message: &Message, mut args: Args) -> CommandResult {
     let user_tags = if args.is_empty() {
         vec![format!("<@!{}>", message.author.id)]
     } else {

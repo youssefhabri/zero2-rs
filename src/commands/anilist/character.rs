@@ -7,11 +7,11 @@ use crate::menu;
 use crate::menu::builders;
 use crate::models::anilist::character::Character;
 
-#[command("character")]
+#[command]
 #[aliases("c")]
 #[usage = "<character name>"]
 #[description = "Search for a character in AniList"]
-fn character_command(context: &mut Context, message: &Message, args: Args) -> CommandResult {
+fn character(context: &mut Context, message: &Message, args: Args) -> CommandResult {
     if args.is_empty() {
         let _ = message
             .channel_id

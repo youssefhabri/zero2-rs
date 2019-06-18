@@ -10,11 +10,11 @@ use crate::commands::anilist::client;
 use crate::core::utils::{next_day, to_midnight, weekday_to_string};
 use crate::models::anilist::airing_schedule::AiringSchedule;
 
-#[command("airing")]
+#[command]
 #[aliases("airs")]
 #[usage = "[weekday]"]
 #[description = "Show airing anime for a given/current day"]
-fn airing_command(context: &mut Context, message: &Message, args: Args) -> CommandResult {
+fn airing(context: &mut Context, message: &Message, args: Args) -> CommandResult {
     let (start, day) = if args.is_empty() {
         (to_midnight(Local::now()), "Today".to_owned())
     } else {

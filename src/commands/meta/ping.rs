@@ -6,19 +6,23 @@ use serenity::{
     prelude::*,
 };
 
-#[command("ping")]
-fn ping_command(context: &mut Context, message: &Message, _: Args) -> CommandResult {
+#[command]
+fn ping(context: &mut Context, message: &Message, _: Args) -> CommandResult {
     // The shard manager is an interface for mutating, stopping, restarting, and
     // retrieving information about shards.
-    let data = context.data.read();
+    let shard_manager = {
+        let data = context.data.read();
 
-    let shard_manager = match data.get::<ShardManagerContainer>() {
-        Some(v) => v,
-        None => {
-            let _ = message.reply(context, "There was a problem getting the shard manager");
+        let shard_manager = match data.get::<ShardManagerContainer>() {
+            Some(v) => v,
+            None => {
+                // let _ = message.reply(context, "There was a problem getting the shard manager");
 
-            return Ok(());
-        }
+                return Ok(());
+            }
+        };
+
+        shard_manager.clone()
     };
 
     let manager = shard_manager.lock();

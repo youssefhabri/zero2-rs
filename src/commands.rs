@@ -7,7 +7,6 @@ use serenity::framework::standard::{
 use serenity::model::prelude::*;
 use serenity::prelude::Context;
 use std::collections::HashSet;
-use std::hash::BuildHasher;
 
 pub mod anilist;
 pub mod fun;
@@ -17,11 +16,14 @@ pub mod nekoslife;
 pub mod system;
 pub mod urban;
 
+pub mod test;
+use self::test::TEST_COMMAND;
+
 use self::giphy::GIPHY_COMMAND;
 
 group!({
     name: "no_category",
-    commands: [giphy],
+    commands: [giphy, test],
 });
 
 #[help]
@@ -39,7 +41,7 @@ pub fn zero2_help(
     args: Args,
     help_options: &'static HelpOptions,
     groups: &[&'static CommandGroup],
-    owners: HashSet<UserId, impl BuildHasher>,
+    owners: HashSet<UserId>,
 ) -> CommandResult {
     help_commands::with_embeds(context, msg, args, help_options, groups, owners)
 }

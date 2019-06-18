@@ -6,8 +6,9 @@ use serenity::prelude::*;
 
 use crate::core::consts::AT_BOT_IDS;
 
-#[command("stats")]
-fn stats_command(context: &mut Context, message: &Message, _: Args) -> CommandResult {
+#[command]
+#[bucket = "stats_limit"]
+fn stats(context: &mut Context, message: &Message, _: Args) -> CommandResult {
     let sending = message
         .channel_id
         .say(&context.http, "_Crunching numbers, please be patient ..._");
