@@ -42,5 +42,7 @@ fn echo(context: &mut Context, message: &Message, args: Args) -> CommandResult {
         }
     }
 
+    message.delete(context)?;
+
     Ok(())
 }
