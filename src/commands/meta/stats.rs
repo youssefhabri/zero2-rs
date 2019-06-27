@@ -1,14 +1,14 @@
+use indexmap::IndexMap;
+use serenity::builder::CreateEmbed;
 use serenity::framework::standard::{macros::command, Args, CommandResult};
-use serenity::model::channel::Message;
+use serenity::model::prelude::{Message, UserId};
 use serenity::prelude::*;
 
 use crate::core::consts::AT_BOT_IDS;
-use indexmap::IndexMap;
-use serenity::builder::CreateEmbed;
-use serenity::model::id::UserId;
 
-#[command("stats")]
-fn stats_command(context: &mut Context, message: &Message, _: Args) -> CommandResult {
+#[command]
+#[bucket = "stats_limit"]
+fn stats(context: &mut Context, message: &Message, _: Args) -> CommandResult {
     let sending = message
         .channel_id
         .say(&context.http, "_Crunching numbers, please be patient ..._");
@@ -20,11 +20,10 @@ fn stats_command(context: &mut Context, message: &Message, _: Args) -> CommandRe
             let mut stats: IndexMap<UserId, u32> = IndexMap::new();
 
             for msg in messages {
-                let author_id = msg.author.id;
-                match stats.get(&author_id) {
-                    Some(count) => stats.insert(author_id, count + 1),
-                    None => stats.insert(author_id, 1),
-                };
+                stats
+                    .entry(msg.author.id)
+                    .and_modify(|v| v.clone_from(&mut (v.clone() + 1)))
+                    .or_insert(1);
             }
 
             stats.sort_by(|_, a, _, b| b.cmp(a));

@@ -17,8 +17,8 @@ group!({
     commands: [urban]
 });
 
-#[command("urban")]
-#[aliases("ub", "define")]
+#[command]
+#[aliases("ud", "define")]
 #[usage = "<keyword>"]
 #[description = "Search for a definition in Urban Dictionary"]
 fn urban(context: &mut Context, message: &Message, args: Args) -> CommandResult {

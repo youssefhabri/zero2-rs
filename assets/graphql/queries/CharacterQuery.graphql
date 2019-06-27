@@ -1,22 +1,11 @@
-query ($id: Int) {
-    Character(id: $id) {
-        id
-        siteUrl
-        description(asHtml: false)
-        name {
-            first
-            last
-            native
-            alternative
-        }
-        image {
-            large
-            medium
-        }
-        media(sort: SCORE_DESC) {
-            nodes {
-                ...MediaBase
-            }
-        }
+query($id: Int) {
+  Character(id: $id) {
+    ...CharacterBase
+    description(asHtml: false)
+    media(sort: SCORE_DESC) {
+      nodes {
+        ...MediaBase
+      }
     }
+  }
 }

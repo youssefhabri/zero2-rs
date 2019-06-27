@@ -4,11 +4,10 @@ use serenity::framework::standard::{macros::command, Args, CommandResult};
 use serenity::model::channel::Message;
 use serenity::prelude::*;
 
-#[command("nlowo")]
-#[aliases("owo")]
+#[command]
 #[usage = "[keyword]"]
 #[description = "OwOfy you text, cause why not."]
-fn nlowo_command(context: &mut Context, message: &Message, args: Args) -> CommandResult {
+fn owo(context: &mut Context, message: &Message, args: Args) -> CommandResult {
     if args.is_empty() {
         let _ = message
             .channel_id

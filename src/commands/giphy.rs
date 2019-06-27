@@ -27,10 +27,10 @@ pub fn query(query: String) -> GiphyResponse {
     response
 }
 
-#[command("giphy")]
+#[command]
 #[aliases("gif")]
 #[usage = "[keyword]"]
-fn giphy_command(context: &mut Context, message: &Message, args: Args) -> CommandResult {
+fn giphy(context: &mut Context, message: &Message, args: Args) -> CommandResult {
     let keyword = args.message().to_string();
     let results = query(keyword.clone()).data;
 

@@ -12,10 +12,10 @@ const BOT_VERSION: &str = env!("CARGO_PKG_VERSION");
 
 /// Taken from https://gitlab.com/Mishio595/momiji-rust
 /// under the MIT license
-#[command("botinfo")]
+#[command]
 #[aliases("bi", "binfo", "info")]
 #[description = "Show bot information"]
-fn bot_info_command(context: &mut Context, message: &Message, _: Args) -> CommandResult {
+fn bot_info(context: &mut Context, message: &Message, _: Args) -> CommandResult {
     let data = context.data.read();
     let (guild_count, shard_count, thumbnail) = {
         let cache = context.cache.read();

@@ -7,11 +7,11 @@ use crate::menu;
 use crate::menu::builders;
 use crate::models::anilist::media::Media;
 
-#[command("anime")]
+#[command]
 #[aliases("a")]
 #[usage = "<anime title>"]
 #[description = "Search for an anime in AniList"]
-pub fn anime_command(context: &mut Context, message: &Message, args: Args) -> CommandResult {
+pub fn anime(context: &mut Context, message: &Message, args: Args) -> CommandResult {
     if args.is_empty() {
         let _ = message
             .channel_id

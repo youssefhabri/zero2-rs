@@ -56,4 +56,5 @@ pub struct MessagePagination {
     pub handler: Option<HandlerFunc>,
     pub message_id: MessageId,
     pub pages: Vec<CreateEmbed>,
+    pub deleted: bool,
 }

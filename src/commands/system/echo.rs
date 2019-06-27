@@ -1,5 +1,5 @@
 use serenity::framework::standard::{macros::command, Args, CommandResult};
-use serenity::model::channel::Message;
+use serenity::model::prelude::{ChannelId, Message};
 use serenity::prelude::Context;
 use serenity::utils::parse_channel;
 
@@ -17,7 +17,6 @@ fn echo(context: &mut Context, message: &Message, args: Args) -> CommandResult {
     }
 
     let segments: Vec<&str> = args.message().split(" ").collect();
-    let channel = parse_channel(segments[0]);
 
     if let Some(channel_id) = parse_channel(segments[0]) {
         if segments.len() == 1 {
@@ -32,16 +31,18 @@ fn echo(context: &mut Context, message: &Message, args: Args) -> CommandResult {
         if segments.len() > 1 {
             // Send message to channel
             let message_text = segments[1..].join(" ");
-            message.channel_id.say(&context.http, message_text)?;
+            ChannelId(channel_id).say(&context.http, message_text)?;
 
             return Ok(());
         }
     } else {
-        if segments.len() >= 1 && channel.is_none() {
+        if segments.len() >= 1 {
             // send message to current channel
             message.channel_id.say(&context.http, segments.join(" "))?;
         }
     }
+
+    message.delete(context)?;
 
     Ok(())
 }

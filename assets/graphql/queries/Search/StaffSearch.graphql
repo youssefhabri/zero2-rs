@@ -1,0 +1,28 @@
+query($search: String) {
+  Page(perPage: 50) {
+    staff(search: $search) {
+      id
+      siteUrl
+      name {
+        first
+        last
+        native
+        alternative
+      }
+      image {
+        large
+      }
+      description
+      characters {
+        nodes {
+          ...CharacterBase
+        }
+      }
+      staffMedia(sort: SCORE_DESC) {
+        nodes {
+          ...MediaBase
+        }
+      }
+    }
+  }
+}

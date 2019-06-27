@@ -5,6 +5,7 @@ pub mod airing_schedule;
 pub mod character;
 pub mod connection;
 pub mod media;
+pub mod staff;
 pub mod studio;
 pub mod user;
 
@@ -26,6 +27,8 @@ pub struct Page {
     pub media: Option<Vec<media::Media>>,
 
     pub users: Option<Vec<user::User>>,
+
+    pub staff: Option<Vec<staff::Staff>>,
 }
 
 impl Default for Page {
@@ -35,6 +38,7 @@ impl Default for Page {
             characters: None,
             media: None,
             users: None,
+            staff: None,
         }
     }
 }
@@ -63,7 +67,14 @@ impl Page {
 
     pub fn characters(self) -> Vec<character::Character> {
         match self.characters {
-            Some(character) => character,
+            Some(characters) => characters,
+            None => vec![],
+        }
+    }
+
+    pub fn staff(self) -> Vec<staff::Staff> {
+        match self.staff {
+            Some(staff) => staff,
             None => vec![],
         }
     }
@@ -85,6 +96,9 @@ pub struct Data {
 
     #[serde(default, rename = "User")]
     pub user: Option<user::User>,
+
+    #[serde(default, rename = "Staff")]
+    pub staff: Option<staff::Staff>,
 
     #[serde(default, rename = "Studio")]
     pub studio: Option<studio::Studio>,

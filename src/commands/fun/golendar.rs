@@ -7,8 +7,8 @@ use chrono::{DateTime, Datelike, NaiveDateTime, Timelike, Utc};
 
 const TIMESTAMP_START: i64 = 1_551_312_000_000; //1551308400000;
 
-#[command("golendar")]
-fn golendar_command(context: &mut Context, message: &Message, _: Args) -> CommandResult {
+#[command]
+fn golendar(context: &mut Context, message: &Message, _: Args) -> CommandResult {
     let now = Utc::now();
     let difference = now.timestamp_millis() - TIMESTAMP_START;
 

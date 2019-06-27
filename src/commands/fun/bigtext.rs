@@ -2,9 +2,9 @@ use serenity::framework::standard::{macros::command, Args, CommandResult};
 use serenity::model::channel::Message;
 use serenity::prelude::*;
 
-#[command("bigtext")]
+#[command]
 #[aliases("bt")]
-fn bigtext_command(context: &mut Context, message: &Message, args: Args) -> CommandResult {
+fn bigtext(context: &mut Context, message: &Message, args: Args) -> CommandResult {
     if args.is_empty() {
         let _ = message
             .channel_id
@@ -23,8 +23,8 @@ fn bigtext_command(context: &mut Context, message: &Message, args: Args) -> Comm
 fn text_to_bigtext(text: String) -> String {
     text.chars()
         .map(|c| match c {
-            'a'...'z' | 'A'...'Z' => format!(":regional_indicator_{}:", c.to_lowercase()),
-            '0'...'9' => match c {
+            'a'..='z' | 'A'..='Z' => format!(":regional_indicator_{}:", c.to_lowercase()),
+            '0'..='9' => match c {
                 '0' => ":zero:",
                 '1' => ":one:",
                 '2' => ":two:",

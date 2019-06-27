@@ -66,6 +66,7 @@ pub fn new_pagination_with_handler(
             handler,
             message_id,
             pages,
+            deleted: false,
         },
     );
 }
@@ -86,7 +87,18 @@ pub fn handle_reaction(ctx: &Context, reaction: &Reaction) {
             ReactionType::Unicode(ref x) if x == reactions::NEXT => right,
             ReactionType::Unicode(ref x) if x == reactions::PREV => left,
             ReactionType::Unicode(ref x) if x == reactions::STOP => {
-                let _ = reaction.message(&ctx.http).unwrap().delete_reactions(ctx);
+                let delete_reactions = reaction.message(&ctx.http).unwrap().delete_reactions(ctx);
+
+                if let Ok(_) = delete_reactions {
+                    let mut data = ctx.data.write();
+                    let paginator = data.get_mut::<MessagePaginator>().unwrap();
+                    paginator
+                        .entry(reaction.message_id)
+                        .and_modify(|pagination| {
+                            pagination.pages = vec![];
+                            pagination.deleted = true;
+                        });
+                }
 
                 return;
             }

@@ -6,11 +6,11 @@ use serenity::prelude::*;
 use crate::commands::anilist::client;
 use crate::menu::builders;
 
-#[command("activity")]
+#[command]
 #[aliases("act")]
 #[usage = "<activity_id|activity_url>"]
 #[description = "Embed an activity from AniList"]
-fn activity_command(context: &mut Context, message: &Message, args: Args) -> CommandResult {
+fn activity(context: &mut Context, message: &Message, args: Args) -> CommandResult {
     if args.is_empty() {
         let _ = message
             .channel_id

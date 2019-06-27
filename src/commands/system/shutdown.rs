@@ -8,6 +8,4 @@ use std::process::exit;
 #[owners_only]
 fn shutdown(_: &mut Context, _: &Message, _: Args) -> CommandResult {
     exit(0);
-
-    Ok(())
 }

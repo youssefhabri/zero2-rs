@@ -32,11 +32,11 @@ pub struct NLImage {
     url: String,
 }
 
-#[command("nlimage")]
+#[command]
 #[aliases("nl", "nlimg")]
 #[usage = "[keyword:optional] [user:optional]"]
 #[description = "Get gifs from nekos.life."]
-fn nlimage_command(context: &mut Context, message: &Message, mut args: Args) -> CommandResult {
+fn nlimage(context: &mut Context, message: &Message, mut args: Args) -> CommandResult {
     let params = if !args.is_empty() {
         let mut list: Vec<String> = Vec::new();
 

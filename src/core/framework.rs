@@ -43,7 +43,7 @@ impl Zero2Framework {
                 true
             })
             .bucket("stats_limit", |b| b.delay(6 * 3600))
-            .help(&commands::ZERO2_HELP_HELP_COMMAND)
+            .help(&commands::ZERO2_HELP)
             .group(&anilist::ANILIST_GROUP)
             .group(&urban::KNOWLEDGE_GROUP)
             .group(&fun::FUN_GROUP)

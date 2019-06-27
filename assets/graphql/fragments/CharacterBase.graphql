@@ -1,0 +1,14 @@
+fragment CharacterBase on Character {
+  id
+  siteUrl
+  name {
+    first
+    last
+    native
+    alternative
+  }
+  image {
+    large
+    medium
+  }
+}
