@@ -1,7 +1,7 @@
 use crate::db::Database;
 
 lazy_static! {
-    pub static ref PREFIX: String = dotenv::var("BOT_PREFIX").expect("token");
+    pub static ref PREFIX: String = dotenv::var("BOT_PREFIX").expect("BOT_PREFIX");
     pub static ref DB: Database = Database::connect();
     pub static ref COOKIES: Vec<String> = {
         let url =
