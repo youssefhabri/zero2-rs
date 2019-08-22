@@ -33,15 +33,12 @@ impl Database {
             .expect("Attempt to get connection timed out")
     }
 
-    pub fn commands_blacklist(&self) -> QueryResult<HashSet<String>> {
-        let blacklist = commands_blacklist::table
-            .load::<(i32, String, bool)>(self.conn().deref())?
+    pub fn blacklist(&self, type_: &str) -> QueryResult<HashSet<String>> {
+        let blacklist = blacklist::table
+            .load::<(i32, String, Option<DateTime<Utc>>, String)>(self.conn().deref())?
             .iter()
-            .filter(|(_, _, blocked)| *blocked)
-            .map(|(_, cmd, _)| {
-                let c = cmd.clone();
-                c
-            })
+            .filter(|(_, b_type, _, _)| b_type == type_)
+            .map(|(_, _, _, value)| value.clone())
             .collect::<HashSet<String>>();
 
         Ok(blacklist)
