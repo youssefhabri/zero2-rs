@@ -74,7 +74,7 @@ pub fn search_users(keyword: String) -> Vec<User> {
     query(
         "Search/UserSearch",
         vec![("search", keyword.as_str())],
-        vec!["CharacterBase", "MediaBase"],
+        vec!["CharacterBase", "MediaBase", "UserStatistics"],
     )
     .data
     .page
@@ -85,7 +85,7 @@ pub fn search_user(username: String) -> Option<User> {
     query(
         "UserQuery",
         vec![("username", username.as_str())],
-        vec!["CharacterBase", "MediaBase"],
+        vec!["CharacterBase", "MediaBase", "UserStatistics"],
     )
     .data
     .user
