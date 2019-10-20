@@ -17,11 +17,6 @@ pub struct Zero2Handler {
 impl EventHandler for Zero2Handler {
     fn guild_member_addition(&self, context: Context, guild_id: GuildId, new_member: Member) {
         monitors::new_member_monitors(&context, guild_id, &new_member);
-
-        // Insert new member to database
-        let _ = db.new_user(
-            new_member.user_id(),
-            guild_id,
     }
 
     fn reaction_add(&self, context: Context, add_reaction: Reaction) {
