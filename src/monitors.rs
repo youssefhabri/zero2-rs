@@ -31,7 +31,7 @@ pub fn message_id_monitor(context: &Context, message: &Message) {
     if let Some(cap) = MSG_RE.find(message.content.as_str()) {
         if let Ok(msg_id) = cap.as_str().parse::<u64>() {
             if let Ok(msg) = message.channel_id.message(context, msg_id) {
-                if !msg.content.is_empty() {
+                if !msg.content.is_empty() || !msg.attachments.is_empty() {
                     let guild_id = match message.guild_id {
                         Some(id) => id,
                         None => return,
@@ -52,10 +52,22 @@ pub fn message_id_monitor(context: &Context, message: &Message) {
                                         .nick_in(context, guild_id)
                                         .unwrap_or_else(|| msg.author.name.clone()),
                                 )
-                                .icon_url(msg.author.default_avatar_url())
+                                .icon_url(
+                                    msg.author
+                                        .avatar_url()
+                                        .unwrap_or_else(|| msg.author.default_avatar_url()),
+                                )
                             })
                             .description(msg.content)
-                            .field("Original", url, false)
+                            .field("Original", url, false);
+
+                            if msg.attachments[0].dimensions().is_some()
+                                && !msg.attachments.is_empty()
+                            {
+                                e.image(msg.attachments[0].url.clone());
+                            };
+
+                            e
                         })
                     });
                 }
