@@ -1,4 +1,4 @@
--- Commands blacklist
+-- blacklist
 CREATE TABLE blacklist
 (
     id SERIAL PRIMARY KEY,

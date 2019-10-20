@@ -65,6 +65,53 @@ pub fn user_embed_builder(user: &User, prefix: String) -> CreateEmbed {
         .clone()
 }
 
+pub fn user_anime_stats_embed_builder(user: &User, prefix: String) -> CreateEmbed {
+    CreateEmbed::default()
+        .color(3447003)
+        .title(format!("{}'s anime statistics", &user.name))
+        .url(format!(
+            "https://anilist.co/user/{}/stats/anime/overview",
+            &user.name
+        ))
+        .thumbnail(&user.avatar.large)
+        .field("Total Anime", &user.statistics.total_anime(), true)
+        .field(
+            "Episodes Watched",
+            &user.statistics.episodes_watched(),
+            true,
+        )
+        .field("Days Watched", &user.statistics.days_watched(), true)
+        .field("Days Planned", &user.statistics.days_planned(), true)
+        .field("Mean Score", &user.statistics.mean_score(), true)
+        .field(
+            "Standard Deviation",
+            &user.statistics.standard_deviation(),
+            true,
+        )
+        .footer(|f| {
+            f.icon_url("https://anilist.co/img/icons/favicon-32x32.png")
+                .text(format!("{}Powered by AniList", prefix))
+        })
+        .clone()
+}
+
+pub fn user_manga_stats_embed_builder(user: &User, prefix: String) -> CreateEmbed {
+    CreateEmbed::default()
+        .color(3447003)
+        .title(format!("{}'s manga statistics", &user.name))
+        .url(format!(
+            "https://anilist.co/user/{}/stats/manga/overview",
+            &user.name
+        ))
+        .thumbnail(&user.avatar.large)
+        .field("Chapters read", &user.statistics.chapters_read(), true)
+        .footer(|f| {
+            f.icon_url("https://anilist.co/img/icons/favicon-32x32.png")
+                .text(format!("{}Powered by AniList", prefix))
+        })
+        .clone()
+}
+
 pub fn character_embed_builder(character: &Character, prefix: String) -> CreateEmbed {
     CreateEmbed::default()
         .color(3447003)

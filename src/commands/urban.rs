@@ -72,10 +72,7 @@ fn urban(context: &mut Context, message: &Message, args: Args) -> CommandResult 
                     // This is a workaround since we can't order fields
                     embed.field(
                         "Votes",
-                        format!(
-                            "👍: **{}** 👎: **{}**",
-                            &def.thumbs_up, &def.thumbs_down
-                        ),
+                        format!("👍: **{}** 👎: **{}**", &def.thumbs_up, &def.thumbs_down),
                         true,
                     );
 

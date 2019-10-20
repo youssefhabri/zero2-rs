@@ -6,6 +6,7 @@ use serenity::{
     prelude::*,
     utils::Colour,
 };
+use std::time::{SystemTime, UNIX_EPOCH};
 use sysinfo::{get_current_pid, ProcessExt, System, SystemExt};
 
 const BOT_VERSION: &str = env!("CARGO_PKG_VERSION");
@@ -45,20 +46,27 @@ fn bot_info(context: &mut Context, message: &Message, _: Args) -> CommandResult 
                        ,false)
                 .thumbnail(thumbnail);
 
-            if let Some(process) = sys.get_process(get_current_pid()) {
+            if let Some(process) = sys.get_process(get_current_pid().unwrap_or(0)) {
+                let current_time = SystemTime::now().duration_since(UNIX_EPOCH);
+                let uptime = if let Ok(time) = current_time {
+                    time.as_secs() - process.start_time()
+                } else { 0 };
+
                 embed
                     .field("System Info", format!(
-                        "Type: {} {}\nUptime: {}"
-                        ,sys_info::os_type().unwrap_or_else(|_| String::from("OS Not Found"))
-                        ,sys_info::os_release().unwrap_or_else(|_| String::from("Release Not Found"))
-                        ,seconds_to_hrtime(sys.get_uptime() as usize))
-                           ,true)
+                        "Type: {} {}\nUptime: {}",
+                        sys_info::os_type().unwrap_or_else(|_| String::from("OS Not Found")),
+                        sys_info::os_release().unwrap_or_else(|_| String::from("Release Not Found")),
+                        seconds_to_hrtime(sys.get_uptime() as usize)),
+                        true
+                    )
                     .field("Process Info", format!(
-                        "Memory Usage: {} MB\nCPU Usage {}%\nUptime: {}"
-                        ,process.memory()/1000 // convert to MB
-                        ,(process.cpu_usage()*100.0).round()/100.0 // round to 2 decimals
-                        ,seconds_to_hrtime((sys.get_uptime() - process.start_time()) as usize))
-                           ,true);
+                        "Memory Usage: {} MB\nCPU Usage {}%\nUptime: {}",
+                        process.memory() / 1000, // convert to MB
+                        (process.cpu_usage() * 100.0).round() / 100.0, // round to 2 decimals
+                        seconds_to_hrtime(uptime as usize)),
+                        true
+                    );
             }
 
             embed

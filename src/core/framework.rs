@@ -2,7 +2,7 @@ use serenity::framework::standard::StandardFramework;
 use serenity::model::id::UserId;
 use std::collections::HashSet;
 
-use crate::commands::{self, anilist, fun, meta, nekoslife, system, urban};
+use crate::commands::{self, anilist, fun, meta, nekoslife, profile, system, urban};
 use crate::core::consts::{BOT_ID, PREFIX};
 use crate::core::store::{Command, CommandLogger};
 use crate::monitors;
@@ -23,6 +23,8 @@ impl Zero2Framework {
                     .prefix(PREFIX.as_str())
             })
             .before(|ctx, msg, cmd| {
+                // TODO check blacklisted commands & users
+
                 if cmd != "shutdown" {
                     let _ = msg.channel_id.broadcast_typing(&ctx.http);
                 }
@@ -54,6 +56,7 @@ impl Zero2Framework {
             .group(&meta::META_GROUP)
             .group(&nekoslife::NEKOSLIFE_GROUP)
             .group(&system::SYSTEM_GROUP)
+            .group(&profile::PROFILE_GROUP)
             .group(&commands::NO_CATEGORY_GROUP)
     }
 }

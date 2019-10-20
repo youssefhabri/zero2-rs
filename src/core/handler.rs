@@ -1,17 +1,35 @@
-use std::collections::HashSet;
-
+use chrono::Utc;
 use serenity::model::{
-    channel::Message, channel::Reaction, event::ResumedEvent, gateway::Activity, gateway::Ready,
-    guild::Member, id::GuildId,
+    channel::Reaction, event::PresenceUpdateEvent, event::ResumedEvent, gateway::Activity,
+    gateway::Ready, guild::Member, id::GuildId, id::UserId,
 };
 use serenity::prelude::{Context, EventHandler};
+use std::collections::{HashMap, HashSet};
 
-use crate::core::consts::DB as db;
+use crate::core::consts::{DB as db, PREFIX};
+use crate::db::models::{Guild, User};
 use crate::{menu, monitors};
 
-#[derive(Default)]
 pub struct Zero2Handler {
     blacklist: HashSet<String>,
+    guilds: HashMap<GuildId, Guild>,
+    users: HashMap<UserId, User<Utc>>,
+}
+
+impl Default for Zero2Handler {
+    fn default() -> Self {
+        let users = db
+            .all_users()
+            .unwrap_or_else(|_| vec![])
+            .into_iter()
+            .map(|user| (UserId(user.id as u64), user))
+            .collect();
+        Zero2Handler {
+            blacklist: HashSet::new(),
+            guilds: HashMap::new(),
+            users,
+        }
+    }
 }
 
 impl EventHandler for Zero2Handler {
@@ -19,13 +37,32 @@ impl EventHandler for Zero2Handler {
         monitors::new_member_monitors(&context, guild_id, &new_member);
 
         // Insert new member to database
-        let _ = db.new_user(
-            new_member.user_id(),
-            guild_id,
+        if !self.users.contains_key(&new_member.user_id()) {
+            let _ = db.new_user(
+                new_member.user_id(),
+                guild_id,
+                new_member
+                    .nick
+                    .clone()
+                    .unwrap_or_else(|| new_member.display_name().to_string()),
+                new_member.roles,
+            );
+        }
     }
 
     fn reaction_add(&self, context: Context, add_reaction: Reaction) {
         menu::handle_reaction(&context, &add_reaction);
+    }
+
+    fn presence_update(&self, _context: Context, new_data: PresenceUpdateEvent) {
+        if !self.users.contains_key(&new_data.presence.user_id) {
+            let _ = db.new_user(
+                new_data.presence.user_id,
+                new_data.guild_id.unwrap_or(GuildId(0)),
+                "".to_string(),
+                new_data.roles.unwrap_or(vec![]),
+            );
+        }
     }
 
     fn ready(&self, ctx: Context, ready: Ready) {

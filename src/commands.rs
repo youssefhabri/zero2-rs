@@ -13,6 +13,7 @@ pub mod fun;
 pub mod giphy;
 pub mod meta;
 pub mod nekoslife;
+pub mod profile;
 pub mod system;
 pub mod urban;
 

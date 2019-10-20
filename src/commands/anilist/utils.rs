@@ -1,4 +1,4 @@
-use dissolve::strip_html_tags;
+use crate::core::utils::strip_html_tags;
 use regex::Regex;
 
 // TODO Refactor markdown code or break into own module

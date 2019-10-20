@@ -1,9 +1,12 @@
-use chrono::format::ParseResult;
-use chrono::prelude::*;
+use chrono::{format::ParseResult, prelude::*};
 use math::round::floor;
 use rand::prelude::*;
 use std::ops::Add;
 use time::Duration;
+
+use html5ever::rcdom::{Node, NodeData, RcDom};
+use html5ever::{parse_document, ParseOpts};
+use tendril::TendrilSink;
 
 /// Get the DateTime<Local> for the next Weekday
 pub fn next_day(target: Weekday) -> DateTime<Local> {
@@ -133,4 +136,71 @@ pub fn seconds_to_hrtime(secs: usize) -> String {
         })
         .collect::<Vec<String>>()
         .join(", ")
+}
+/// Code from the Dissolve crate under the MIT License
+///
+/// Consumes a string that contains HTML5 tags and outputs a Vec<String>
+/// containing the text content inside the tags in a pre-order manner.
+///
+/// Basic usage:
+///
+/// ```rust
+/// let input = "<html>Hello World!</html>";
+/// let output = strip_html_tags(input);
+/// assert_eq!(output, vec!["Hello World!".to_owned()]);
+/// ```
+pub fn strip_html_tags(input: &str) -> Vec<String> {
+    let dom = parse_document(RcDom::default(), ParseOpts::default())
+        .from_utf8()
+        .one(input.as_bytes());
+    let doc = dom.document;
+    get_text(&doc)
+}
+
+/// Helper function to return text in text nodes in pre-order traversal.
+fn get_text(element: &Node) -> Vec<String> {
+    match element.data {
+        NodeData::Text { ref contents } => {
+            let mut text = vec![(&**contents.borrow()).to_owned()];
+            for child in &*element.children.borrow() {
+                text.append(&mut get_text(child));
+            }
+            text
+        }
+        _ => {
+            let mut text = vec![];
+            for child in &*element.children.borrow() {
+                text.append(&mut get_text(child));
+            }
+            text
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn test_strip_html_tag() {
+        let input = "<html>Hello World!</html>";
+        let output = strip_html_tags(input);
+        assert_eq!(output, vec!["Hello World!".to_owned()]);
+    }
+
+    #[test]
+    fn test_strip_nested_tags() {
+        let input = "<html>Hello<div>World!</div></html>";
+        let output = strip_html_tags(input);
+        assert_eq!(output, vec!["Hello".to_owned(), "World!".to_owned()]);
+    }
+
+    #[test]
+    fn test_preorder_traversal() {
+        let input = "<html>Hel<div>lo</div>World!</html>";
+        let output = strip_html_tags(input);
+        assert_eq!(
+            output,
+            vec!["Hel".to_owned(), "lo".to_owned(), "World!".to_owned()]
+        );
+    }
 }

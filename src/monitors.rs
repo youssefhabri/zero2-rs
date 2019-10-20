@@ -1,17 +1,10 @@
-use serenity::model::{channel::Message, guild::Member, id::GuildId};
+use serenity::model::prelude::{GuildId, Member, Message};
 use serenity::prelude::Context;
 
-use crate::core::consts::PREFIX;
-
-mod anilist;
+pub(crate) mod anilist;
 
 pub fn message_monitors(context: &Context, message: &Message) {
-    if !message.author.bot
-        && !message
-            .content_safe(&context.cache)
-            .as_str()
-            .starts_with(PREFIX.as_str())
-    {
+    if !message.author.bot {
         anilist::anilist_links_monitor(context, message);
         //anilist::rem_monitor(&context, &message);
     }
@@ -19,4 +12,5 @@ pub fn message_monitors(context: &Context, message: &Message) {
 
 pub fn new_member_monitors(context: &Context, guild_id: GuildId, new_member: &Member) {
     // Greet the user?
+    // Add user to database
 }

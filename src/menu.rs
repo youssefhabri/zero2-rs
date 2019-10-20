@@ -10,6 +10,8 @@ use crate::core::store::{BotOwnerContainer, MessagePagination, MessagePaginator}
 use crate::menu::Error::PaginationError;
 
 pub mod builders;
+pub mod handlers;
+pub mod utils;
 
 /// Emulating an enum of reactions ¯\_(ツ)_/¯
 pub mod reactions {
@@ -17,8 +19,15 @@ pub mod reactions {
     pub const NEXT: &str = "➡";
     pub const STOP: &str = "🇽";
 
+    pub const ANIME: &str = "🇦";
+    pub const MANGA: &str = "🇲";
+
     pub fn default<'a>() -> Vec<&'a str> {
         [PREV, NEXT, STOP].to_vec()
+    }
+    pub fn stats<'a>() -> Vec<&'a str> {
+        // TODO add a way to stop
+        [ANIME, MANGA].to_vec()
     }
 }
 
@@ -36,7 +45,7 @@ pub enum Error {
 }
 
 pub type HandlerFunc =
-    fn(&Context, &Reaction) -> fn(&Context, ChannelId, MessageId) -> Result<(), Error>;
+    fn(&Context, &Reaction) -> Option<fn(&Context, ChannelId, MessageId) -> Result<(), Error>>;
 
 /// Create a new menu pagination
 pub fn new_pagination(
@@ -82,7 +91,10 @@ pub fn handle_reaction(ctx: &Context, reaction: &Reaction) {
     }
 
     let func = match handler.unwrap() {
-        Some(handler) => handler(ctx, reaction),
+        Some(handler) => match handler(ctx, reaction) {
+            Some(func) => func,
+            None => return,
+        },
         None => match reaction.emoji {
             ReactionType::Unicode(ref x) if x == reactions::NEXT => right,
             ReactionType::Unicode(ref x) if x == reactions::PREV => left,
@@ -117,18 +129,9 @@ pub fn left(ctx: &Context, channel_id: ChannelId, message_id: MessageId) -> Resu
         None => return Ok(()),
     };
 
-    let embed_content = get_page_content(ctx, message_id, page);
+    let embed_content = utils::get_page_content(ctx, message_id, page);
 
-    if let Some(embed_content) = embed_content {
-        if let Err(why) = channel_id.edit_message(&ctx.http, message_id, |m| {
-            m.embed(|e| {
-                e.clone_from(&embed_content);
-                e
-            })
-        }) {
-            warn!("Err editing message: {:?}", why);
-        }
-    }
+    utils::update_message(&ctx, channel_id, message_id, embed_content);
 
     Ok(())
 }
@@ -139,18 +142,9 @@ pub fn right(ctx: &Context, channel_id: ChannelId, message_id: MessageId) -> Res
         None => return Ok(()),
     };
 
-    let embed_content = get_page_content(ctx, message_id, page);
+    let embed_content = utils::get_page_content(ctx, message_id, page);
 
-    if let Some(embed_content) = embed_content {
-        if let Err(why) = channel_id.edit_message(&ctx.http, message_id, |m| {
-            m.embed(|e| {
-                e.clone_from(&embed_content);
-                e
-            })
-        }) {
-            warn!("Err editing message: {:?}", why);
-        }
-    }
+    utils::update_message(&ctx, channel_id, message_id, embed_content);
 
     Ok(())
 }
@@ -190,24 +184,7 @@ pub fn modify_page(context: &Context, message_id: MessageId, modifier: &Modifier
     Some(pagination.current_page)
 }
 
-pub fn get_page_content(
-    context: &Context,
-    message_id: MessageId,
-    page: u32,
-) -> Option<CreateEmbed> {
-    let data = context.data.read();
-
-    //    let paginator = data.get_mut::<MessagePaginator>().unwrap();
-    let paginator = data.get::<MessagePaginator>().unwrap();
-
-    let pagination = match paginator.get(&message_id) {
-        Some(pagination) => pagination,
-        None => return None,
-    };
-
-    Some(pagination.pages[page as usize].clone())
-}
-
+// TODO untangle this mess, pls?
 fn get_handler(ctx: &Context, reaction: &Reaction) -> Result<Option<HandlerFunc>, Error> {
     let data = ctx.data.read();
     let paginator = data.get::<MessagePaginator>().unwrap();
