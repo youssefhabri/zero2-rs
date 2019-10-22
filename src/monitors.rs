@@ -61,8 +61,8 @@ pub fn message_id_monitor(context: &Context, message: &Message) {
                             .description(msg.content)
                             .field("Original", url, false);
 
-                            if msg.attachments[0].dimensions().is_some()
-                                && !msg.attachments.is_empty()
+                            if !msg.attachments.is_empty()
+                                && msg.attachments[0].dimensions().is_some()
                             {
                                 e.image(msg.attachments[0].url.clone());
                             };
