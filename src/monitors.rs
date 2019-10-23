@@ -2,8 +2,6 @@ use regex::Regex;
 use serenity::model::{channel::Message, guild::Member, id::GuildId};
 use serenity::prelude::Context;
 
-pub(crate) mod anilist;
-
 mod anilist;
 
 lazy_static! {
