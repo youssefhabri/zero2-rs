@@ -28,7 +28,7 @@ pub fn new_member_monitors(context: &Context, guild_id: GuildId, new_member: &Me
 }
 
 pub fn message_id_monitor(context: &Context, message: &Message) {
-    if let Some(cap) = MSG_RE.find(message.content.as_str()) {
+    for cap in MSG_RE.find_iter(message.content.as_str()) {
         if let Ok(msg_id) = cap.as_str().parse::<u64>() {
             if let Ok(msg) = message.channel_id.message(context, msg_id) {
                 if !msg.content.is_empty() || !msg.attachments.is_empty() {
