@@ -110,7 +110,7 @@ pub fn studio_embed_builder(studio: &Studio, prefix: String) -> CreateEmbed {
         .clone()
 }
 
-pub fn activity_embed_builder(activity: &Activity) -> CreateEmbed {
+pub fn activity_embed_builder(activity: &Activity, _prefix: String) -> CreateEmbed {
     match activity.__typename.as_str() {
         "TextActivity" => text_activity_embed_builder(activity),
         "ListActivity" => list_activity_embed_builder(activity),
