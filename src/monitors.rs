@@ -23,7 +23,7 @@ pub fn message_monitors(context: &Context, message: &Message) {
     }
 }
 
-pub fn new_member_monitors(context: &Context, guild_id: GuildId, new_member: &Member) {
+pub fn new_member_monitors(_context: &Context, _guild_id: GuildId, _new_member: &Member) {
     // Greet the user?
 }
 
