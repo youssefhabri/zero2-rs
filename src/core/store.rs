@@ -58,3 +58,11 @@ pub struct MessagePagination {
     pub pages: Vec<CreateEmbed>,
     pub deleted: bool,
 }
+
+pub enum RichInteractionKind {
+    Pagination,
+}
+
+pub struct RichInteraction {
+    kind: RichInteractionKind,
+}

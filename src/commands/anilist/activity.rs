@@ -34,7 +34,7 @@ fn activity(context: &mut Context, message: &Message, args: Args) -> CommandResu
         Some(activity) => {
             let _ = message.channel_id.send_message(&context.http, |m| {
                 m.embed(|e| {
-                    e.clone_from(&builders::activity_embed_builder(&activity));
+                    e.clone_from(&builders::activity_embed_builder(&activity, "".into()));
 
                     e
                 })
