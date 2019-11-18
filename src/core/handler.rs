@@ -26,6 +26,12 @@ impl EventHandler for Zero2Handler {
     fn ready(&self, ctx: Context, ready: Ready) {
         ctx.set_activity(Activity::listening("2!help"));
 
+        for guild_id in ctx.cache.clone().read().all_guilds() {
+            if let Ok(guild) = guild_id.to_partial_guild(&ctx) {
+                info!("[GUILD] Available in {}", guild.name);
+            }
+        }
+
         info!("Connected as {}", ready.user.name);
     }
 
