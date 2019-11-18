@@ -1,12 +1,14 @@
-use crate::core::store::BotOwnerContainer;
-use crate::core::utils::seconds_to_hrtime;
 use serenity::{
     framework::standard::{macros::command, Args, CommandResult},
     model::channel::Message,
     prelude::*,
     utils::Colour,
 };
+use std::time::{SystemTime, UNIX_EPOCH};
 use sysinfo::{get_current_pid, ProcessExt, System, SystemExt};
+
+use crate::core::store::BotOwnerContainer;
+use crate::core::utils::seconds_to_hrtime;
 
 const BOT_VERSION: &str = env!("CARGO_PKG_VERSION");
 
@@ -47,6 +49,10 @@ fn bot_info(context: &mut Context, message: &Message, _: Args) -> CommandResult 
 
             if let Ok(current_pid) = get_current_pid() {
                 if let Some(process) = sys.get_process(current_pid) {
+                    let uptime = if let Ok(current_time) = SystemTime::now().duration_since(UNIX_EPOCH) {
+                        current_time.as_secs() - process.start_time()
+                    } else { 0 } as usize;
+
                     embed
                         .field("System Info", format!(
                             "Type: {} {}\nUptime: {}"
@@ -58,7 +64,7 @@ fn bot_info(context: &mut Context, message: &Message, _: Args) -> CommandResult 
                             "Memory Usage: {} MB\nCPU Usage {}%\nUptime: {}"
                             ,process.memory()/1000 // convert to MB
                             ,(process.cpu_usage()*100.0).round()/100.0 // round to 2 decimals
-                            ,seconds_to_hrtime((sys.get_uptime() - process.start_time()) as usize))
+                            ,seconds_to_hrtime(uptime))
                             ,true);
                 }
             }
