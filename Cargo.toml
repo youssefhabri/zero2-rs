@@ -29,7 +29,7 @@ serde_derive = "1.0"
 serde_json = "1.0"
 sys-info = "0.5"
 sysinfo = "0.9"
-serenity = "0.7.2" 
+serenity = { git = "https://github.com/serenity-rs/serenity", branch = "current" } 
 
 [dependencies.fern]
 version = "0.5"
