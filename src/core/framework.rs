@@ -22,6 +22,17 @@ impl Zero2Framework {
                     .delimiters(vec![",", " "])
                     .owners(owners)
                     .prefix(PREFIX.as_str())
+                    .dynamic_prefix(|_ctx, msg| {
+                        if let Some(guild_id) = msg.guild_id {
+                            if let Ok(guild) = DB.find_guild(guild_id) {
+                                if !guild.prefix.is_empty() {
+                                    return Some(guild.prefix);
+                                }
+                            }
+                        }
+
+                        None
+                    })
             })
             .before(|ctx, msg, cmd| {
                 // TODO check blacklisted commands & users
