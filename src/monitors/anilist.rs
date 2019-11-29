@@ -1,5 +1,4 @@
 use regex::Regex;
-use serenity::builder::CreateEmbed;
 use serenity::model::channel::Message;
 use serenity::prelude::Context;
 

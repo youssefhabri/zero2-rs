@@ -1,7 +1,7 @@
 use regex::Regex;
 use serenity::model::{
     channel::Message,
-    id::{ChannelId, GuildId, MessageId},
+    id::{ChannelId, GuildId},
 };
 use serenity::prelude::Context;
 
@@ -9,13 +9,6 @@ use crate::core::consts;
 
 lazy_static! {
     static ref MSG_RE: Regex = Regex::new(r"[0-9]{17,18}").unwrap();
-}
-
-fn message_url(guild_id: GuildId, channel_id: ChannelId, message_id: MessageId) -> String {
-    format!(
-        "[Jump!](https://discordapp.com/channels/{}/{}/{}/)",
-        guild_id, channel_id, message_id
-    )
 }
 
 pub fn message_id_monitor(context: &Context, message: &Message) {
@@ -54,7 +47,10 @@ fn handle_message(
     message: &Message,
 ) {
     if !message.content.is_empty() || !message.attachments.is_empty() {
-        let url = message_url(guild_id, message.channel_id, message.id);
+        let url = format!(
+            "[Jump!](https://discordapp.com/channels/{}/{}/{}/)",
+            guild_id, message.channel_id, message.id
+        );
 
         let _ = target_channel_id.send_message(context, |m| {
             m.embed(|e| {

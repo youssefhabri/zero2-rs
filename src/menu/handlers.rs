@@ -26,7 +26,7 @@ const ANIME_STATS_PAGE: u32 = 0;
 const MANGA_STATS_PAGE: u32 = 1;
 
 pub fn user_stats_handler(
-    context: &Context,
+    _context: &Context,
     reaction: &Reaction,
 ) -> Option<fn(&Context, ChannelId, MessageId) -> Result<(), Error>> {
     match reaction.emoji {

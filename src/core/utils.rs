@@ -144,7 +144,7 @@ pub fn seconds_to_hrtime(secs: usize) -> String {
 ///
 /// Basic usage:
 ///
-/// ```rust
+/// ```rust,ignore
 /// let input = "<html>Hello World!</html>";
 /// let output = strip_html_tags(input);
 /// assert_eq!(output, vec!["Hello World!".to_owned()]);
@@ -179,7 +179,8 @@ fn get_text(element: &Node) -> Vec<String> {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use super::strip_html_tags;
+
     #[test]
     fn test_strip_html_tag() {
         let input = "<html>Hello World!</html>";
