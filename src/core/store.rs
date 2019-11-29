@@ -6,7 +6,7 @@ use serenity::{
     builder::CreateEmbed,
     client::bridge::gateway::ShardManager,
     model::{
-        id::{MessageId, UserId},
+        id::{GuildId, MessageId, UserId},
         user::User,
     },
     prelude::*,
@@ -37,6 +37,7 @@ impl TypeMapKey for CommandLogger {
 
 #[derive(Clone, Debug)]
 pub struct Command {
+    pub guild_id: GuildId,
     pub message: String,
     pub name: String,
     pub user_id: UserId,
