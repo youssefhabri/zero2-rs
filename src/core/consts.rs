@@ -34,3 +34,4 @@ pub const AT_BOT_IDS: [u64; 4] = [
 ];
 
 pub const MAIN_COLOUR: u32 = 16580705;
+pub const RED_COLOUR: u32 = 15158332;

@@ -17,6 +17,16 @@ table! {
 }
 
 table! {
+    custom_commands (id, guild_id) {
+        id -> Int8,
+        guild_id -> Int8,
+        name -> Varchar,
+        kind -> Varchar,
+        content -> Text,
+    }
+}
+
+table! {
     guilds (id) {
         id -> Int8,
         admin_roles -> Array<Int8>,
@@ -44,4 +54,10 @@ table! {
     }
 }
 
-allow_tables_to_appear_in_same_query!(blacklist, commands_blacklist, guilds, users,);
+allow_tables_to_appear_in_same_query!(
+    blacklist,
+    commands_blacklist,
+    custom_commands,
+    guilds,
+    users,
+);

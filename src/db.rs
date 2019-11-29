@@ -95,10 +95,10 @@ impl Database {
 
         // TODO can this be improved?
         if !res.is_empty() {
-            Ok(res.remove(0))
-        } else {
-            Err(Error::NotFound)
+            return Ok(res.remove(0));
         }
+
+        Err(Error::NotFound)
     }
 
     pub fn delete_user(&self, id: UserId, guild_id: GuildId) -> QueryResult<usize> {
@@ -108,5 +108,38 @@ impl Database {
 
     pub fn all_users(&self) -> QueryResult<Vec<User<Utc>>> {
         users::table.load::<User<Utc>>(self.conn().deref())
+    }
+
+    pub fn all_guilds(&self) -> QueryResult<Vec<Guild>> {
+        guilds::table.load::<Guild>(self.conn().deref())
+    }
+
+    pub fn find_guild(&self, guild_id: GuildId) -> QueryResult<Guild> {
+        let guild_id = *guild_id.as_u64() as i64;
+        let mut res = guilds::table
+            .load::<Guild>(self.conn().deref())?
+            .into_iter()
+            .filter(|guild| guild.id == guild_id)
+            .collect::<Vec<Guild>>();
+
+        if !res.is_empty() {
+            return Ok(res.remove(0));
+        }
+
+        Err(Error::NotFound)
+    }
+
+    pub fn find_command(&self, command: String) -> QueryResult<CustomCommand> {
+        let mut res = custom_commands::table
+            .load::<CustomCommand>(self.conn().deref())?
+            .into_iter()
+            .filter(|cmd| cmd.name == command)
+            .collect::<Vec<CustomCommand>>();
+
+        if !res.is_empty() {
+            return Ok(res.remove(0));
+        }
+
+        Err(Error::NotFound)
     }
 }

@@ -18,14 +18,14 @@ pub mod system;
 pub mod urban;
 
 pub mod test;
-use self::test::TEST_COMMAND;
 
 use self::giphy::GIPHY_COMMAND;
+use self::test::EVAL_COMMAND;
+use self::test::TEST_COMMAND;
 
-group!({
-    name: "no_category",
-    commands: [giphy, test],
-});
+#[group]
+#[commands(eval, giphy, test)]
+pub struct NoCategory;
 
 #[help]
 #[individual_command_tip = "Hello! こんにちは！Hola! Bonjour! 您好!\n\

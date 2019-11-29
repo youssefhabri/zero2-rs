@@ -47,3 +47,12 @@ pub struct AnilistNameUpdate {
     pub anilist_id: i32,
     pub anilist_name: String,
 }
+
+#[derive(Queryable, Identifiable, AsChangeset, Debug)]
+pub struct CustomCommand {
+    pub id: i64,
+    pub guild_id: i64,
+    pub name: String,
+    pub kind: String, // 'text', 'simple_parsable'
+    pub content: String,
+}
