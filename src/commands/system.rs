@@ -15,7 +15,6 @@ use self::embed::*;
 use self::log::*;
 use self::shutdown::*;
 
-group!({
-    name: "System",
-    commands: [cleanup, dm, echo, embed, log, shutdown]
-});
+#[group]
+#[commands(cleanup, dm, echo, embed, log, shutdown)]
+pub struct System;

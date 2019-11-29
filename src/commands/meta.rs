@@ -10,7 +10,6 @@ use self::botinfo::BOT_INFO_COMMAND;
 use self::ping::PING_COMMAND;
 use self::stats::STATS_COMMAND;
 
-group!({
-    name: "Meta",
-    commands: [avatar, bot_info, ping, stats]
-});
+#[group]
+#[commands(avatar, bot_info, ping, stats)]
+pub struct Meta;

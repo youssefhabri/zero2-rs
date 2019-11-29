@@ -6,7 +6,7 @@ use serenity::prelude::*;
 
 #[command]
 #[usage = "[keyword]"]
-#[description = "OwOfy you text, cause why not."]
+#[description = "OwOfy your text, cause why not."]
 fn owo(context: &mut Context, message: &Message, args: Args) -> CommandResult {
     if args.is_empty() {
         let _ = message
@@ -19,7 +19,7 @@ fn owo(context: &mut Context, message: &Message, args: Args) -> CommandResult {
 
     let mut rnd = rand::thread_rng();
 
-    let faces = [" owo ", " UwU ", " >w< ", " ^w^ "];
+    let faces = [" OwO ", " UwU ", " >w< ", " ^w^ "];
     let mut text = input
         .replace("ove", "uv")
         .replace("n", "ny")

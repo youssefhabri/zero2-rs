@@ -6,15 +6,12 @@ use serenity::utils::parse_username;
 use crate::checks::*;
 use crate::core::consts::{DB as db, OWNER_ID};
 
-group!({
-    name: "Profile",
-    options: {
-        prefixes: ["profile"],
-        default_command: info,
-        owner_privilege: false
-    },
-    commands: [info, init, delete]
-});
+#[group]
+#[prefixes("profile")]
+#[default_command(info)]
+#[owner_privilege(false)]
+#[commands(info, init, delete)]
+pub struct Profile;
 
 #[command]
 #[checks(user_exists)]

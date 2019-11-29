@@ -5,7 +5,7 @@ use serenity::prelude::*;
 use crate::core::utils::random_num;
 
 #[command]
-#[description = "Find out you fortune. It just might be you lucky day ..."]
+#[description = "Find out your fortune. It just might be your lucky day ..."]
 fn fortune(context: &mut Context, message: &Message, _: Args) -> CommandResult {
     match random_fortune() {
         Some(fortune) => {

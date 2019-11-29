@@ -12,10 +12,9 @@ use serenity::{
     utils::Colour,
 };
 
-group!({
-    name: "Knowledge",
-    commands: [urban]
-});
+#[group]
+#[commands(urban)]
+pub struct Knowledge;
 
 #[command]
 #[aliases("ud", "define")]

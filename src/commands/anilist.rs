@@ -27,10 +27,9 @@ use self::manga::MANGA_COMMAND;
 use self::staff::STAFF_COMMAND;
 use self::user::USER_COMMAND;
 
-group!({
-    name: "Anilist",
-    commands: [anilist, activity, airing, anime, character, manga, staff, user]
-});
+#[group]
+#[commands(anilist, activity, airing, anime, character, manga, staff, user)]
+pub struct AniList;
 
 #[command]
 #[aliases(al)]
