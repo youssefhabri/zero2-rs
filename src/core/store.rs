@@ -62,6 +62,7 @@ pub struct MessagePagination {
 
 pub enum RichInteractionKind {
     Pagination,
+    Menu,
 }
 
 pub struct RichInteraction {
