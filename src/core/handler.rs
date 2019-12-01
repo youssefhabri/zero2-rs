@@ -18,6 +18,15 @@ pub struct Zero2Handler {
 
 impl Default for Zero2Handler {
     fn default() -> Self {
+        // TODO batch DB queries
+        // https://docs.diesel.rs/diesel/pg/struct.TransactionBuilder.html
+        let blacklist = HashSet::new();
+        let guilds = db
+            .all_guilds()
+            .unwrap_or_else(|_| vec![])
+            .into_iter()
+            .map(|guild| (GuildId(guild.id as u64), guild))
+            .collect();
         let users = db
             .all_users()
             .unwrap_or_else(|_| vec![])
@@ -25,8 +34,8 @@ impl Default for Zero2Handler {
             .map(|user| (UserId(user.id as u64), user))
             .collect();
         Zero2Handler {
-            blacklist: HashSet::new(),
-            guilds: HashMap::new(),
+            blacklist,
+            guilds,
             users,
         }
     }
