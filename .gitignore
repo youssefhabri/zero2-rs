@@ -3,6 +3,7 @@
 .env
 .deploy.env
 .idea
+zero2.service
 
 # Google Cloud files
 .dockerignore
