@@ -53,11 +53,11 @@ pub fn user_embed_builder(user: &User, prefix: String) -> CreateEmbed {
         .url(&user.site_url)
         .description(&user.about())
         .thumbnail(&user.avatar.large)
-        .field("Days Watched", &user.statistics.days_watched(), true)
-        .field("Chapters read", &user.statistics.chapters_read(), true)
         .field("Favourite Anime", &user.favourite_anime(), true)
         .field("Favourite Manga", &user.favourite_manga(), true)
         .field("Favourite Characters", &user.favourite_characters(), true)
+        .field("Days Watched", &user.statistics.days_watched(), true)
+        .field("Chapters read", &user.statistics.chapters_read(), true)
         .footer(|f| {
             f.icon_url("https://anilist.co/img/icons/favicon-32x32.png")
                 .text(format!("{}Powered by AniList", prefix))
