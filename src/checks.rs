@@ -19,9 +19,7 @@ fn admin_check(ctx: &mut Context, msg: &Message, _: &mut Args, _: &CommandOption
         }
     }
 
-    println!("Admin check");
-
-    false.into()
+    CheckResult::new_user("User is not an admin")
 }
 
 #[check]
@@ -40,7 +38,7 @@ fn eap_check(ctx: &mut Context, msg: &Message, _: &mut Args, _: &CommandOptions)
         }
     }
 
-    false.into()
+    CheckResult::new_user("User does not have the Early Access, Donator, or the Nitro Booster role")
 }
 
 #[check]
@@ -52,7 +50,7 @@ fn user_exists_check(
     _: &CommandOptions,
 ) -> CheckResult {
     match db.find_user(message.author.id) {
-        Ok(_user) => true.into(),
+        Ok(_user) => CheckResult::Success,
         Err(why) => {
             let _ = message.channel_id.send_message(&context, |m| m.content(
                 format!("You account is not registered in the database. Please run `{}profile init` to initialize it.", PREFIX.as_str())
@@ -60,7 +58,7 @@ fn user_exists_check(
 
             dbg!(why);
 
-            false.into()
+            CheckResult::new_user("User does not exists in the database")
         }
     }
 }
@@ -82,8 +80,8 @@ fn anilist_username_check(
                 PREFIX.as_str()
             ))
         });
-        return false.into();
+        return CheckResult::new_user("User hasn't connect their anilist account");
     }
 
-    true.into()
+    CheckResult::Success
 }
