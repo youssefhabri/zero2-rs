@@ -10,13 +10,15 @@ pub fn update_message(
     embed_content: Option<CreateEmbed>,
 ) {
     if let Some(embed_content) = embed_content {
-        if let Err(why) = channel_id.edit_message(&context, message_id, |m| {
+        let edit_result = channel_id.edit_message(&context, message_id, |m| {
             m.embed(|e| {
                 e.clone_from(&embed_content);
                 e
             })
-        }) {
-            warn!("Err editing message: {:?}", why);
+        });
+
+        if let Err(why) = edit_result {
+            error!("Error editing message: {:?}", why);
         }
     }
 }
@@ -27,14 +29,10 @@ pub fn get_page_content(
     page: u32,
 ) -> Option<CreateEmbed> {
     let data = context.data.read();
-
-    //    let paginator = data.get_mut::<MessagePaginator>().unwrap();
     let paginator = data.get::<MessagePaginator>().unwrap();
 
-    let pagination = match paginator.get(&message_id) {
-        Some(pagination) => pagination,
-        None => return None,
-    };
-
-    Some(pagination.pages[page as usize].clone())
+    match paginator.get(&message_id) {
+        Some(pagination) => Some(pagination.pages[page as usize].clone()),
+        None => None,
+    }
 }
