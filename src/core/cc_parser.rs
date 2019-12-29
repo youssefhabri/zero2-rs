@@ -15,8 +15,6 @@ pub fn parse(context: &Context, message: &Message, args: &Args, cc_content: Stri
         .enumerate()
         .collect::<Vec<(usize, Captures)>>();
 
-    dbg!(&arg_caps);
-
     let content = if arg_caps.len() > 0 && arg_caps.len() != args.len() {
         format!(
             "Not enough arguments! The command requires {} argument(s)",
@@ -26,8 +24,6 @@ pub fn parse(context: &Context, message: &Message, args: &Args, cc_content: Stri
         let content = dbg!(parse_content(cc_content, message));
         parse_args(content, arg_caps, args)
     };
-
-    dbg!(&content);
 
     let _ = message
         .channel_id
@@ -56,7 +52,7 @@ fn parse_content(content: String, message: &Message) -> String {
                 )
             }
             "arg" | "args" => {}
-            _ => unreachable!(),
+            _ => {}
         }
     }
 
@@ -70,7 +66,8 @@ fn parse_args(content: String, arg_caps: Vec<(usize, Captures)>, args: &Args) ->
         .iter::<String>()
         .map(|a| a.unwrap_or_else(|_| "".into()))
         .collect::<Vec<String>>();
-    for (idx, cap) in dbg!(arg_caps) {
+
+    for (idx, cap) in arg_caps {
         let cap = cap.get(0).map_or("", |m| m.as_str());
         new_content = new_content.replace(cap, args[idx].as_str());
     }
