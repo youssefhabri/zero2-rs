@@ -1,8 +1,10 @@
 use regex::Regex;
+use serenity::builder::CreateEmbed;
 use serenity::model::channel::Message;
 use serenity::prelude::Context;
 
 use crate::commands::anilist::client;
+use crate::match_send;
 use crate::menu::builders;
 use crate::models::anilist::{
     character::Character, media::Media, staff::Staff, studio::Studio, user::User,
@@ -29,8 +31,7 @@ pub fn _rem_monitor(context: &Context, message: &Message) {
 
 fn should_embed(message: &str) -> bool {
     message.contains("https://anilist.co/")
-        || !message.contains("noembed")
-        || !message.contains("-ne")
+        && (!message.contains("noembed") || !message.contains("-ne"))
 }
 
 /// AniList Links Monitor
@@ -80,104 +81,63 @@ fn handle_media(context: &Context, message: &Message, media_type: &str, media_id
     let media: Option<Media> =
         client::search_media_by_id(media_id.to_string(), media_type.to_uppercase());
 
-    match media {
-        Some(media) => {
-            let _sending = message.channel_id.send_message(&context.http, |m| {
-                m.embed(|embed| {
-                    embed.clone_from(&builders::media_embed_builder(&media, "".to_string()));
-
-                    embed
-                })
-            });
-        }
-        None => return,
-    }
+    match_send!(context, message, media, builders::media_embed_builder);
 }
 
 /// Handles activity embeds for the AniList Links Monitor
 fn handle_activity(context: &Context, message: &Message, activity_id: &str) {
-    match client::search_activity(activity_id.into()) {
-        Some(activity) => {
-            let _ = message.channel_id.send_message(&context.http, |m| {
-                m.embed(|embed| {
-                    embed.clone_from(&builders::activity_embed_builder(&activity));
+    let activity = client::search_activity(activity_id.into());
 
-                    embed
-                })
-            });
-        }
-        None => return,
-    }
+    match_send!(context, message, activity, builders::activity_embed_builder);
 }
 
 /// Handles character embeds for the AniList Links Monitor
 fn handle_character(context: &Context, message: &Message, character_id: &str) {
     let character: Option<Character> = client::search_character_by_id(character_id.into());
 
-    match character {
-        Some(character) => {
-            let _sending = message.channel_id.send_message(&context.http, |m| {
-                m.embed(|embed| {
-                    embed.clone_from(&builders::character_embed_builder(&character, "".into()));
-
-                    embed
-                })
-            });
-        }
-        None => return,
-    }
+    match_send!(
+        context,
+        message,
+        character,
+        builders::character_embed_builder
+    );
 }
 
 /// Handles user embeds for the AniList Links Monitor
 fn handle_user(context: &Context, message: &Message, username: &str) {
     let user: Option<User> = client::search_user(username.into());
 
-    match user {
-        Some(user) => {
-            let _sending = message.channel_id.send_message(&context.http, |m| {
-                m.embed(|embed| {
-                    embed.clone_from(&builders::user_embed_builder(&user, "".into()));
-
-                    embed
-                })
-            });
-        }
-        None => return,
-    }
+    match_send!(context, message, user, builders::user_embed_builder);
 }
 
 /// Handles studio embeds for the AniList Links Monitor
 fn handle_studio(context: &Context, message: &Message, studio_id: &str) {
     let studio: Option<Studio> = client::search_studio(studio_id.into());
 
-    match studio {
-        Some(studio) => {
-            let _sending = message.channel_id.send_message(&context.http, |m| {
-                m.embed(|embed| {
-                    embed.clone_from(&builders::studio_embed_builder(&studio, "".into()));
-
-                    embed
-                })
-            });
-        }
-        None => return,
-    }
+    match_send!(context, message, studio, builders::studio_embed_builder);
 }
 
 /// Handles staff embeds for the AniList Links Monitor
 fn handle_staff(context: &Context, message: &Message, staff_id: &str) {
     let staff: Option<Staff> = client::search_staff_by_id(staff_id.into());
 
-    match staff {
-        Some(staff) => {
-            let _sending = message.channel_id.send_message(&context.http, |m| {
-                m.embed(|embed| {
-                    embed.clone_from(&builders::staff_embed_builder(&staff, "".into()));
+    match_send!(context, message, staff, builders::staff_embed_builder);
+}
 
-                    embed
-                })
-            });
+#[macro_export]
+macro_rules! match_send {
+    ($context:expr, $message:expr, $data:expr, $embed_builder:expr) => {
+        match $data {
+            Some(data) => {
+                let _sending = ($message).channel_id.send_message(&($context).http, |m| {
+                    m.embed(|embed| {
+                        embed.clone_from(&($embed_builder(&data, "".into())));
+
+                        embed
+                    })
+                });
+            }
+            None => return,
         }
-        None => return,
-    }
+    };
 }

@@ -5,6 +5,7 @@ use std::collections::HashSet;
 use crate::commands::{self, anilist, fun, meta, nekoslife, system, urban};
 use crate::core::consts::{BOT_ID, PREFIX};
 use crate::core::store::{Command, CommandLogger};
+use crate::monitors;
 
 pub struct Zero2Framework;
 
@@ -41,6 +42,9 @@ impl Zero2Framework {
                 }
 
                 true
+            })
+            .normal_message(|ctx, msg| {
+                monitors::message_monitors(ctx, msg);
             })
             .bucket("stats_limit", |b| b.delay(6 * 3600))
             .help(&commands::ZERO2_HELP)

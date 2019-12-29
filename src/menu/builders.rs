@@ -1,10 +1,12 @@
+use serenity::{builder::CreateEmbed, utils::Colour};
+use urbandictionary::model::Definition;
+
 use crate::commands::anilist::utils::synopsis;
 use crate::models::anilist::studio::Studio;
 use crate::models::anilist::{
     activity::Activity, character::Character, media::Media, staff::Staff, user::User,
 };
 use crate::models::giphy::Giphy;
-use serenity::builder::CreateEmbed;
 
 pub fn pages_builder<T>(
     results: Vec<T>,
@@ -53,11 +55,11 @@ pub fn user_embed_builder(user: &User, prefix: String) -> CreateEmbed {
         .url(&user.site_url)
         .description(&user.about())
         .thumbnail(&user.avatar.large)
-        .field("Watched time", &user.watched_time(), true)
-        .field("Chapters read", &user.chapters_read(), true)
         .field("Favourite Anime", &user.favourite_anime(), true)
         .field("Favourite Manga", &user.favourite_manga(), true)
         .field("Favourite Characters", &user.favourite_characters(), true)
+        .field("Days Watched", &user.statistics.days_watched(), true)
+        .field("Chapters read", &user.statistics.chapters_read(), true)
         .footer(|f| {
             f.icon_url("https://anilist.co/img/icons/favicon-32x32.png")
                 .text(format!("{}Powered by AniList", prefix))
@@ -110,7 +112,7 @@ pub fn studio_embed_builder(studio: &Studio, prefix: String) -> CreateEmbed {
         .clone()
 }
 
-pub fn activity_embed_builder(activity: &Activity) -> CreateEmbed {
+pub fn activity_embed_builder(activity: &Activity, _prefix: String) -> CreateEmbed {
     match activity.__typename.as_str() {
         "TextActivity" => text_activity_embed_builder(activity),
         "ListActivity" => list_activity_embed_builder(activity),
@@ -214,4 +216,39 @@ pub fn giphy_embed_builder(gif: &Giphy, prefix: String) -> CreateEmbed {
                 .text(format!("{}Powered by Giphy", prefix))
         })
         .clone()
+}
+
+pub fn urban_embed_builder(definition: &Definition, prefix: String) -> CreateEmbed {
+    let mut s = definition.definition.clone();
+    if s.len() > 1800 {
+        s.truncate(1800);
+    }
+
+    let mut embed = CreateEmbed::default();
+    embed
+        .color(Colour::GOLD)
+        .title(&format!("Definition of {}", &definition.word))
+        .url(&definition.permalink)
+        .description(s)
+        .footer(|f| f
+            .icon_url("https://d2gatte9o95jao.cloudfront.net/assets/apple-touch-icon-1734beeaa059fbc5587bddb3001a0963670c6de8767afb6c67d88d856b0c0dad.png")
+            .text(&format!("{}Defined by {}", prefix, definition.author)));
+
+    // Only add example field if there's an example
+    let example = definition.example.clone();
+    if !example.is_empty() {
+        embed.field("Example", example, true);
+    }
+
+    // This is a workaround since we can't order fields
+    embed.field(
+        "Votes",
+        format!(
+            "👍: **{}** 👎: **{}**",
+            &definition.thumbs_up, &definition.thumbs_down
+        ),
+        true,
+    );
+
+    embed.clone()
 }

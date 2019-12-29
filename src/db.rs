@@ -1,7 +1,14 @@
+use diesel::prelude::*;
 use diesel::r2d2::{ConnectionManager, Pool, PooledConnection};
 use diesel::PgConnection;
+use std::collections::HashSet;
+use std::iter::FromIterator;
+use std::ops::Deref;
 
 pub mod models;
+pub mod schema;
+
+use self::schema::*;
 
 pub struct Database {
     pool: Pool<ConnectionManager<PgConnection>>,
@@ -25,6 +32,4 @@ impl Database {
             .get()
             .expect("Attempt to get connection timed out")
     }
-
-    // TODO setup database functions
 }

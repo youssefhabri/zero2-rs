@@ -8,9 +8,13 @@ query($username: String) {
     }
     bannerImage
     about(asHtml: false)
-    stats {
-      watchedTime
-      chaptersRead
+    statistics {
+      anime {
+        ...UserStatistics
+      }
+      manga {
+        ...UserStatistics
+      }
     }
     favourites {
       manga {

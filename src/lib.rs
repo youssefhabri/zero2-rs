@@ -6,6 +6,8 @@ extern crate lazy_static;
 extern crate serde_derive;
 #[macro_use]
 extern crate rust_embed;
+#[macro_use]
+extern crate diesel;
 
 pub mod checks;
 pub mod client;

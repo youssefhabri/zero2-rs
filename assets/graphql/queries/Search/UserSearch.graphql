@@ -9,9 +9,13 @@ query($id: Int, $search: String) {
       }
       bannerImage
       about(asHtml: true)
-      stats {
-        watchedTime
-        chaptersRead
+      statistics {
+        anime {
+          ...UserStatistics
+        }
+        manga {
+          ...UserStatistics
+        }
       }
       favourites {
         manga {

@@ -1,0 +1,23 @@
+fragment UserStatistics on UserStatistics {
+  count
+  meanScore
+  minutesWatched
+  episodesWatched
+  chaptersRead
+  volumesRead
+  standardDeviation
+  statuses {
+    count
+    meanScore
+    chaptersRead
+    minutesWatched
+    status
+  }
+  genres {
+    count
+    genre
+    minutesWatched
+    chaptersRead
+    meanScore
+  }
+}

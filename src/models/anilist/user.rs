@@ -8,12 +8,43 @@ pub struct UserAvatar {
 }
 
 #[derive(Deserialize, Debug)]
-pub struct UserStats {
-    #[serde(rename = "watchedTime")]
-    pub watched_time: Option<u64>,
+pub struct UserStatistics {
+    pub anime: UserMediaStatistics,
+    pub manga: UserMediaStatistics,
+}
 
-    #[serde(rename = "chaptersRead")]
-    pub chapters_read: Option<u32>,
+#[derive(Clone, Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
+pub struct UserMediaStatistics {
+    count: u32,
+    mean_score: f32,
+    minutes_watched: u32,
+    episodes_watched: u32,
+    chapters_read: u32,
+    volumes_read: u32,
+    standard_deviation: f32,
+    statuses: Vec<UserStatusStats>,
+    genres: Vec<GenreStats>,
+}
+
+#[derive(Clone, Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
+pub struct UserStatusStats {
+    count: u32,
+    mean_score: f32,
+    chapters_read: u32,
+    minutes_watched: u32,
+    status: String,
+}
+
+#[derive(Clone, Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
+pub struct GenreStats {
+    count: u32,
+    genre: String,
+    minutes_watched: u32,
+    chapters_read: u32,
+    mean_score: f32,
 }
 
 #[derive(Deserialize, Debug)]
@@ -38,7 +69,7 @@ pub struct User {
 
     pub about: Option<String>,
 
-    pub stats: UserStats,
+    pub statistics: UserStatistics,
 
     pub favourites: Favourites,
 }
@@ -48,20 +79,6 @@ impl User {
         match &self.about {
             Some(about) => synopsis(about, 300),
             None => String::new(),
-        }
-    }
-
-    pub fn watched_time(&self) -> String {
-        match &self.stats.watched_time {
-            Some(watched_time) => format_time(*watched_time as f64),
-            None => String::from("N/A"),
-        }
-    }
-
-    pub fn chapters_read(&self) -> String {
-        match &self.stats.chapters_read {
-            Some(chapters_read) => format!("{}", chapters_read),
-            None => String::from("N/A"),
         }
     }
 
@@ -132,5 +149,42 @@ impl User {
         }
 
         String::from("N/A")
+    }
+}
+
+impl UserStatistics {
+    pub fn total_anime(&self) -> u32 {
+        self.anime.count
+    }
+
+    pub fn episodes_watched(&self) -> u32 {
+        self.anime.episodes_watched
+    }
+
+    pub fn days_watched(&self) -> String {
+        format_time(f64::from(self.anime.minutes_watched))
+    }
+
+    pub fn days_planned(&self) -> String {
+        let minutes_planned = self
+            .anime
+            .statuses
+            .iter()
+            .find(|stat| stat.status.as_str() == "PLANNING")
+            .map_or(0, |stat| stat.minutes_watched);
+
+        format_time(f64::from(minutes_planned))
+    }
+
+    pub fn mean_score(&self) -> f32 {
+        self.anime.mean_score
+    }
+
+    pub fn standard_deviation(&self) -> f32 {
+        self.anime.standard_deviation
+    }
+
+    pub fn chapters_read(&self) -> String {
+        format!("{}", self.manga.chapters_read)
     }
 }

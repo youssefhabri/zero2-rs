@@ -1,5 +1,9 @@
+use crate::db::Database;
+
 lazy_static! {
-    pub static ref PREFIX: String = dotenv::var("BOT_PREFIX").expect("token");
+    pub static ref PREFIX: String = dotenv::var("BOT_PREFIX").expect("BOT_PREFIX");
+    pub static ref DB: Database = Database::connect();
+    pub static ref OWNER_ID: String = dotenv::var("OWNER_ID").expect("OWNER_ID");
     pub static ref COOKIES: Vec<String> = {
         let url =
             "https://raw.githubusercontent.com/ianli/fortune-cookies-galore/master/fortunes.txt";
@@ -28,3 +32,5 @@ pub const AT_BOT_IDS: [u64; 4] = [
     510000124949168165,
     235088799074484224,
 ];
+
+pub const MAIN_COLOUR: u32 = 16580705;
