@@ -81,20 +81,6 @@ pub fn format_time(time_minutes: f64) -> String {
     format!("{} minutes", minutes)
 }
 
-pub fn _format_time_long(time_minutes: f64) -> String {
-    let minutes = floor(time_minutes % 60.0, 0);
-    let hours = floor((time_minutes / 60.0) % 24.0, 0);
-    let days = floor(time_minutes / 60.0 / 24.0, 0);
-
-    if days > 0.0 {
-        return format!("{} days, {} hours {} minutes", days, hours, minutes);
-    } else if hours > 0.0 {
-        return format!("{} hours, {} minutes", hours, minutes);
-    }
-
-    format!("{} minutes", minutes)
-}
-
 /// Generate a random number between the min & max values
 pub fn random_num(min: usize, max: usize) -> usize {
     rand::thread_rng().gen_range(min, max)
