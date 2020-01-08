@@ -6,7 +6,7 @@ use serenity::model::{
 use serenity::prelude::{Context, EventHandler};
 use std::collections::{HashMap, HashSet};
 
-use crate::core::consts::{DB as db, PREFIX};
+use crate::core::consts::DB as db;
 use crate::db::models::{Guild, User};
 use crate::{menu, monitors};
 

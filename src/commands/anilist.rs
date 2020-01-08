@@ -5,7 +5,6 @@ use serenity::prelude::Context;
 use crate::checks::*;
 use crate::core::consts::{DB as db, OWNER_ID, PREFIX};
 use crate::menu::{self, builders};
-use crate::models::anilist::user::User;
 
 pub mod client;
 pub mod utils;
