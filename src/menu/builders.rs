@@ -33,9 +33,9 @@ pub fn media_embed_builder(media: &Media, prefix: String) -> CreateEmbed {
         .description(&media.synopsis())
         .image(&media.banner_image())
         .thumbnail(&media.cover_image.large)
-        .field("Score", &media.mean_score(), true)
-        .field("Genres", &media.genres(), true)
+        .field("Genres", &media.genres(), false)
         .field(field_name, value, true)
+        .field("Score", &media.mean_score(), true)
         .field("More info", &media.tracking_sites(), true)
         .footer(|f| {
             f.icon_url("https://anilist.co/img/icons/favicon-32x32.png")
