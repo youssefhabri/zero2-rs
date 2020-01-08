@@ -9,14 +9,6 @@ table! {
 }
 
 table! {
-    commands_blacklist (id) {
-        id -> Int4,
-        name -> Varchar,
-        blocked -> Bool,
-    }
-}
-
-table! {
     custom_commands (id, guild_id) {
         id -> Int8,
         guild_id -> Int8,
@@ -56,7 +48,6 @@ table! {
 
 allow_tables_to_appear_in_same_query!(
     blacklist,
-    commands_blacklist,
     custom_commands,
     guilds,
     users,
