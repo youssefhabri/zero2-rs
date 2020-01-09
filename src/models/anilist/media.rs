@@ -163,13 +163,16 @@ impl Media {
     }
 
     pub fn tracking_sites(&self) -> String {
-        let anilist = format!("[AniList](https://anilist.co/anime/{})", self.id);
-        let mal = match self.id_mal {
-            Some(id_mal) => format!("[MyAnimeList](https://myanimelist.com/anime/{})", id_mal),
-            None => "".to_owned(),
-        };
+        let mut sites = vec![];
+        sites.push(format!("[AniList]({})", self.site_url));
+        if let Some(id) = self.id_mal {
+            sites.push(format!(
+                "[MyAnimeList](https://myanimelist.com/anime/{})",
+                id
+            ));
+        }
 
-        format!("{}, {}", anilist, mal)
+        sites.join(", ")
     }
 
     pub fn synopsis(&self) -> String {
