@@ -2,9 +2,13 @@ use serenity::{builder::CreateEmbed, utils::Colour};
 use urbandictionary::model::Definition;
 
 use crate::commands::anilist::utils::synopsis;
-use crate::models::anilist::studio::Studio;
 use crate::models::anilist::{
-    activity::Activity, character::Character, media::Media, staff::Staff, user::User,
+    activity::Activity,
+    character::Character,
+    media::{Media, MediaType},
+    staff::Staff,
+    studio::Studio,
+    user::User,
 };
 use crate::models::giphy::Giphy;
 
@@ -20,7 +24,7 @@ pub fn pages_builder<T>(
 }
 
 pub fn media_embed_builder(media: &Media, prefix: String) -> CreateEmbed {
-    let (field_name, value) = if &media.media_type == "ANIME" {
+    let (field_name, value) = if media.media_type == MediaType::Anime {
         ("Episodes", media.episodes())
     } else {
         ("Chapters", media.chapters())
@@ -74,8 +78,8 @@ pub fn character_embed_builder(character: &Character, prefix: String) -> CreateE
         .url(&character.site_url)
         .description(&character.about())
         .thumbnail(&character.cover_image())
-        .field("Anime", &character.media_list("ANIME"), true)
-        .field("Manga", &character.media_list("MANGA"), true)
+        .field("Anime", &character.media_list(MediaType::Anime), true)
+        .field("Manga", &character.media_list(MediaType::Manga), true)
         .footer(|f| {
             f.icon_url("https://anilist.co/img/icons/favicon-32x32.png")
                 .text(format!("{}Powered by AniList", prefix))
@@ -90,8 +94,8 @@ pub fn staff_embed_builder(staff: &Staff, prefix: String) -> CreateEmbed {
         .url(&staff.site_url)
         .description(&staff.about())
         .thumbnail(&staff.image())
-        .field("Anime", &staff.media_list("ANIME"), true)
-        .field("Manga", &staff.media_list("MANGA"), true)
+        .field("Anime", &staff.media_list(MediaType::Anime), true)
+        .field("Manga", &staff.media_list(MediaType::Manga), true)
         .footer(|f| {
             f.icon_url("https://anilist.co/img/icons/favicon-32x32.png")
                 .text(format!("{}Powered by AniList", prefix))

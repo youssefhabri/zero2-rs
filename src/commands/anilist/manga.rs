@@ -5,7 +5,7 @@ use serenity::prelude::*;
 use crate::commands::anilist::client;
 use crate::menu;
 use crate::menu::builders;
-use crate::models::anilist::media::Media;
+use crate::models::anilist::media::{Media, MediaType};
 
 #[command]
 #[aliases("m")]
@@ -21,7 +21,7 @@ fn manga(context: &mut Context, message: &Message, args: Args) -> CommandResult 
 
     let keyword = args.message().to_string();
 
-    let results: Vec<Media> = client::search_media(keyword.clone(), "MANGA".to_owned());
+    let results: Vec<Media> = client::search_media(keyword.clone(), MediaType::Manga);
 
     if !results.is_empty() {
         let manga: &Media = &results[0];

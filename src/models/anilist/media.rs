@@ -3,6 +3,23 @@ use crate::core::utils::format_time;
 use std::time::SystemTime;
 use std::time::UNIX_EPOCH;
 
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq)]
+#[serde(rename_all = "UPPERCASE")]
+pub enum MediaType {
+    Anime,
+    Manga,
+}
+
+impl ToString for MediaType {
+    fn to_string(&self) -> String {
+        match self {
+            MediaType::Anime => "ANIME",
+            MediaType::Manga => "MANGE",
+        }
+        .to_string()
+    }
+}
+
 #[derive(Clone, Deserialize, Debug)]
 pub struct MediaTitle {
     pub romaji: Option<String>,
@@ -42,7 +59,7 @@ pub struct MediaBase {
     pub title: MediaTitle,
 
     #[serde(rename = "type")]
-    pub media_type: String,
+    pub media_type: MediaType,
 
     #[serde(rename = "siteUrl")]
     pub site_url: String,
@@ -65,7 +82,7 @@ pub struct Media {
     pub id_mal: Option<u32>,
 
     #[serde(rename = "type")]
-    pub media_type: String,
+    pub media_type: MediaType,
 
     pub title: MediaTitle,
 
@@ -186,7 +203,7 @@ impl Media {
         let status = match self.status.as_str() {
             "FINISHED" => "Finished".to_string(),
             "RELEASING" => {
-                if self.media_type == "ANIME" {
+                if self.media_type == MediaType::Anime {
                     match &self.next_airing_episode {
                         Some(next) => {
                             let start = SystemTime::now();
