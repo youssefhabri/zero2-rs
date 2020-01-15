@@ -11,7 +11,7 @@ use crate::core::utils::{next_day, to_midnight, weekday_to_string};
 use crate::models::anilist::airing_schedule::AiringSchedule;
 
 #[command]
-#[aliases("airs")]
+#[aliases("air", "airs")]
 #[usage = "[weekday]"]
 #[description = "Show airing anime for a given/current day"]
 fn airing(context: &mut Context, message: &Message, args: Args) -> CommandResult {

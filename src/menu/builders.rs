@@ -1,10 +1,16 @@
+use serenity::{builder::CreateEmbed, utils::Colour};
+use urbandictionary::model::Definition;
+
 use crate::commands::anilist::utils::synopsis;
-use crate::models::anilist::studio::Studio;
 use crate::models::anilist::{
-    activity::Activity, character::Character, media::Media, staff::Staff, user::User,
+    activity::Activity,
+    character::Character,
+    media::{Media, MediaType},
+    staff::Staff,
+    studio::Studio,
+    user::User,
 };
 use crate::models::giphy::Giphy;
-use serenity::builder::CreateEmbed;
 
 pub fn pages_builder<T>(
     results: Vec<T>,
@@ -18,7 +24,7 @@ pub fn pages_builder<T>(
 }
 
 pub fn media_embed_builder(media: &Media, prefix: String) -> CreateEmbed {
-    let (field_name, value) = if &media.media_type == "ANIME" {
+    let (field_name, value) = if media.media_type == MediaType::Anime {
         ("Episodes", media.episodes())
     } else {
         ("Chapters", media.chapters())
@@ -31,9 +37,9 @@ pub fn media_embed_builder(media: &Media, prefix: String) -> CreateEmbed {
         .description(&media.synopsis())
         .image(&media.banner_image())
         .thumbnail(&media.cover_image.large)
-        .field("Score", &media.mean_score(), true)
-        .field("Genres", &media.genres(), true)
+        .field("Genres", &media.genres(), false)
         .field(field_name, value, true)
+        .field("Score", &media.mean_score(), true)
         .field("More info", &media.tracking_sites(), true)
         .footer(|f| {
             f.icon_url("https://anilist.co/img/icons/favicon-32x32.png")
@@ -53,11 +59,11 @@ pub fn user_embed_builder(user: &User, prefix: String) -> CreateEmbed {
         .url(&user.site_url)
         .description(&user.about())
         .thumbnail(&user.avatar.large)
-        .field("Days Watched", &user.statistics.days_watched(), true)
-        .field("Chapters read", &user.statistics.chapters_read(), true)
         .field("Favourite Anime", &user.favourite_anime(), true)
         .field("Favourite Manga", &user.favourite_manga(), true)
         .field("Favourite Characters", &user.favourite_characters(), true)
+        .field("Days Watched", &user.statistics.days_watched(), true)
+        .field("Chapters read", &user.statistics.chapters_read(), true)
         .footer(|f| {
             f.icon_url("https://anilist.co/img/icons/favicon-32x32.png")
                 .text(format!("{}Powered by AniList", prefix))
@@ -119,8 +125,8 @@ pub fn character_embed_builder(character: &Character, prefix: String) -> CreateE
         .url(&character.site_url)
         .description(&character.about())
         .thumbnail(&character.cover_image())
-        .field("Anime", &character.media_list("ANIME"), true)
-        .field("Manga", &character.media_list("MANGA"), true)
+        .field("Anime", &character.media_list(MediaType::Anime), true)
+        .field("Manga", &character.media_list(MediaType::Manga), true)
         .footer(|f| {
             f.icon_url("https://anilist.co/img/icons/favicon-32x32.png")
                 .text(format!("{}Powered by AniList", prefix))
@@ -135,8 +141,8 @@ pub fn staff_embed_builder(staff: &Staff, prefix: String) -> CreateEmbed {
         .url(&staff.site_url)
         .description(&staff.about())
         .thumbnail(&staff.image())
-        .field("Anime", &staff.media_list("ANIME"), true)
-        .field("Manga", &staff.media_list("MANGA"), true)
+        .field("Anime", &staff.media_list(MediaType::Anime), true)
+        .field("Manga", &staff.media_list(MediaType::Manga), true)
         .footer(|f| {
             f.icon_url("https://anilist.co/img/icons/favicon-32x32.png")
                 .text(format!("{}Powered by AniList", prefix))
@@ -261,4 +267,39 @@ pub fn giphy_embed_builder(gif: &Giphy, prefix: String) -> CreateEmbed {
                 .text(format!("{}Powered by Giphy", prefix))
         })
         .clone()
+}
+
+pub fn urban_embed_builder(definition: &Definition, prefix: String) -> CreateEmbed {
+    let mut s = definition.definition.clone();
+    if s.len() > 1800 {
+        s.truncate(1800);
+    }
+
+    let mut embed = CreateEmbed::default();
+    embed
+        .color(Colour::GOLD)
+        .title(&format!("Definition of {}", &definition.word))
+        .url(&definition.permalink)
+        .description(s)
+        .footer(|f| f
+            .icon_url("https://d2gatte9o95jao.cloudfront.net/assets/apple-touch-icon-1734beeaa059fbc5587bddb3001a0963670c6de8767afb6c67d88d856b0c0dad.png")
+            .text(&format!("{}Defined by {}", prefix, definition.author)));
+
+    // Only add example field if there's an example
+    let example = definition.example.clone();
+    if !example.is_empty() {
+        embed.field("Example", example, true);
+    }
+
+    // This is a workaround since we can't order fields
+    embed.field(
+        "Votes",
+        format!(
+            "👍: **{}** 👎: **{}**",
+            &definition.thumbs_up, &definition.thumbs_down
+        ),
+        true,
+    );
+
+    embed.clone()
 }

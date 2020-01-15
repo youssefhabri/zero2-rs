@@ -1,6 +1,7 @@
 use crate::commands::anilist::utils::synopsis;
 use crate::core::utils::format_time;
 use crate::models::anilist::connection::{CharacterConnection, MediaConnection};
+use crate::models::anilist::media::MediaType;
 
 #[derive(Clone, Deserialize, Debug)]
 pub struct UserAvatar {
@@ -82,11 +83,10 @@ impl User {
         }
     }
 
-    pub fn favourite_media(&self, fav_type: &str) -> String {
+    pub fn favourite_media(&self, fav_type: MediaType) -> String {
         let media_list = match fav_type {
-            "ANIME" => &self.favourites.anime.nodes,
-            "MANGA" => &self.favourites.manga.nodes,
-            _ => return String::from("N/A"),
+            MediaType::Anime => &self.favourites.anime.nodes,
+            MediaType::Manga => &self.favourites.manga.nodes,
         };
 
         let mut fav_list: Vec<String> = vec![];
@@ -113,11 +113,11 @@ impl User {
     }
 
     pub fn favourite_anime(&self) -> String {
-        self.favourite_media("ANIME")
+        self.favourite_media(MediaType::Anime)
     }
 
     pub fn favourite_manga(&self) -> String {
-        self.favourite_media("MANGA")
+        self.favourite_media(MediaType::Manga)
     }
 
     pub fn favourite_characters(&self) -> String {

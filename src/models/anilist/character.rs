@@ -1,5 +1,6 @@
 use crate::commands::anilist::utils::synopsis;
 use crate::models::anilist::connection::MediaConnection;
+use crate::models::anilist::media::MediaType;
 
 #[derive(Clone, Deserialize, Debug)]
 pub struct CharacterName {
@@ -92,7 +93,7 @@ impl Character {
         }
     }
 
-    pub fn media_list(&self, media_type: &str) -> String {
+    pub fn media_list(&self, media_type: MediaType) -> String {
         let media_list = &self.media.nodes;
 
         let mut fav_list: Vec<String> = vec![];

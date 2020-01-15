@@ -22,6 +22,7 @@ impl Zero2Framework {
                     .delimiters(vec![",", " "])
                     .owners(owners)
                     .prefix(PREFIX.as_str())
+                    .prefixes(PREFIXES.to_vec())
                     .dynamic_prefix(|_ctx, msg| {
                         if let Some(guild_id) = msg.guild_id {
                             if let Ok(guild) = DB.find_guild(guild_id) {

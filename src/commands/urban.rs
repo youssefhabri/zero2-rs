@@ -1,7 +1,4 @@
 use reqwest::Client;
-use urbandictionary::model::Definition;
-use urbandictionary::ReqwestUrbanDictionaryRequester;
-
 use serenity::{
     framework::standard::{
         macros::{command, group},
@@ -11,10 +8,16 @@ use serenity::{
     prelude::*,
     utils::Colour,
 };
+use urbandictionary::model::Definition;
+use urbandictionary::ReqwestUrbanDictionaryRequester;
 
-#[group]
-#[commands(urban)]
-pub struct Knowledge;
+use crate::menu;
+use crate::menu::builders;
+
+group!({
+    name: "Knowledge",
+    commands: [urban]
+});
 
 #[command]
 #[aliases("ud", "define")]
@@ -24,7 +27,7 @@ fn urban(context: &mut Context, message: &Message, args: Args) -> CommandResult 
     if args.is_empty() {
         let _ = message
             .channel_id
-            .say(&context.http, "You need to input a anime title.");
+            .say(&context.http, "You need to input a keyword.");
         return Ok(());
     }
 
@@ -33,68 +36,53 @@ fn urban(context: &mut Context, message: &Message, args: Args) -> CommandResult 
     // Code adopted from tofubot by noxim
     // github: https://owo.codes/noxim/tofu3/blob/master/src/modules/urban.rs
     let client = Client::new();
-    let response: Option<Definition> = match client.define(&keyword) {
-        Ok(res) => res,
+    let definitions: Vec<Definition> = match client.definitions(&keyword) {
+        Ok(res) => res.definitions,
         Err(why) => {
             error!("Err requesting UB definition: {:#?}", why);
             let _ = message
                 .channel_id
                 .say(&context.http, "Error requesting UB definition!");
-            None
+            vec![]
         }
     };
 
-    match response {
-        Some(def) => {
-            // discord only accepts 2000 characters. 1800 should give us enough
-            // headroom for our example field to fit
-            let mut s = def.definition.clone();
-            if s.len() > 1800 {
-                s.truncate(1800);
-            }
+    if definitions.is_empty() {
+        let _ = message.channel_id.send_message(&context.http, |f| {
+            f.embed(|m| {
+                m.color(Colour::GOLD)
+                    .title(format!("Could not find \"{}\"", keyword))
+                    .description(format!(
+                        "Could not find \"{}\" on Urban Dictionary. Are you \
+                         sure you wrote it correctly?",
+                        keyword
+                    ))
+            })
+        });
 
-            match message.channel_id.send_message(&context.http, |f| {
-                f.embed(|embed| {
-                    embed
-                        .color(Colour::FOOYOO)
-                        .title(&format!("Definition of {}", &def.word))
-                        .url(&def.permalink)
-                        .description(s)
-                        .footer(|f| f.text(&format!("Defined by {}", def.author)));
+        return Ok(());
+    }
 
-                    // Only add example field if there's an example
-                    let example = def.example.clone();
-                    if !example.is_empty() {
-                        embed.field("Example", example, true);
-                    }
+    let definition: &Definition = &definitions[0];
+    let sending = message.channel_id.send_message(&context.http, |m| {
+        m.embed(|e| {
+            e.clone_from(&builders::urban_embed_builder(
+                definition,
+                format!("Page: {}/{} | ", 1, definitions.len()),
+            ));
 
-                    // This is a workaround since we can't order fields
-                    embed.field(
-                        "Votes",
-                        format!("👍: **{}** 👎: **{}**", &def.thumbs_up, &def.thumbs_down),
-                        true,
-                    );
+            e
+        })
+        .reactions(menu::reactions::default())
+    });
 
-                    embed
-                })
-            }) {
-                Ok(_) => {}
-                Err(why) => error!("Sending UB failed: {:#?}", why),
-            }
-        }
-        None => {
-            let _ = message.channel_id.send_message(&context.http, |f| {
-                f.embed(|m| {
-                    m.color(Colour::GOLD)
-                        .title(format!("Could not find \"{}\"", keyword))
-                        .description(format!(
-                            "Could not find \"{}\" on Urban Dictionary. Are you \
-                             sure you wrote it correctly?",
-                            keyword
-                        ))
-                })
-            });
-        }
+    if let Ok(sending_msg) = sending {
+        menu::new_pagination(
+            context,
+            sending_msg.id,
+            message.author.id,
+            builders::pages_builder::<Definition>(definitions, builders::urban_embed_builder),
+        )
     }
 
     Ok(())
