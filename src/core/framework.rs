@@ -4,7 +4,7 @@ use std::collections::HashSet;
 
 use crate::commands::{self, anilist, fun, meta, nekoslife, profile, system, urban};
 use crate::core::cc_parser;
-use crate::core::consts::{BOT_ID, DB, PREFIX};
+use crate::core::consts::{BOT_ID, DB, PREFIX, PREFIXES};
 use crate::core::store::{Command, CommandLogger};
 use crate::monitors;
 
