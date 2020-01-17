@@ -47,6 +47,15 @@ impl Database {
         Ok(blacklist)
     }
 
+    pub fn new_guild(&self, id: GuildId) -> QueryResult<Guild> {
+        let id = *id.as_u64() as i64;
+        let guild = NewGuild { id };
+        diesel::insert_into(guilds::table)
+            .values(&guild)
+            .on_conflict_do_nothing()
+            .get_result(self.conn().deref())
+    }
+
     pub fn new_user(
         &self,
         id: UserId,

@@ -14,6 +14,12 @@ pub struct Guild {
     pub prefix: String, // TODO implement a per-guild prefix?
 }
 
+#[derive(Insertable)]
+#[table_name = "guilds"]
+pub struct NewGuild {
+    pub id: i64,
+}
+
 #[derive(Queryable, Identifiable, AsChangeset, Debug)]
 #[primary_key(id, guild_id)]
 pub struct User<Tz: TimeZone> {
