@@ -1,6 +1,9 @@
 use regex::{Captures, Regex};
 use serenity::framework::standard::Args;
-use serenity::model::channel::Message;
+use serenity::model::{
+    channel::Message,
+    id::{ChannelId, UserId},
+};
 use serenity::prelude::Context;
 
 lazy_static! {
@@ -21,7 +24,7 @@ pub fn parse(context: &Context, message: &Message, args: &Args, cc_content: Stri
             arg_caps.len()
         )
     } else {
-        let content = dbg!(parse_content(cc_content, message));
+        let content = parse_content(cc_content, &message.author.id, &message.channel_id);
         parse_args(content, arg_caps, args)
     };
 
@@ -30,26 +33,25 @@ pub fn parse(context: &Context, message: &Message, args: &Args, cc_content: Stri
         .send_message(context, |m| m.content(content));
 }
 
-fn parse_content(content: String, message: &Message) -> String {
-    let mut new_content = content.to_string();
+fn parse_content(content: String, author_id: &UserId, channel_id: &ChannelId) -> String {
+    let mut new_content = content.clone();
     for cap in CC_RE.captures_iter(content.as_str()) {
         let cap_inner: &str = &cap[1];
         let segments = cap_inner.split(':').collect::<Vec<&str>>();
 
-        let author_id = message.author.id.as_u64().to_string();
-        let channel_id = message.channel_id.as_u64().to_string();
+        let id_or_default = |default: &u64| match segments.get(1) {
+            Some(id) => id.to_string(),
+            None => default.to_string(),
+        };
+
         match segments[0] {
             "author" | "user" => {
-                new_content = new_content.replace(
-                    &cap[0],
-                    format!("<@{}>", segments.get(1).unwrap_or(&author_id.as_str())).as_str(),
-                )
+                let id = id_or_default(author_id.as_u64());
+                new_content = new_content.replace(&cap[0], format!("<@{}>", id).as_str())
             }
             "channel" => {
-                new_content = new_content.replace(
-                    &cap[0],
-                    format!("<#{}>", segments.get(1).unwrap_or(&channel_id.as_str())).as_str(),
-                )
+                let id = id_or_default(channel_id.as_u64());
+                new_content = new_content.replace(&cap[0], format!("<#{}>", id).as_str())
             }
             "arg" | "args" => {}
             _ => {}
@@ -75,39 +77,43 @@ fn parse_args(content: String, arg_caps: Vec<(usize, Captures)>, args: &Args) ->
     new_content
 }
 
-// #[cfg(test)]
-// mod tests {
-//     use super::*;
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-//     #[test]
-//     fn test_parse_user() {
-//         assert_eq!(
-//             parse_content("Hello, {{user:10}}!"),
-//             "Hello, <@10>!".to_string()
-//         );
-//         assert_eq!(
-//             parse_content("Hello, {{user}}!"),
-//             "Hello, <@0>!".to_string()
-//         );
-//     }
+    #[test]
+    fn test_parse_user() {
+        assert_eq!(
+            parse_content("Hello, {{user:10}}!".to_string(), &UserId(0), &ChannelId(0)),
+            "Hello, <@10>!".to_string()
+        );
+        assert_eq!(
+            parse_content("Hello, {{user}}!".to_string(), &UserId(0), &ChannelId(0)),
+            "Hello, <@0>!".to_string()
+        );
+    }
 
-//     #[test]
-//     fn test_parse_author() {
-//         assert_eq!(
-//             parse_content("Hello, {{author}}!"),
-//             "Hello, <@0>!".to_string()
-//         );
-//     }
+    #[test]
+    fn test_parse_author() {
+        assert_eq!(
+            parse_content("Hello, {{author}}!".to_string(), &UserId(0), &ChannelId(0)),
+            "Hello, <@0>!".to_string()
+        );
+    }
 
-//     #[test]
-//     fn test_parse_channel() {
-//         assert_eq!(
-//             parse_content("Hello, {{channel:200}}!"),
-//             "Hello, <#200>!".to_string()
-//         );
-//         assert_eq!(
-//             parse_content("Hello, {{channel}}!"),
-//             "Hello, <#0>!".to_string()
-//         );
-//     }
-// }
+    #[test]
+    fn test_parse_channel() {
+        assert_eq!(
+            parse_content(
+                "Hello, {{channel:200}}!".to_string(),
+                &UserId(0),
+                &ChannelId(0)
+            ),
+            "Hello, <#200>!".to_string()
+        );
+        assert_eq!(
+            parse_content("Hello, {{channel}}!".to_string(), &UserId(0), &ChannelId(0)),
+            "Hello, <#0>!".to_string()
+        );
+    }
+}
