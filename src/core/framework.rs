@@ -3,7 +3,7 @@ use serenity::model::id::UserId;
 use std::collections::HashSet;
 
 use crate::commands::{self, anilist, fun, meta, nekoslife, system, urban};
-use crate::core::consts::{BOT_ID, PREFIX};
+use crate::core::consts::{BOT_ID, PREFIX, PREFIXES};
 use crate::core::store::{Command, CommandLogger};
 use crate::monitors;
 
@@ -21,6 +21,7 @@ impl Zero2Framework {
                     .delimiters(vec![",", " "])
                     .owners(owners)
                     .prefix(PREFIX.as_str())
+                    .prefixes(PREFIXES.to_vec())
             })
             .before(|ctx, msg, cmd| {
                 if cmd != "shutdown" {

@@ -1,8 +1,14 @@
 use std::str;
 
 use crate::models::anilist::{
-    activity::Activity, airing_schedule::AiringSchedule, character::Character, media::Media,
-    staff::Staff, studio::Studio, user::User, QueryBody, Response,
+    activity::Activity,
+    airing_schedule::AiringSchedule,
+    character::Character,
+    media::{Media, MediaType},
+    staff::Staff,
+    studio::Studio,
+    user::User,
+    QueryBody, Response,
 };
 
 #[derive(RustEmbed)]
@@ -49,10 +55,13 @@ pub fn query(query: &str, variables: Vec<Var>, fragments: Vec<&str>) -> Response
     res.json::<Response>().expect("json")
 }
 
-pub fn search_media(keyword: String, media_type: String) -> Vec<Media> {
+pub fn search_media(keyword: String, media_type: MediaType) -> Vec<Media> {
     query(
         "Search/MediaSearch",
-        vec![("search", keyword.as_str()), ("type", media_type.as_str())],
+        vec![
+            ("search", keyword.as_str()),
+            ("type", &media_type.to_string()),
+        ],
         vec!["MediaBase"],
     )
     .data

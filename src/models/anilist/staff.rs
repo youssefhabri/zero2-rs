@@ -1,5 +1,6 @@
 use crate::commands::anilist::utils::synopsis;
 use crate::models::anilist::connection::{CharacterConnection, MediaConnection};
+use crate::models::anilist::media::MediaType;
 
 // TODO unify all image structs
 #[derive(Clone, Deserialize, Debug)]
@@ -59,7 +60,7 @@ impl Staff {
         }
     }
 
-    pub fn media_list(&self, media_type: &str) -> String {
+    pub fn media_list(&self, media_type: MediaType) -> String {
         let media_list = &self.staff_media.nodes;
 
         let mut fav_list: Vec<String> = vec![];
