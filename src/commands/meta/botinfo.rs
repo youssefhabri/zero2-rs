@@ -56,8 +56,12 @@ fn bot_info(context: &mut Context, message: &Message, _: Args) -> CommandResult 
                     embed
                         .field("System Info", format!(
                             "Type: {} {}\nUptime: {}"
-                            ,sys_info::os_type().unwrap_or_else(|_| String::from("OS Not Found"))
-                            ,sys_info::os_release().unwrap_or_else(|_| String::from("Release Not Found"))
+                            ,sys_info::os_type().unwrap_or_else(|_| String::from("OS unknown"))
+                            ,if sys_info::os_type().unwrap() == "Linux" {
+                                String::from("2.4")
+                            } else {
+                                sys_info::os_release().unwrap_or_else(|_| String::from("(release unknown)"))
+                            }
                             ,seconds_to_hrtime(sys.get_uptime() as usize))
                             ,true)
                         .field("Process Info", format!(
