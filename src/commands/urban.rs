@@ -1,4 +1,4 @@
-use reqwest::Client;
+use reqwest::blocking::Client;
 use urbandictionary::model::Definition;
 use urbandictionary::ReqwestUrbanDictionaryRequester;
 

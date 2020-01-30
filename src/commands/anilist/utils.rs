@@ -8,14 +8,12 @@ fn clean_spoilers(content: String) -> String {
 
     let spoiler_pairs: Vec<_> = content.match_indices("||").collect();
 
-    let result = if spoiler_pairs.len() % 2 != 0 {
+    if spoiler_pairs.len() % 2 != 0 {
         let index = spoiler_pairs[spoiler_pairs.len() - 1].0;
-        content.split_at(index).0.to_string()
-    } else {
-        content
-    };
+        return content.split_at(index).0.to_string();
+    }
 
-    result
+    content
 }
 
 fn parse_markdown(mut content: String) -> String {
@@ -46,8 +44,8 @@ fn parse_markdown_links(mut content: String) -> String {
     content
 }
 
-pub fn synopsis(description: &String, length: usize) -> String {
-    let mut synopsis = description.clone();
+pub fn synopsis(description: &str, length: usize) -> String {
+    let mut synopsis = description.to_string();
 
     synopsis = parse_markdown_links(synopsis);
     synopsis = parse_markdown(synopsis);

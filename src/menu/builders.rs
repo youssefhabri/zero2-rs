@@ -301,5 +301,5 @@ pub fn urban_embed_builder(definition: &Definition, prefix: String) -> CreateEmb
         true,
     );
 
-    embed.clone()
+    embed
 }

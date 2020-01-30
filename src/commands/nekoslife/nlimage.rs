@@ -57,7 +57,7 @@ fn nlimage(context: &mut Context, message: &Message, mut args: Args) -> CommandR
         String::new()
     };
     let user: Option<User> = if params.len() > 1 {
-        let re = Regex::new(r"^<@!?\d+>$").unwrap();
+        let re = Regex::new(r"^<@!?\d+>$")?;
         match re.captures(params[1].clone().as_str()) {
             Some(caps) => match caps.get(0) {
                 Some(user_id) => {
@@ -69,7 +69,7 @@ fn nlimage(context: &mut Context, message: &Message, mut args: Args) -> CommandR
                         .replace("!", "")
                         .parse::<u64>()
                         .unwrap();
-                    Some(UserId(id).to_user(&context).unwrap())
+                    Some(UserId(id).to_user(&context)?)
                 }
                 None => None,
             },
@@ -79,7 +79,7 @@ fn nlimage(context: &mut Context, message: &Message, mut args: Args) -> CommandR
         None
     };
 
-    let selection: String = selection(&context, message, keyword.clone());
+    let selection: String = selection(&context, message, keyword);
 
     let image: NLImage = query(selection.clone());
     let image_title = selection.replace("_", " ");
@@ -88,8 +88,7 @@ fn nlimage(context: &mut Context, message: &Message, mut args: Args) -> CommandR
         m.embed(|embed| {
             embed.image(image.url.clone());
 
-            if user.is_some() {
-                let user = user.unwrap();
+            if let Some(user) = user {
                 let _ = message.delete(&context);
                 let _ = message.channel_id.send_message(&context.http, |m| {
                     m.content(format!(
@@ -109,7 +108,7 @@ fn nlimage(context: &mut Context, message: &Message, mut args: Args) -> CommandR
 }
 
 pub fn query(selection: String) -> NLImage {
-    let client = reqwest::Client::new();
+    let client = reqwest::blocking::Client::new();
     let mut response = client
         .get(format!("https://nekos.life/api/v2/img/{}", selection).as_str())
         .send()

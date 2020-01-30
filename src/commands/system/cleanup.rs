@@ -10,7 +10,7 @@ fn cleanup(context: &mut Context, message: &Message, args: Args) -> CommandResul
     // TODO handle numbers over 100
     //  as discord limit the number to 100
     //  we need to iterate multiple time to handle that
-    let msgs_count: u64 = if args.len() >= 1 { args.parse()? } else { 10 };
+    let msgs_count: u64 = if !args.is_empty() { args.parse()? } else { 10 };
 
     let msgs_ids: Vec<MessageId> = message
         .channel_id

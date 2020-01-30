@@ -6,6 +6,12 @@ use crate::core::{framework::Zero2Framework, handler::Zero2Handler, store::*};
 
 pub struct Zero2Client(Client);
 
+impl Default for Zero2Client {
+    fn default() -> Self {
+        Zero2Client::new()
+    }
+}
+
 impl Zero2Client {
     pub fn new() -> Self {
         // Load token from environment variables or .env file

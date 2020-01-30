@@ -16,7 +16,7 @@ fn echo(context: &mut Context, message: &Message, args: Args) -> CommandResult {
         return Ok(());
     }
 
-    let segments: Vec<&str> = args.message().split(" ").collect();
+    let segments: Vec<&str> = args.message().split(' ').collect();
 
     if let Some(channel_id) = parse_channel(segments[0]) {
         if segments.len() == 1 {
@@ -35,11 +35,9 @@ fn echo(context: &mut Context, message: &Message, args: Args) -> CommandResult {
 
             return Ok(());
         }
-    } else {
-        if segments.len() >= 1 {
-            // send message to current channel
-            message.channel_id.say(&context.http, segments.join(" "))?;
-        }
+    } else if !segments.is_empty() {
+        // send message to current channel
+        message.channel_id.say(&context.http, segments.join(" "))?;
     }
 
     message.delete(context)?;

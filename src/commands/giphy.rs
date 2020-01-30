@@ -9,7 +9,7 @@ use crate::models::giphy::*;
 
 pub fn query(query: String) -> GiphyResponse {
     let giphy_key = dotenv::var("GIPHY_API_KEY").expect("giphy_api_token");
-    let client = reqwest::Client::new();
+    let client = reqwest::blocking::Client::new();
 
     let endpoint = if !query.is_empty() {
         format!("search?q={}&", query)

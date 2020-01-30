@@ -36,7 +36,7 @@ pub struct Fortune {
 }
 
 fn request() -> Option<Vec<Fortune>> {
-    let client = reqwest::Client::new();
+    let client = reqwest::blocking::Client::new();
     let page = random_num(0, 6);
     let mut response = client
         .get(

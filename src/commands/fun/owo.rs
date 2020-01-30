@@ -23,8 +23,7 @@ fn owo(context: &mut Context, message: &Message, args: Args) -> CommandResult {
     let mut text = input
         .replace("ove", "uv")
         .replace("n", "ny")
-        .replace("N", "NY")
-        .to_owned();
+        .replace("N", "NY");
     text = Regex::new(r"[rl]")
         .unwrap()
         .replace_all(text.as_str(), "w")

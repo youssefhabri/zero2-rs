@@ -17,7 +17,7 @@ fn embed(context: &mut Context, message: &Message, args: Args) -> CommandResult 
         .filter(|seg| !seg.is_empty())
         .collect();
 
-    if segments.len() < 1 {
+    if segments.is_empty() {
         let _ = message
             .channel_id
             .say(&context.http, "_Echo echo. Test 1 2 3, test A B C ..._");

@@ -45,7 +45,7 @@ pub fn query(query: &str, variables: Vec<Var>, fragments: Vec<&str>) -> Response
             .collect(),
     };
 
-    let client = reqwest::Client::new();
+    let client = reqwest::blocking::Client::new();
     let mut res = client
         .post("https://graphql.anilist.co")
         .json(&body)

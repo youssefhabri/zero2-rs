@@ -22,7 +22,7 @@ log = "0.4"
 time = "0.1"
 tendril = "0.4"
 rand = "0.7"
-reqwest = "0.9"
+reqwest = { version = "0.10", features = ["blocking", "json"] }
 rust-embed = "5.1"
 serde = "1.0"
 serde_derive = "1.0"
