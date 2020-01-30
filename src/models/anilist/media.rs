@@ -14,7 +14,7 @@ impl ToString for MediaType {
     fn to_string(&self) -> String {
         match self {
             MediaType::Anime => "ANIME",
-            MediaType::Manga => "MANGE",
+            MediaType::Manga => "MANGA",
         }
         .to_string()
     }
