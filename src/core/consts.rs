@@ -20,7 +20,7 @@ lazy_static! {
         match reqwest::get(url) {
             Ok(mut res) => match res.text() {
                 Ok(text) => {
-                    text.split("\n").for_each(|s| {
+                    text.split('\n').for_each(|s| {
                         cookies.push(s.to_string());
                     });
                 }

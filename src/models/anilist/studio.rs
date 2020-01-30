@@ -31,7 +31,7 @@ impl Studio {
         let unwrap_score = |score: Option<u32>| -> String {
             match score {
                 Some(score) => format!("{}", score),
-                None => format!("N/A"),
+                None => "N/A".to_string(),
             }
         };
 

@@ -1,17 +1,16 @@
 use std::collections::HashSet;
 
 use serenity::model::{
-    channel::Message, channel::Reaction, event::ResumedEvent, gateway::Activity, gateway::Ready,
-    guild::Member, id::GuildId,
+    channel::Reaction, event::ResumedEvent, gateway::Activity, gateway::Ready, guild::Member,
+    id::GuildId,
 };
 use serenity::prelude::{Context, EventHandler};
 
-use crate::core::consts::DB as db;
 use crate::{menu, monitors};
 
 #[derive(Default)]
 pub struct Zero2Handler {
-    blacklist: HashSet<String>,
+    _blacklist: HashSet<String>,
 }
 
 impl EventHandler for Zero2Handler {

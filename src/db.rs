@@ -1,9 +1,6 @@
 use diesel::prelude::*;
 use diesel::r2d2::{ConnectionManager, Pool, PooledConnection};
 use diesel::PgConnection;
-use std::collections::HashSet;
-use std::iter::FromIterator;
-use std::ops::Deref;
 
 pub mod models;
 pub mod schema;

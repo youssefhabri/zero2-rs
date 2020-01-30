@@ -85,8 +85,7 @@ impl Staff {
             if media_list
                 .iter()
                 .filter(|media| media.media_type == media_type)
-                .collect::<Vec<_>>()
-                .len()
+                .count()
                 > 5
             {
                 return format!("{}\n + {} more", fav_list.join("\n"), media_list.len() - 5);

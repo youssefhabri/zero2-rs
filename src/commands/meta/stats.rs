@@ -22,22 +22,22 @@ fn stats(context: &mut Context, message: &Message, _: Args) -> CommandResult {
             for msg in messages {
                 stats
                     .entry(msg.author.id)
-                    .and_modify(|v| v.clone_from(&mut (v.clone() + 1)))
+                    .and_modify(|v| v.clone_from(&(*v + 1)))
                     .or_insert(1);
             }
 
             stats.sort_by(|_, a, _, b| b.cmp(a));
 
-            let _ = sending.unwrap().delete(&context);
+            let _ = sending?.delete(&context);
 
             let _ = message.channel_id.send_message(&context.http, |m| {
                 m.embed(|embed| build_embed(embed, message.channel_id.name(&context), stats))
-            });
+            })?;
         }
         None => {
             let _ = message
                 .channel_id
-                .say(&context.http, "Error getting the channel messages.");
+                .say(&context.http, "Error getting the channel messages.")?;
         }
     }
 

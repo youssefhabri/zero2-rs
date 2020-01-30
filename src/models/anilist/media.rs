@@ -200,7 +200,7 @@ impl Media {
     }
 
     pub fn status(&self) -> String {
-        let status = match self.status.as_str() {
+        match self.status.as_str() {
             "FINISHED" => "Finished".to_string(),
             "RELEASING" => {
                 if self.media_type == MediaType::Anime {
@@ -226,8 +226,6 @@ impl Media {
             "NOT_YET_RELEASED" => "Not Yet Released".to_string(),
             "CANCELLED" => "Cancelled".to_string(),
             _ => "Unknown Status".to_string(),
-        };
-
-        status
+        }
     }
 }

@@ -89,7 +89,7 @@ pub fn handle_reaction(ctx: &Context, reaction: &Reaction) {
             ReactionType::Unicode(ref x) if x == reactions::STOP => {
                 let delete_reactions = reaction.message(&ctx.http).unwrap().delete_reactions(ctx);
 
-                if let Ok(_) = delete_reactions {
+                if delete_reactions.is_ok() {
                     let mut data = ctx.data.write();
                     let paginator = data.get_mut::<MessagePaginator>().unwrap();
                     paginator
