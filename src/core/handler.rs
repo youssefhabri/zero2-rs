@@ -77,7 +77,7 @@ impl EventHandler for Zero2Handler {
                 new_data.presence.user_id,
                 new_data.guild_id.unwrap_or(GuildId(0)),
                 "".to_string(),
-                new_data.roles.unwrap_or(vec![]),
+                new_data.roles.unwrap_or_else(|| vec![]),
             );
         }
     }

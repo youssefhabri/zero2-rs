@@ -1,5 +1,3 @@
-use std::str;
-
 use crate::models::anilist::{
     activity::Activity,
     airing_schedule::AiringSchedule,
@@ -20,7 +18,7 @@ fn load_graphql(file: &str) -> String {
         Some(asset) => asset,
         None => panic!("Error loading query: {}", file),
     };
-    str::from_utf8(&asset).expect(file).to_owned()
+    std::str::from_utf8(&asset).expect(file).to_owned()
 }
 
 fn load_graphql_with_fragment(query_file: &str, fragment_files: Vec<&str>) -> String {
@@ -46,7 +44,7 @@ pub fn query(query: &str, variables: Vec<Var>, fragments: Vec<&str>) -> Response
     };
 
     let client = reqwest::blocking::Client::new();
-    let mut res = client
+    let res = client
         .post("https://graphql.anilist.co")
         .json(&body)
         .send()

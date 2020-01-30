@@ -21,10 +21,9 @@ pub fn query(query: String) -> GiphyResponse {
         "http://api.giphy.com/v1/gifs/{}api_key={}&fmt=json",
         endpoint, giphy_key
     );
-    let mut res = client.get(request.as_str()).send().expect("response");
-    let response: GiphyResponse = res.json().expect("json");
+    let res = client.get(request.as_str()).send().expect("response");
 
-    response
+    res.json::<GiphyResponse>().expect("json")
 }
 
 #[command]

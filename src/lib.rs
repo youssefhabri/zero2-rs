@@ -1,3 +1,5 @@
+#![allow(clippy::unreadable_literal)]
+
 #[macro_use]
 extern crate log;
 #[macro_use]

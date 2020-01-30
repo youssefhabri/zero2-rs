@@ -18,13 +18,13 @@ pub fn parse(context: &Context, message: &Message, args: &Args, cc_content: Stri
         .enumerate()
         .collect::<Vec<(usize, Captures)>>();
 
-    let content = if arg_caps.len() > 0 && arg_caps.len() != args.len() {
+    let content = if !arg_caps.is_empty() && arg_caps.len() != args.len() {
         format!(
             "Not enough arguments! The command requires {} argument(s)",
             arg_caps.len()
         )
     } else {
-        let content = parse_content(cc_content, &message.author.id, &message.channel_id);
+        let content = parse_content(cc_content, message.author.id, message.channel_id);
         parse_args(content, arg_caps, args)
     };
 
@@ -33,14 +33,14 @@ pub fn parse(context: &Context, message: &Message, args: &Args, cc_content: Stri
         .send_message(context, |m| m.content(content));
 }
 
-fn parse_content(content: String, author_id: &UserId, channel_id: &ChannelId) -> String {
+fn parse_content(content: String, author_id: UserId, channel_id: ChannelId) -> String {
     let mut new_content = content.clone();
     for cap in CC_RE.captures_iter(content.as_str()) {
         let cap_inner: &str = &cap[1];
         let segments = cap_inner.split(':').collect::<Vec<&str>>();
 
         let id_or_default = |default: &u64| match segments.get(1) {
-            Some(id) => id.to_string(),
+            Some(id) => (*id).to_string(),
             None => default.to_string(),
         };
 
@@ -62,7 +62,7 @@ fn parse_content(content: String, author_id: &UserId, channel_id: &ChannelId) ->
 }
 
 fn parse_args(content: String, arg_caps: Vec<(usize, Captures)>, args: &Args) -> String {
-    let mut new_content = content.clone();
+    let mut new_content = content;
     let args = args
         .clone()
         .iter::<String>()
@@ -84,11 +84,11 @@ mod tests {
     #[test]
     fn test_parse_user() {
         assert_eq!(
-            parse_content("Hello, {{user:10}}!".to_string(), &UserId(0), &ChannelId(0)),
+            parse_content("Hello, {{user:10}}!".to_string(), UserId(0), ChannelId(0)),
             "Hello, <@10>!".to_string()
         );
         assert_eq!(
-            parse_content("Hello, {{user}}!".to_string(), &UserId(0), &ChannelId(0)),
+            parse_content("Hello, {{user}}!".to_string(), UserId(0), ChannelId(0)),
             "Hello, <@0>!".to_string()
         );
     }
@@ -96,7 +96,7 @@ mod tests {
     #[test]
     fn test_parse_author() {
         assert_eq!(
-            parse_content("Hello, {{author}}!".to_string(), &UserId(0), &ChannelId(0)),
+            parse_content("Hello, {{author}}!".to_string(), UserId(0), ChannelId(0)),
             "Hello, <@0>!".to_string()
         );
     }
@@ -106,13 +106,13 @@ mod tests {
         assert_eq!(
             parse_content(
                 "Hello, {{channel:200}}!".to_string(),
-                &UserId(0),
-                &ChannelId(0)
+                UserId(0),
+                ChannelId(0)
             ),
             "Hello, <#200>!".to_string()
         );
         assert_eq!(
-            parse_content("Hello, {{channel}}!".to_string(), &UserId(0), &ChannelId(0)),
+            parse_content("Hello, {{channel}}!".to_string(), UserId(0), ChannelId(0)),
             "Hello, <#0>!".to_string()
         );
     }

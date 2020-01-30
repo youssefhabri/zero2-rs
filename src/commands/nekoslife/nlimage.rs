@@ -109,14 +109,12 @@ fn nlimage(context: &mut Context, message: &Message, mut args: Args) -> CommandR
 
 pub fn query(selection: String) -> NLImage {
     let client = reqwest::blocking::Client::new();
-    let mut response = client
+    let response = client
         .get(format!("https://nekos.life/api/v2/img/{}", selection).as_str())
         .send()
         .expect("Response");
 
-    let result: NLImage = response.json().expect("json");
-
-    result
+    response.json::<NLImage>().expect("json")
 }
 
 pub fn selection(context: &Context, message: &Message, keyword: String) -> String {

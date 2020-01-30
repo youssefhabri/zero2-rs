@@ -1,6 +1,6 @@
 use crate::core::store::MessagePaginator;
 use serenity::builder::CreateEmbed;
-use serenity::model::id::{ChannelId, MessageId};
+use serenity::model::prelude::*;
 use serenity::prelude::Context;
 
 pub fn update_message(
@@ -34,5 +34,23 @@ pub fn get_page_content(
     match paginator.get(&message_id) {
         Some(pagination) => Some(pagination.pages[page as usize].clone()),
         None => None,
+    }
+}
+
+pub fn stop_pagination(context: &Context, reaction: &Reaction) {
+    let delete_reactions = reaction
+        .message(&context.http)
+        .unwrap()
+        .delete_reactions(context);
+
+    if delete_reactions.is_ok() {
+        let mut data = context.data.write();
+        let paginator = data.get_mut::<MessagePaginator>().unwrap();
+        paginator
+            .entry(reaction.message_id)
+            .and_modify(|pagination| {
+                pagination.pages = vec![];
+                pagination.deleted = true;
+            });
     }
 }

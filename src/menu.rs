@@ -48,8 +48,8 @@ pub enum Error {
     PaginationError,
 }
 
-pub type HandlerFunc =
-    fn(&Context, &Reaction) -> Option<fn(&Context, ChannelId, MessageId) -> Result<(), Error>>;
+pub type HandlerFunc = fn(&Context, &Reaction) -> HandlerFuncReturn;
+pub type HandlerFuncReturn = Option<fn(&Context, ChannelId, MessageId) -> Result<(), Error>>;
 
 /// Create a new menu pagination
 pub fn new_pagination(
@@ -133,25 +133,11 @@ pub fn default_handler(context: &Context, reaction: &Reaction) -> Result<(), Err
             update_message(&context, channel_id, message_id, &Modifier::Last)
         }
         ReactionType::Unicode(ref x) if x == reactions::STOP => {
-            let delete_reactions = reaction
-                .message(&context.http)
-                .unwrap()
-                .delete_reactions(context);
+            utils::stop_pagination(&context, &reaction);
 
-            if let Ok(_) = delete_reactions {
-                let mut data = context.data.write();
-                let paginator = data.get_mut::<MessagePaginator>().unwrap();
-                paginator
-                    .entry(reaction.message_id)
-                    .and_modify(|pagination| {
-                        pagination.pages = vec![];
-                        pagination.deleted = true;
-                    });
-            }
-
-            return Ok(());
+            Ok(())
         }
-        _ => return Ok(()),
+        _ => Ok(()),
     }
 }
 

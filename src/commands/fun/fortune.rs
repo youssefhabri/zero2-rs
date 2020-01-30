@@ -38,7 +38,7 @@ pub struct Fortune {
 fn request() -> Option<Vec<Fortune>> {
     let client = reqwest::blocking::Client::new();
     let page = random_num(0, 6);
-    let mut response = client
+    let response = client
         .get(
             format!(
                 "http://fortunecookieapi.herokuapp.com/v1/fortunes?limit=&skip=&page={}",
