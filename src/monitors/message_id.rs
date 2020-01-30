@@ -76,9 +76,26 @@ fn handle_message(
                 .description(message.content.clone())
                 .field("Original", url, false);
 
-                if !message.attachments.is_empty() && message.attachments[0].dimensions().is_some()
-                {
-                    e.image(message.attachments[0].url.clone());
+                if !message.attachments.is_empty() {
+                    let mut attachments = message.attachments.clone();
+                    if let Some((index, image)) = attachments
+                        .iter()
+                        .enumerate()
+                        .find(|(_, attachment)| attachment.dimensions().is_some())
+                    {
+                        dbg!(&image);
+                        e.image(image.url.clone());
+                        attachments.remove(index);
+                    }
+
+                    let files = attachments
+                        .iter()
+                        .map(|item| format!("[{}]({})", item.filename, item.url))
+                        .collect::<Vec<String>>();
+
+                    if !files.is_empty() {
+                        e.field("Attachments", files.join("\n"), false);
+                    }
                 };
 
                 e
