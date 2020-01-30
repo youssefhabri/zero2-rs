@@ -1,4 +1,4 @@
-use reqwest::Client;
+use reqwest::blocking::Client;
 use serenity::{
     framework::standard::{
         macros::{command, group},

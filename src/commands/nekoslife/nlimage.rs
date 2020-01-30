@@ -108,7 +108,7 @@ fn nlimage(context: &mut Context, message: &Message, mut args: Args) -> CommandR
 }
 
 pub fn query(selection: String) -> NLImage {
-    let client = reqwest::Client::new();
+    let client = reqwest::blocking::Client::new();
     let mut response = client
         .get(format!("https://nekos.life/api/v2/img/{}", selection).as_str())
         .send()

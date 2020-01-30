@@ -17,7 +17,7 @@ lazy_static! {
         let url =
             "https://raw.githubusercontent.com/ianli/fortune-cookies-galore/master/fortunes.txt";
         let mut cookies = vec![];
-        match reqwest::get(url) {
+        match reqwest::blocking::get(url) {
             Ok(mut res) => match res.text() {
                 Ok(text) => {
                     text.split('\n').for_each(|s| {
