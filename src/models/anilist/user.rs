@@ -1,7 +1,6 @@
+use super::{CharacterConnection, MediaConnection, MediaType};
 use crate::commands::anilist::utils::synopsis;
 use crate::core::utils::format_time;
-use crate::models::anilist::connection::{CharacterConnection, MediaConnection};
-use crate::models::anilist::media::MediaType;
 
 #[derive(Clone, Deserialize, Debug)]
 pub struct UserAvatar {

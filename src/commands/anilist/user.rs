@@ -5,7 +5,7 @@ use serenity::prelude::*;
 use crate::commands::anilist::client;
 use crate::menu;
 use crate::menu::builders;
-use crate::models::anilist::user::User;
+use crate::models::anilist::User;
 
 #[command]
 #[aliases("u")]

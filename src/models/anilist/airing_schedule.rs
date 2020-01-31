@@ -1,4 +1,4 @@
-use crate::models::anilist::media::MediaBase;
+use super::MediaBase;
 
 #[derive(Clone, Debug, Deserialize)]
 pub struct AiringSchedule {

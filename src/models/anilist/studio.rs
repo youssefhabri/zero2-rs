@@ -1,4 +1,4 @@
-use crate::models::anilist::connection::MediaConnection;
+use super::MediaConnection;
 
 #[derive(Deserialize, Debug)]
 pub struct Studio {

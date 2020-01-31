@@ -1,12 +1,5 @@
 use crate::models::anilist::{
-    activity::Activity,
-    airing_schedule::AiringSchedule,
-    character::Character,
-    media::{Media, MediaType},
-    staff::Staff,
-    studio::Studio,
-    user::User,
-    QueryBody, Response,
+    Activity, AiringSchedule, Character, Media, MediaType, QueryBody, Response, Staff, Studio, User,
 };
 
 #[derive(RustEmbed)]
@@ -22,14 +15,13 @@ fn load_graphql(file: &str) -> String {
 }
 
 fn load_graphql_with_fragment(query_file: &str, fragment_files: Vec<&str>) -> String {
-    let query = load_graphql(&format!("queries/{}.graphql", query_file));
+    let mut query = load_graphql(&format!("queries/{}.graphql", query_file));
 
-    let mut fragments: Vec<String> = vec![];
     for fragment in fragment_files {
-        fragments.push(load_graphql(&format!("fragments/{}.graphql", fragment)));
+        query.push_str(&load_graphql(&format!("fragments/{}.graphql", fragment)));
     }
 
-    format!("{}\n{}", query, fragments.join("\n"))
+    query
 }
 
 type Var<'a> = (&'a str, &'a str);

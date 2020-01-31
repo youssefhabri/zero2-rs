@@ -5,9 +5,7 @@ use serenity::prelude::Context;
 use crate::commands::anilist::client;
 use crate::match_send;
 use crate::menu::builders;
-use crate::models::anilist::{
-    character::Character, media::Media, staff::Staff, studio::Studio, user::User,
-};
+use crate::models::anilist::{Character, Media, Staff, Studio, User};
 
 lazy_static! {
     static ref RE: Regex = Regex::new(

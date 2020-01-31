@@ -8,7 +8,6 @@ use serenity::prelude::*;
 
 use crate::commands::anilist::client;
 use crate::core::utils::{next_day, to_midnight, weekday_to_string};
-use crate::models::anilist::airing_schedule::AiringSchedule;
 
 #[command]
 #[aliases("air", "airs")]
@@ -25,7 +24,7 @@ fn airing(context: &mut Context, message: &Message, args: Args) -> CommandResult
         }
     };
 
-    let results: Vec<AiringSchedule> = client::search_airing_schedule(
+    let results = client::search_airing_schedule(
         start?.timestamp(),
         start?.add(Duration::days(1)).timestamp(),
     );

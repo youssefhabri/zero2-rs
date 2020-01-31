@@ -1,5 +1,4 @@
-use crate::models::anilist::media::MediaBase;
-use crate::models::anilist::user::UserAvatar;
+use super::{MediaBase, UserAvatar};
 
 #[derive(Clone, Deserialize, Debug)]
 pub struct UserBase {

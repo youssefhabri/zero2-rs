@@ -1,6 +1,5 @@
+use super::{MediaConnection, MediaType};
 use crate::commands::anilist::utils::synopsis;
-use crate::models::anilist::connection::MediaConnection;
-use crate::models::anilist::media::MediaType;
 
 #[derive(Clone, Deserialize, Debug)]
 pub struct CharacterName {

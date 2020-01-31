@@ -5,7 +5,7 @@ use serenity::prelude::*;
 use crate::commands::anilist::client;
 use crate::menu;
 use crate::menu::builders;
-use crate::models::anilist::media::{Media, MediaType};
+use crate::models::anilist::{Media, MediaType};
 
 #[command]
 #[aliases("m")]

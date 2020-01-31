@@ -1,7 +1,7 @@
+use std::time::{SystemTime, UNIX_EPOCH};
+
 use crate::commands::anilist::utils::synopsis;
 use crate::core::utils::format_time;
-use std::time::SystemTime;
-use std::time::UNIX_EPOCH;
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq)]
 #[serde(rename_all = "UPPERCASE")]
@@ -33,7 +33,7 @@ pub struct MediaTitle {
 }
 
 #[derive(Deserialize, Debug)]
-pub struct AiringSchedule {
+pub struct MediaAiringSchedule {
     #[serde(rename = "airingAt")]
     pub airing_at: u64,
 }
@@ -87,7 +87,7 @@ pub struct Media {
     pub title: MediaTitle,
 
     #[serde(rename = "nextAiringEpisode")]
-    pub next_airing_episode: Option<AiringSchedule>,
+    pub next_airing_episode: Option<MediaAiringSchedule>,
 
     pub status: String,
 
