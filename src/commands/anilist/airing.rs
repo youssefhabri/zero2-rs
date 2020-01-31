@@ -24,10 +24,8 @@ fn airing(context: &mut Context, message: &Message, args: Args) -> CommandResult
         }
     };
 
-    let results = client::search_airing_schedule(
-        start?.timestamp(),
-        start?.add(Duration::days(1)).timestamp(),
-    );
+    let results =
+        client::search_airing_schedule(start.timestamp(), start.add(Duration::days(1)).timestamp());
 
     if !results.is_empty() {
         let mut airing = vec![];
