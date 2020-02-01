@@ -16,14 +16,11 @@ pub struct CharacterImage {
 }
 
 #[derive(Clone, Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
 pub struct CharacterBase {
     pub id: u32,
-
-    #[serde(rename = "siteUrl")]
     pub site_url: String,
-
     pub name: CharacterName,
-
     pub image: CharacterImage,
 }
 
@@ -46,18 +43,13 @@ impl CharacterBase {
 }
 
 #[derive(Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
 pub struct Character {
     pub id: u32,
-
-    #[serde(rename = "siteUrl")]
     pub site_url: String,
-
     pub description: Option<String>,
-
     pub name: CharacterName,
-
     pub image: CharacterImage,
-
     pub media: MediaConnection,
 }
 

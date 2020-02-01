@@ -1,14 +1,11 @@
 use super::MediaConnection;
 
 #[derive(Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
 pub struct Studio {
     id: u32,
-
     name: String,
-
-    #[serde(rename = "siteUrl")]
     site_url: String,
-
     media: MediaConnection,
 }
 

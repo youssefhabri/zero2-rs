@@ -11,23 +11,19 @@ pub struct QueryBody {
 }
 
 #[derive(Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
 pub struct Page {
-    #[serde(rename = "airingSchedules")]
-    pub airing_schedule: Option<Vec<AiringSchedule>>,
-
+    pub airing_schedules: Option<Vec<AiringSchedule>>,
     pub characters: Option<Vec<Character>>,
-
     pub media: Option<Vec<Media>>,
-
     pub users: Option<Vec<User>>,
-
     pub staff: Option<Vec<Staff>>,
 }
 
 impl Default for Page {
     fn default() -> Self {
         Page {
-            airing_schedule: None,
+            airing_schedules: None,
             characters: None,
             media: None,
             users: None,
@@ -38,7 +34,7 @@ impl Default for Page {
 
 impl Page {
     pub fn airing_schedule(self) -> Vec<AiringSchedule> {
-        match self.airing_schedule {
+        match self.airing_schedules {
             Some(airing_schedule) => airing_schedule,
             None => vec![],
         }
@@ -73,27 +69,15 @@ impl Page {
     }
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Default)]
+#[serde(default, rename_all = "PascalCase")]
 pub struct Data {
-    #[serde(default, rename = "Page")]
     pub page: Page,
-
-    #[serde(default, rename = "Activity")]
     pub activity: Option<Activity>,
-
-    #[serde(default, rename = "Character")]
     pub character: Option<Character>,
-
-    #[serde(default, rename = "Media")]
     pub media: Option<Media>,
-
-    #[serde(default, rename = "User")]
     pub user: Option<User>,
-
-    #[serde(default, rename = "Staff")]
     pub staff: Option<Staff>,
-
-    #[serde(default, rename = "Studio")]
     pub studio: Option<Studio>,
 }
 

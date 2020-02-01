@@ -21,20 +21,17 @@ impl ToString for MediaType {
 }
 
 #[derive(Clone, Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
 pub struct MediaTitle {
     pub romaji: Option<String>,
-
     pub english: Option<String>,
-
     pub native: Option<String>,
-
-    #[serde(rename = "userPreferred")]
     pub user_preferred: String,
 }
 
 #[derive(Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
 pub struct MediaAiringSchedule {
-    #[serde(rename = "airingAt")]
     pub airing_at: u64,
 }
 
@@ -48,73 +45,41 @@ pub struct MediaExternalLink {
 #[derive(Clone, Deserialize, Debug)]
 pub struct MediaCoverImage {
     pub large: String,
-
     pub medium: String,
 }
 
 #[derive(Clone, Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
 pub struct MediaBase {
     pub id: u32,
-
     pub title: MediaTitle,
-
     #[serde(rename = "type")]
     pub media_type: MediaType,
-
-    #[serde(rename = "siteUrl")]
     pub site_url: String,
-
-    #[serde(rename = "coverImage")]
     pub cover_image: MediaCoverImage,
-
-    #[serde(rename = "averageScore")]
     pub average_score: Option<u32>,
-
-    #[serde(rename = "meanScore")]
     pub mean_score: Option<u32>,
 }
 
 #[derive(Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
 pub struct Media {
     pub id: u32,
-
-    #[serde(rename = "idMal")]
     pub id_mal: Option<u32>,
-
     #[serde(rename = "type")]
     pub media_type: MediaType,
-
     pub title: MediaTitle,
-
-    #[serde(rename = "nextAiringEpisode")]
     pub next_airing_episode: Option<MediaAiringSchedule>,
-
     pub status: String,
-
-    #[serde(rename = "isAdult")]
     pub is_adult: bool,
-
-    #[serde(rename = "meanScore")]
     pub mean_score: Option<u8>,
-
     pub episodes: Option<u32>,
-
     pub chapters: Option<u32>,
-
-    #[serde(rename = "siteUrl")]
     pub site_url: String,
-
-    #[serde(rename = "externalLinks")]
     pub external_links: Vec<MediaExternalLink>,
-
-    #[serde(rename = "coverImage")]
     pub cover_image: MediaCoverImage,
-
-    #[serde(rename = "bannerImage")]
     pub banner_image: Option<String>,
-
     pub description: Option<String>,
-
     genres: Vec<String>,
 }
 

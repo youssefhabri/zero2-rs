@@ -1,46 +1,29 @@
 use super::{MediaBase, UserAvatar};
 
 #[derive(Clone, Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
 pub struct UserBase {
     pub id: u32,
-
     pub name: String,
-
-    #[serde(rename = "siteUrl")]
     pub site_url: String,
-
     pub avatar: UserAvatar,
 }
 
 #[derive(Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
 pub struct Activity {
     pub __typename: String,
-
     pub id: u32,
-
-    #[serde(rename = "createdAt")]
     pub created_at: u64,
-
-    #[serde(rename = "type")]
     pub activity_type: String,
-
-    #[serde(rename = "siteUrl")]
     pub site_url: String,
-
     pub user: Option<UserBase>,
-
     pub text: Option<String>,
-
     pub status: Option<String>,
-
     pub progress: Option<String>,
-
     pub media: Option<MediaBase>,
-
     pub recipient: Option<UserBase>,
-
     pub messenger: Option<UserBase>,
-
     pub message: Option<String>,
 }
 

@@ -55,22 +55,15 @@ pub struct Favourites {
 }
 
 #[derive(Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
 pub struct User {
     pub id: u32,
     pub name: String,
-
-    #[serde(rename = "siteUrl")]
     pub site_url: String,
-
     pub avatar: UserAvatar,
-
-    #[serde(rename = "bannerImage")]
     pub banner_image: Option<String>,
-
     pub about: Option<String>,
-
     pub statistics: UserStatistics,
-
     pub favourites: Favourites,
 }
 

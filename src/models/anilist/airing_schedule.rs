@@ -1,14 +1,11 @@
 use super::MediaBase;
 
 #[derive(Clone, Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct AiringSchedule {
     id: u32,
-
-    #[serde(rename = "timeUntilAiring")]
     time_until_airing: Option<i64>,
-
     episode: Option<u32>,
-
     media: MediaBase,
 }
 
