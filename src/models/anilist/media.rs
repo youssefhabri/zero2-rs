@@ -32,10 +32,11 @@ pub struct MediaTitle {
     pub user_preferred: String,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Copy, Clone, Deserialize, Debug)]
 pub struct AiringSchedule {
     #[serde(rename = "airingAt")]
     pub airing_at: u64,
+    pub episode: Option<u32>,
 }
 
 #[derive(Deserialize, Debug)]
@@ -127,10 +128,27 @@ impl Media {
     }
 
     pub fn episodes(&self) -> String {
-        match self.episodes {
-            Some(episodes) => format!("{}", episodes),
-            None => String::from("N/A"),
+        let total_episodes = match self.episodes {
+            Some(total) => total.to_string(),
+            None => "-".to_string(),
+        };
+        let current_airing_episode = match self.next_airing_episode() {
+            Some(episode) => (episode.saturating_sub(1)).to_string(),
+            None => "-".to_string(),
+        };
+
+        match self.is_releasing() {
+            true => format!("{}/{}", current_airing_episode, total_episodes),
+            false => total_episodes,
         }
+    }
+
+    fn next_airing_episode(&self) -> Option<u32> {
+        if dbg!(self.next_airing_episode).is_some() {
+            return dbg!(self.next_airing_episode.unwrap().episode);
+        }
+
+        None
     }
 
     pub fn chapters(&self) -> String {
@@ -227,5 +245,9 @@ impl Media {
             "CANCELLED" => "Cancelled".to_string(),
             _ => "Unknown Status".to_string(),
         }
+    }
+
+    pub fn is_releasing(&self) -> bool {
+        self.status == "RELEASING"
     }
 }

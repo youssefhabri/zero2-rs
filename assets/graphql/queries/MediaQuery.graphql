@@ -1,21 +1,22 @@
-query ($id: Int, $type: MediaType) {
-    Media(id: $id, type: $type) {
-        ...MediaBase
+query($id: Int, $type: MediaType) {
+  Media(id: $id, type: $type) {
+    ...MediaBase
 
-        nextAiringEpisode {
-            airingAt
-        }
-        status
-        isAdult
-        episodes
-        chapters
-        siteUrl
-        externalLinks {
-            site
-            url
-        }
-        bannerImage
-        description
-        genres
+    nextAiringEpisode {
+      airingAt
+      episode
     }
+    status
+    isAdult
+    episodes
+    chapters
+    siteUrl
+    externalLinks {
+      site
+      url
+    }
+    bannerImage
+    description
+    genres
+  }
 }

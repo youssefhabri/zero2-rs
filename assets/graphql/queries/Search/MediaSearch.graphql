@@ -1,22 +1,23 @@
-query ($search: String, $type: MediaType) {
-    Page(perPage: 50) {
-        media(search: $search, type: $type) {
-            ...MediaBase
+query($search: String, $type: MediaType) {
+  Page(perPage: 50) {
+    media(search: $search, type: $type) {
+      ...MediaBase
 
-            nextAiringEpisode {
-                airingAt
-            }
-            status
-            isAdult
-            episodes
-            chapters
-            externalLinks {
-                site
-                url
-            }
-            bannerImage
-            description
-            genres
-        }
+      nextAiringEpisode {
+        airingAt
+        episode
+      }
+      status
+      isAdult
+      episodes
+      chapters
+      externalLinks {
+        site
+        url
+      }
+      bannerImage
+      description
+      genres
     }
+  }
 }
