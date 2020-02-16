@@ -2207,7 +2207,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 [[package]]
 name = "urbandictionary"
 version = "0.3.2"
-source = "git+https://github.com/youssefhabri/urbandictionary.rs#99d775de2c622a805bf8e501295bc501c7be0a63"
+source = "git+https://github.com/youssefhabri/urbandictionary.rs#08008d583f5e1a4d636ecad220ba41a0526312fb"
 dependencies = [
  "reqwest 0.10.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde 1.0.103 (registry+https://github.com/rust-lang/crates.io-index)",

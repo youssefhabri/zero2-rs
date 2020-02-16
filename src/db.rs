@@ -1,14 +1,11 @@
-use diesel::prelude::*;
 use diesel::r2d2::{ConnectionManager, Pool, PooledConnection};
 use diesel::PgConnection;
 
 pub mod models;
 pub mod schema;
 
-use self::schema::*;
-
 pub struct Database {
-    pool: Pool<ConnectionManager<PgConnection>>,
+    _pool: Pool<ConnectionManager<PgConnection>>,
 }
 
 impl Database {
@@ -20,11 +17,11 @@ impl Database {
             .build(manager)
             .expect("Failed to create connection pool");
 
-        Database { pool }
+        Database { _pool: pool }
     }
 
-    fn conn(&self) -> PooledConnection<ConnectionManager<PgConnection>> {
-        self.pool
+    fn _conn(&self) -> PooledConnection<ConnectionManager<PgConnection>> {
+        self._pool
             .clone()
             .get()
             .expect("Attempt to get connection timed out")
