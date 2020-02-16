@@ -11,6 +11,7 @@ use serenity::{
 use urbandictionary::model::Definition;
 use urbandictionary::ReqwestUrbanDictionaryRequester;
 
+use crate::core::store::PaginationKind;
 use crate::menu;
 use crate::menu::builders;
 
@@ -81,7 +82,8 @@ fn urban(context: &mut Context, message: &Message, args: Args) -> CommandResult 
             context,
             sending_msg.id,
             message.author.id,
-            builders::pages_builder::<Definition>(definitions, builders::urban_embed_builder),
+            PaginationKind::Urban,
+            menu::utils::serialize_entries(definitions),
         )
     }
 

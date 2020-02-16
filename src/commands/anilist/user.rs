@@ -3,6 +3,7 @@ use serenity::model::channel::Message;
 use serenity::prelude::*;
 
 use crate::commands::anilist::client;
+use crate::core::store::PaginationKind;
 use crate::menu;
 use crate::menu::builders;
 use crate::models::anilist::user::User;
@@ -38,11 +39,13 @@ fn user(context: &mut Context, message: &Message, args: Args) -> CommandResult {
         });
 
         if let Ok(sending_msg) = sending {
-            menu::new_pagination(
+            menu::new_pagination_with_handler(
                 context,
                 sending_msg.id,
                 message.author.id,
-                builders::pages_builder::<User>(results, builders::user_embed_builder),
+                PaginationKind::User,
+                menu::utils::serialize_entries(results),
+                None,
             )
         }
     } else {

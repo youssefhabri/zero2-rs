@@ -3,6 +3,7 @@ use serenity::model::channel::Message;
 use serenity::prelude::*;
 
 use crate::commands::anilist::client;
+use crate::core::store::PaginationKind;
 use crate::menu;
 use crate::menu::builders;
 use crate::models::anilist::character::Character;
@@ -38,11 +39,13 @@ fn character(context: &mut Context, message: &Message, args: Args) -> CommandRes
         });
 
         match sending {
-            Ok(sending_msg) => menu::new_pagination(
+            Ok(sending_msg) => menu::new_pagination_with_handler(
                 context,
                 sending_msg.id,
                 message.author.id,
-                builders::pages_builder::<Character>(results, builders::character_embed_builder),
+                PaginationKind::Character,
+                menu::utils::serialize_entries(results),
+                None,
             ),
             Err(why) => error!("Err sending character embed: {:?}", why),
         }

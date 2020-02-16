@@ -5,6 +5,7 @@ use serenity::prelude::*;
 use crate::menu;
 use crate::menu::builders;
 
+use crate::core::store::PaginationKind;
 use crate::models::giphy::*;
 
 pub fn query(query: String) -> GiphyResponse {
@@ -21,7 +22,7 @@ pub fn query(query: String) -> GiphyResponse {
         "http://api.giphy.com/v1/gifs/{}api_key={}&fmt=json",
         endpoint, giphy_key
     );
-    let mut res = client.get(request.as_str()).send().expect("response");
+    let res = client.get(request.as_str()).send().expect("response");
     let response: GiphyResponse = res.json().expect("json");
 
     response
@@ -53,7 +54,8 @@ fn giphy(context: &mut Context, message: &Message, args: Args) -> CommandResult 
                 context,
                 sending_msg.id,
                 message.author.id,
-                builders::giphy_pages_builder(results, builders::giphy_embed_builder),
+                PaginationKind::Giphy,
+                menu::utils::serialize_entries(results),
             )
         }
     } else {

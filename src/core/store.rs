@@ -3,7 +3,6 @@ use std::sync::Arc;
 
 use chrono::{DateTime, FixedOffset};
 use serenity::{
-    builder::CreateEmbed,
     client::bridge::gateway::ShardManager,
     model::{
         id::{MessageId, UserId},
@@ -50,19 +49,24 @@ impl TypeMapKey for MessagePaginator {
     type Value = HashMap<MessageId, MessagePagination>;
 }
 
+pub enum PaginationKind {
+    // Anilist
+    Character,
+    Media,
+    Staff,
+    User,
+
+    // Misc
+    Urban,
+    Giphy,
+}
+
 pub struct MessagePagination {
     pub author_id: UserId,
-    pub current_page: u32,
+    pub current_page: usize,
     pub handler: Option<HandlerFunc>,
     pub message_id: MessageId,
-    pub pages: Vec<CreateEmbed>,
+    pub pages: Vec<String>,
+    pub kind: PaginationKind,
     pub deleted: bool,
-}
-
-pub enum RichInteractionKind {
-    Pagination,
-}
-
-pub struct RichInteraction {
-    kind: RichInteractionKind,
 }

@@ -3,6 +3,7 @@ use serenity::model::channel::Message;
 use serenity::prelude::*;
 
 use crate::commands::anilist::client;
+use crate::core::store::PaginationKind;
 use crate::menu;
 use crate::menu::builders;
 use crate::models::anilist::media::{Media, MediaType};
@@ -38,11 +39,13 @@ pub fn anime(context: &mut Context, message: &Message, args: Args) -> CommandRes
         });
 
         if let Ok(sending_msg) = sending {
-            menu::new_pagination(
+            menu::new_pagination_with_handler(
                 context,
                 sending_msg.id,
                 message.author.id,
-                builders::pages_builder::<Media>(results, builders::media_embed_builder),
+                PaginationKind::Media,
+                menu::utils::serialize_entries(results),
+                None,
             )
         }
     } else {
