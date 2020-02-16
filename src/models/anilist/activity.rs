@@ -1,7 +1,7 @@
 use crate::models::anilist::media::MediaBase;
 use crate::models::anilist::user::UserAvatar;
 
-#[derive(Clone, Deserialize, Debug)]
+#[derive(Clone, Deserialize, Serialize, Debug)]
 pub struct UserBase {
     pub id: u32,
 
@@ -13,7 +13,7 @@ pub struct UserBase {
     pub avatar: UserAvatar,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Serialize, Debug)]
 pub struct Activity {
     pub __typename: String,
 

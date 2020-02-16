@@ -3,7 +3,7 @@ use crate::core::utils::format_time;
 use std::time::SystemTime;
 use std::time::UNIX_EPOCH;
 
-#[derive(Clone, Debug, Deserialize, Eq, PartialEq)]
+#[derive(Clone, Debug, Deserialize, Serialize, Eq, PartialEq)]
 #[serde(rename_all = "UPPERCASE")]
 pub enum MediaType {
     Anime,
@@ -20,7 +20,7 @@ impl ToString for MediaType {
     }
 }
 
-#[derive(Clone, Deserialize, Debug)]
+#[derive(Clone, Deserialize, Serialize, Debug)]
 pub struct MediaTitle {
     pub romaji: Option<String>,
 
@@ -32,28 +32,28 @@ pub struct MediaTitle {
     pub user_preferred: String,
 }
 
-#[derive(Copy, Clone, Deserialize, Debug)]
+#[derive(Copy, Clone, Deserialize, Serialize, Debug)]
 pub struct AiringSchedule {
     #[serde(rename = "airingAt")]
     pub airing_at: u64,
     pub episode: Option<u32>,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Serialize, Debug)]
 pub struct MediaExternalLink {
     pub url: String,
 
     pub site: String,
 }
 
-#[derive(Clone, Deserialize, Debug)]
+#[derive(Clone, Deserialize, Serialize, Debug)]
 pub struct MediaCoverImage {
     pub large: String,
 
     pub medium: String,
 }
 
-#[derive(Clone, Deserialize, Debug)]
+#[derive(Clone, Deserialize, Serialize, Debug)]
 pub struct MediaBase {
     pub id: u32,
 
@@ -75,7 +75,7 @@ pub struct MediaBase {
     pub mean_score: Option<u32>,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Serialize, Debug)]
 pub struct Media {
     pub id: u32,
 
@@ -144,8 +144,8 @@ impl Media {
     }
 
     fn next_airing_episode(&self) -> Option<u32> {
-        if dbg!(self.next_airing_episode).is_some() {
-            return dbg!(self.next_airing_episode.unwrap().episode);
+        if let Some(next_airing_episode) = self.next_airing_episode {
+            return next_airing_episode.episode;
         }
 
         None

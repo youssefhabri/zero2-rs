@@ -1,6 +1,6 @@
 use crate::models::anilist::media::MediaBase;
 
-#[derive(Clone, Debug, Deserialize)]
+#[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct AiringSchedule {
     id: u32,
 

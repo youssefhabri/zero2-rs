@@ -3,13 +3,13 @@ use crate::models::anilist::connection::{CharacterConnection, MediaConnection};
 use crate::models::anilist::media::MediaType;
 
 // TODO unify all image structs
-#[derive(Clone, Deserialize, Debug)]
+#[derive(Clone, Deserialize, Serialize, Debug)]
 pub struct StaffImage {
     pub large: Option<String>,
     pub medium: Option<String>,
 }
 
-#[derive(Clone, Deserialize, Debug)]
+#[derive(Clone, Deserialize, Serialize, Debug)]
 pub struct StaffName {
     pub first: Option<String>,
     pub last: Option<String>,
@@ -17,7 +17,7 @@ pub struct StaffName {
     pub alternative: Vec<String>,
 }
 
-#[derive(Clone, Deserialize, Debug)]
+#[derive(Clone, Deserialize, Serialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct Staff {
     pub id: u32,

@@ -2,7 +2,7 @@ use crate::commands::anilist::utils::synopsis;
 use crate::models::anilist::connection::MediaConnection;
 use crate::models::anilist::media::MediaType;
 
-#[derive(Clone, Deserialize, Debug)]
+#[derive(Clone, Deserialize, Serialize, Debug)]
 pub struct CharacterName {
     pub first: Option<String>,
     pub last: Option<String>,
@@ -10,13 +10,13 @@ pub struct CharacterName {
     pub alternative: Vec<String>,
 }
 
-#[derive(Clone, Deserialize, Debug)]
+#[derive(Clone, Deserialize, Serialize, Debug)]
 pub struct CharacterImage {
     pub large: Option<String>,
     pub medium: Option<String>,
 }
 
-#[derive(Clone, Deserialize, Debug)]
+#[derive(Clone, Deserialize, Serialize, Debug)]
 pub struct CharacterBase {
     pub id: u32,
 
@@ -46,7 +46,7 @@ impl CharacterBase {
     }
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Serialize, Debug)]
 pub struct Character {
     pub id: u32,
 

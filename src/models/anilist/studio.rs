@@ -1,6 +1,6 @@
 use crate::models::anilist::connection::MediaConnection;
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Serialize, Debug)]
 pub struct Studio {
     id: u32,
 

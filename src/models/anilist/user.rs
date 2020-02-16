@@ -3,18 +3,18 @@ use crate::core::utils::format_time;
 use crate::models::anilist::connection::{CharacterConnection, MediaConnection};
 use crate::models::anilist::media::MediaType;
 
-#[derive(Clone, Deserialize, Debug)]
+#[derive(Clone, Deserialize, Serialize, Debug)]
 pub struct UserAvatar {
     pub large: String,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Serialize, Debug)]
 pub struct UserStatistics {
     pub anime: UserMediaStatistics,
     pub manga: UserMediaStatistics,
 }
 
-#[derive(Clone, Deserialize, Debug)]
+#[derive(Clone, Deserialize, Serialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct UserMediaStatistics {
     count: u32,
@@ -28,7 +28,7 @@ pub struct UserMediaStatistics {
     genres: Vec<GenreStats>,
 }
 
-#[derive(Clone, Deserialize, Debug)]
+#[derive(Clone, Deserialize, Serialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct UserStatusStats {
     count: u32,
@@ -38,7 +38,7 @@ pub struct UserStatusStats {
     status: String,
 }
 
-#[derive(Clone, Deserialize, Debug)]
+#[derive(Clone, Deserialize, Serialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct GenreStats {
     count: u32,
@@ -48,14 +48,14 @@ pub struct GenreStats {
     mean_score: f32,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Serialize, Debug)]
 pub struct Favourites {
     pub anime: MediaConnection,
     pub manga: MediaConnection,
     pub characters: CharacterConnection,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Serialize, Debug)]
 pub struct User {
     pub id: u32,
     pub name: String,
