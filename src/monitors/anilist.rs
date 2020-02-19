@@ -122,18 +122,3 @@ fn handle_staff(context: &Context, message: &Message, staff_id: &str) {
 
     match_send!(context, message, staff, builders::staff_embed_builder);
 }
-
-#[macro_export]
-macro_rules! match_send {
-    ($context:expr, $message:expr, $data:expr, $embed_builder:expr) => {
-        if let Some(data) = $data {
-            let _sending = ($message).channel_id.send_message(&($context).http, |m| {
-                m.embed(|embed| {
-                    embed.clone_from(&($embed_builder(&data, "".into())));
-
-                    embed
-                })
-            });
-        }
-    };
-}

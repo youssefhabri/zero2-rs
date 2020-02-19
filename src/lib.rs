@@ -14,6 +14,8 @@ pub mod client;
 pub mod commands;
 pub mod core;
 pub mod db;
+#[macro_use]
+pub mod macros;
 pub mod menu;
 pub mod models;
 pub mod monitors;
