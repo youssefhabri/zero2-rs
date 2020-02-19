@@ -15,10 +15,9 @@ use crate::core::store::PaginationKind;
 use crate::menu;
 use crate::menu::builders;
 
-group!({
-    name: "Knowledge",
-    commands: [urban]
-});
+#[group]
+#[commands(urban)]
+struct Knowledge;
 
 #[command]
 #[aliases("ud", "define")]

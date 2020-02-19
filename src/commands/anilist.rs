@@ -20,7 +20,6 @@ use self::manga::MANGA_COMMAND;
 use self::staff::STAFF_COMMAND;
 use self::user::USER_COMMAND;
 
-group!({
-    name: "Anilist",
-    commands: [activity, airing, anime, character, manga, staff, user]
-});
+#[group]
+#[commands(activity, airing, anime, character, manga, staff, user)]
+struct Anilist;

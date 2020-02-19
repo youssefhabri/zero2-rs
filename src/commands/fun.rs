@@ -12,7 +12,6 @@ use self::fortune::FORTUNE_COMMAND;
 use self::golendar::GOLENDAR_COMMAND;
 use self::owo::OWO_COMMAND;
 
-group!({
-    name: "Fun",
-    commands: [bigtext, cookie, golendar, fortune, owo]
-});
+#[group]
+#[commands(bigtext, cookie, golendar, fortune, owo)]
+struct Fun;

@@ -55,6 +55,6 @@ impl Zero2Framework {
             .group(&meta::META_GROUP)
             .group(&nekoslife::NEKOSLIFE_GROUP)
             .group(&system::SYSTEM_GROUP)
-            .group(&commands::NO_CATEGORY_GROUP)
+            .group(&commands::NOCATEGORY_GROUP)
     }
 }

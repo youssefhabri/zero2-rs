@@ -21,10 +21,9 @@ use self::test::TEST_COMMAND;
 
 use self::giphy::GIPHY_COMMAND;
 
-group!({
-    name: "no_category",
-    commands: [giphy, test],
-});
+#[group]
+#[commands(giphy, test)]
+struct NoCategory;
 
 #[help]
 #[individual_command_tip = "Hello! こんにちは！Hola! Bonjour! 您好!\n\
