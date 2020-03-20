@@ -1,4 +1,5 @@
 /target
+assets/emojis/*
 **/*.rs.bk
 .env
 .deploy.env
