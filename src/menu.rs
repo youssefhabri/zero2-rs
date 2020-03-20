@@ -10,7 +10,7 @@ use crate::core::store::{BotOwnerContainer, MessagePagination, MessagePaginator,
 use crate::menu::Error::PaginationError;
 
 pub mod builders;
-pub mod handlers;
+// pub mod handlers;
 pub mod utils;
 
 /// Emulating an enum of reactions ¯\_(ツ)_/¯

@@ -4,6 +4,7 @@ use serenity::prelude::Context;
 use crate::core::consts::PREFIX;
 
 mod anilist;
+mod emojis;
 mod message_id;
 
 pub fn message_monitors(context: &Context, message: &Message) {
@@ -15,6 +16,7 @@ pub fn message_monitors(context: &Context, message: &Message) {
     {
         anilist::anilist_links_monitor(context, message);
         //anilist::rem_monitor(&context, &message);
+        emojis::emojis_monitor(context, message);
         message_id::message_id_monitor(context, message);
     }
 }
