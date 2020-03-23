@@ -11,11 +11,9 @@ fn fortune(context: &mut Context, message: &Message, _: Args) -> CommandResult {
         Some(fortune) => {
             let _ = message.channel_id.send_message(&context.http, |m| {
                 m.embed(|e| {
-                    e.color(16711769).field(
-                        format!("{}'s fortune!", message.author.name),
-                        fortune.message,
-                        false,
-                    )
+                    e.color(16711769)
+                        .title(format!("{}'s fortune!", message.author.name))
+                        .description(fortune.message.trim())
                 })
             });
         }
