@@ -9,11 +9,9 @@ fn cookie(context: &mut Context, message: &Message, _args: Args) -> CommandResul
     if !&COOKIES.is_empty() {
         message.channel_id.send_message(&context.http, |m| {
             m.embed(|e| {
-                e.color(16711769).field(
-                    format!("{}'s fortune cookie!", message.author.name),
-                    &COOKIES[random_num(0, COOKIES.len() - 1)],
-                    false,
-                )
+                e.color(16711769)
+                    .title(format!("{}'s fortune cookie!", message.author.name))
+                    .description(&COOKIES[random_num(0, COOKIES.len() - 1)].trim())
             })
         })?;
 
