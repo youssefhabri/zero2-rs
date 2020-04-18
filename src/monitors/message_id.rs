@@ -19,22 +19,28 @@ pub fn message_id_monitor(context: &Context, message: &Message) {
         None => return,
     };
 
-    for cap in MSG_RE.find_iter(message.content.as_str()) {
-        if let Ok(msg_id) = cap.as_str().parse::<u64>() {
-            match message.channel_id.message(context, msg_id) {
-                Ok(msg) => handle_message(context, guild_id, message.channel_id, &msg),
-                Err(why) => {
-                    warn!("[MessageID Monitor] {}", why);
-                    if let Ok(channels) = guild_id.channels(context) {
-                        for (channel_id, _) in channels {
-                            match channel_id.message(context, msg_id) {
-                                Ok(msg) => {
-                                    handle_message(context, guild_id, message.channel_id, &msg);
-                                    break;
-                                }
-                                Err(why) => warn!("[MessageID Monitor] {}", why),
-                            }
+    for cap in MESSAGE_ID_RE.find_iter(message.content.as_str()) {
+        let msg_id: u64 = match cap.as_str().parse::<u64>() {
+            Ok(msg_id) => msg_id,
+            Err(_) => return,
+        };
+
+        match message.channel_id.message(context, msg_id) {
+            Ok(msg) => handle_message(context, guild_id, message.channel_id, &msg),
+            Err(why) => {
+                warn!("[MessageID Monitor] {}", why);
+                let channels = match guild_id.channels(context) {
+                    Ok(channels) => channels,
+                    Err(_) => continue,
+                };
+
+                for (channel_id, _) in channels {
+                    match channel_id.message(context, msg_id) {
+                        Ok(msg) => {
+                            handle_message(context, guild_id, message.channel_id, &msg);
+                            break;
                         }
+                        Err(why) => warn!("[MessageID Monitor] {}", why),
                     }
                 }
             }
@@ -42,12 +48,34 @@ pub fn message_id_monitor(context: &Context, message: &Message) {
     }
 }
 
+use serenity::builder::CreateEmbed;
+
 fn handle_message(
     context: &Context,
     guild_id: GuildId,
     target_channel_id: ChannelId,
     message: &Message,
 ) {
+    dbg!(&message.embeds);
+
+    if !message.embeds.is_empty() {
+        let _ = target_channel_id.send_message(context, |m| {
+            if !message.content.is_empty() {
+                m.content(message.content.clone());
+            }
+
+            let embed = message.embeds[0].clone();
+            m.embed(|e| {
+                e.clone_from(&CreateEmbed::from(embed));
+                e
+            });
+
+            m
+        });
+
+        return;
+    }
+
     if !message.content.is_empty() || !message.attachments.is_empty() {
         let url = message_url(guild_id, message.channel_id, message.id);
 
@@ -67,7 +95,7 @@ fn handle_message(
                             .unwrap_or_else(|| message.author.default_avatar_url()),
                     )
                 })
-                .colour(consts::MAIN_COLOUR)
+                .colour(MAIN_COLOUR)
                 .description(message.content.clone())
                 .field("Original", url, false);
 
