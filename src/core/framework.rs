@@ -1,10 +1,11 @@
 use serenity::framework::standard::StandardFramework;
-use serenity::model::id::UserId;
+use serenity::model::prelude::{Message, UserId};
+use serenity::prelude::Context;
 use std::collections::HashSet;
 
+use super::consts::{BOT_ID, PREFIX, PREFIXES};
+use super::utils;
 use crate::commands::{self, anilist, fun, meta, nekoslife, system, urban};
-use crate::core::consts::{BOT_ID, PREFIX, PREFIXES};
-use crate::core::store::{Command, CommandLogger};
 use crate::monitors;
 
 pub struct Zero2Framework;
@@ -23,27 +24,7 @@ impl Zero2Framework {
                     .prefix(PREFIX.as_str())
                     .prefixes(PREFIXES.to_vec())
             })
-            .before(|ctx, msg, cmd| {
-                if cmd != "shutdown" {
-                    let _ = msg.channel_id.broadcast_typing(&ctx.http);
-                }
-
-                {
-                    let mut data = ctx.data.write();
-                    let cmd_logger = data.get_mut::<CommandLogger>().unwrap();
-                    cmd_logger.insert(
-                        msg.id,
-                        Command {
-                            name: cmd.to_string(),
-                            message: msg.content.clone(),
-                            user_id: msg.author.id,
-                            time: msg.timestamp,
-                        },
-                    );
-                }
-
-                true
-            })
+            .before(before)
             .normal_message(|ctx, msg| {
                 monitors::message_monitors(ctx, msg);
             })
@@ -57,4 +38,14 @@ impl Zero2Framework {
             .group(&system::SYSTEM_GROUP)
             .group(&commands::NOCATEGORY_GROUP)
     }
+}
+
+fn before(ctx: &mut Context, msg: &Message, cmd: &str) -> bool {
+    if cmd != "shutdown" {
+        let _ = msg.channel_id.broadcast_typing(&ctx.http);
+    }
+
+    utils::log_command(ctx, msg, cmd);
+
+    true
 }

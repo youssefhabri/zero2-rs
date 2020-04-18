@@ -105,19 +105,24 @@ pub fn default_handler(context: &Context, reaction: &Reaction) -> Result<(), Err
     let channel_id = reaction.channel_id;
     let message_id = reaction.message_id;
 
+    let update_message = |modifier: &Modifier| -> Result<(), Error> {
+        update_current_page(context, message_id, modifier)?;
+
+        let embed_content = get_page_content(context, message_id);
+        utils::update_message(context, channel_id, message_id, embed_content);
+
+        Ok(())
+    };
+
     match reaction.emoji {
         ReactionType::Unicode(ref x) if x == reactions::NEXT => {
-            update_message(&context, channel_id, message_id, &Modifier::Increment)
+            update_message(&Modifier::Increment)
         }
         ReactionType::Unicode(ref x) if x == reactions::PREV => {
-            update_message(&context, channel_id, message_id, &Modifier::Decrement)
+            update_message(&Modifier::Decrement)
         }
-        ReactionType::Unicode(ref x) if x == reactions::FIRST => {
-            update_message(&context, channel_id, message_id, &Modifier::First)
-        }
-        ReactionType::Unicode(ref x) if x == reactions::LAST => {
-            update_message(&context, channel_id, message_id, &Modifier::Last)
-        }
+        ReactionType::Unicode(ref x) if x == reactions::FIRST => update_message(&Modifier::First),
+        ReactionType::Unicode(ref x) if x == reactions::LAST => update_message(&Modifier::Last),
         ReactionType::Unicode(ref x) if x == reactions::STOP => {
             utils::stop_pagination(&context, &reaction);
 
@@ -127,19 +132,19 @@ pub fn default_handler(context: &Context, reaction: &Reaction) -> Result<(), Err
     }
 }
 
-pub fn update_message(
-    context: &Context,
-    channel_id: ChannelId,
-    message_id: MessageId,
-    modifier: &Modifier,
-) -> Result<(), Error> {
-    update_current_page(context, message_id, modifier)?;
+// pub fn update_message(
+//     context: &Context,
+//     channel_id: ChannelId,
+//     message_id: MessageId,
+//     modifier: &Modifier,
+// ) -> Result<(), Error> {
+//     update_current_page(context, message_id, modifier)?;
 
-    let embed_content = get_page_content(context, message_id);
-    utils::update_message(context, channel_id, message_id, embed_content);
+//     let embed_content = get_page_content(context, message_id);
+//     utils::update_message(context, channel_id, message_id, embed_content);
 
-    Ok(())
-}
+//     Ok(())
+// }
 
 pub fn update_current_page(
     context: &Context,
@@ -225,9 +230,13 @@ fn get_page_builder(pagination: &MessagePagination) -> Option<CreateEmbed> {
         PaginationKind::User => serde_json::from_str(data.as_str())
             .ok()
             .map(|user| builders::user_embed_builder(&user, prefix)),
+
+        // Urban
         PaginationKind::Urban => serde_json::from_str(data.as_str())
             .ok()
             .map(|definition| builders::urban_embed_builder(&definition, prefix)),
+
+        // Giphy
         PaginationKind::Giphy => serde_json::from_str(data.as_str())
             .ok()
             .map(|gif| builders::giphy_embed_builder(&gif, prefix)),

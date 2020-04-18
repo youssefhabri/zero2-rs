@@ -5,6 +5,26 @@ use rand::prelude::*;
 use std::ops::Add;
 use time::Duration;
 
+use serenity::model::prelude::Message;
+use serenity::prelude::Context;
+
+use super::store::{Command, CommandLogger};
+
+#[inline]
+pub fn log_command(ctx: &mut Context, msg: &Message, cmd: &str) {
+    let mut data = ctx.data.write();
+    let cmd_logger = data.get_mut::<CommandLogger>().unwrap();
+    cmd_logger.insert(
+        msg.id,
+        Command {
+            name: cmd.to_string(),
+            message: msg.content.clone(),
+            user_id: msg.author.id,
+            time: msg.timestamp,
+        },
+    );
+}
+
 /// Get the DateTime<Local> for the next Weekday
 pub fn next_day(target: Weekday) -> DateTime<Local> {
     let mut dt = Local::now();

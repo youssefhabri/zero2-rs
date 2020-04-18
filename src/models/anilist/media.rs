@@ -137,10 +137,11 @@ impl Media {
             None => "-".to_string(),
         };
 
-        match self.is_releasing() {
-            true => format!("{}/{}", current_airing_episode, total_episodes),
-            false => total_episodes,
+        if self.is_releasing() {
+            return format!("{}/{}", current_airing_episode, total_episodes);
         }
+
+        total_episodes
     }
 
     fn next_airing_episode(&self) -> Option<u32> {

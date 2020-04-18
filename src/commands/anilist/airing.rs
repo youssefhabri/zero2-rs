@@ -15,14 +15,9 @@ use crate::models::anilist::airing_schedule::AiringSchedule;
 #[usage = "[weekday]"]
 #[description = "Show airing anime for a given/current day"]
 fn airing(context: &mut Context, message: &Message, args: Args) -> CommandResult {
-    let (start, day) = if args.is_empty() {
-        (to_midnight(Local::now()), "Today".to_owned())
-    } else {
-        let day = args.message().to_string();
-        match day.parse::<Weekday>() {
-            Ok(day) => (to_midnight(next_day(day)), weekday_to_string(day)),
-            Err(_) => (to_midnight(Local::now()), "Today".to_owned()),
-        }
+    let (start, day) = match args.message().parse::<Weekday>() {
+        Ok(day) => (to_midnight(next_day(day)), weekday_to_string(day)),
+        Err(_) => (to_midnight(Local::now()), "Today".to_owned()),
     };
 
     let results: Vec<AiringSchedule> = client::search_airing_schedule(
@@ -31,17 +26,17 @@ fn airing(context: &mut Context, message: &Message, args: Args) -> CommandResult
     );
 
     if !results.is_empty() {
-        let mut airing = vec![];
-
-        for item in results {
-            airing.push(item.to_url());
-        }
+        let airing_shows = results
+            .iter()
+            .map(|item| item.to_url())
+            .collect::<Vec<String>>()
+            .join("\n");
 
         let _ = message.channel_id.send_message(&context.http, |m| {
             m.embed(|e| {
                 e.color(3447003)
                     .title(format!("Airing Schedule for {}", day))
-                    .description(airing.join("\n"))
+                    .description(airing_shows)
                     .footer(|f| {
                         f.icon_url("https://anilist.co/img/icons/favicon-32x32.png")
                             .text("Powered by AniList")

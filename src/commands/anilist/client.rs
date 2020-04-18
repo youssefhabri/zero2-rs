@@ -24,14 +24,17 @@ fn load_graphql(file: &str) -> String {
 }
 
 fn load_graphql_with_fragment(query_file: &str, fragment_files: Vec<&str>) -> String {
-    let query = load_graphql(&format!("queries/{}.graphql", query_file));
+    let mut query_parts = vec![
+        // Load the query
+        load_graphql(&format!("queries/{}.graphql", query_file)),
+    ];
 
-    let mut fragments: Vec<String> = vec![];
+    // Load the fragments
     for fragment in fragment_files {
-        fragments.push(load_graphql(&format!("fragments/{}.graphql", fragment)));
+        query_parts.push(load_graphql(&format!("fragments/{}.graphql", fragment)));
     }
 
-    format!("{}\n{}", query, fragments.join("\n"))
+    query_parts.join("\n")
 }
 
 type Var<'a> = (&'a str, &'a str);
