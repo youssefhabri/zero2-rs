@@ -1,15 +1,10 @@
-use regex::Regex;
 use serenity::model::{
     channel::Message,
     id::{ChannelId, GuildId, MessageId},
 };
 use serenity::prelude::Context;
 
-use crate::core::consts;
-
-lazy_static! {
-    static ref MSG_RE: Regex = Regex::new(r"[0-9]{17,18}").unwrap();
-}
+use crate::core::consts::{MAIN_COLOUR, MESSAGE_ID_RE};
 
 fn message_url(guild_id: GuildId, channel_id: ChannelId, message_id: MessageId) -> String {
     format!(

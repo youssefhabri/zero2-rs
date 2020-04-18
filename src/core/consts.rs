@@ -9,7 +9,11 @@ lazy_static! {
     pub static ref EMOJIS: HashMap<String, Emoji> = load_emojis();
     pub static ref OWNER_ID: String = dotenv::var("OWNER_ID").expect("OWNER_ID");
     pub static ref PREFIX: String = dotenv::var("BOT_PREFIX").expect("BOT_PREFIX");
-    pub static ref PREFIXES: Vec<String> = load_prefixes();
+    pub static ref PREFIXES: Vec<String> = load_csv_var("BOT_PREFIXES");
+    pub static ref VIP_ROLES: Vec<String> = load_csv_var("VIP_ROLES");
+
+    // RegEx
+    pub static ref MESSAGE_ID_RE: regex::Regex = regex::Regex::new(r"[0-9]{17,18}").unwrap();
 }
 
 pub const BOT_ID: u64 = 453773001805135883;
@@ -24,8 +28,8 @@ pub const AT_BOT_IDS: [u64; 4] = [
 
 pub const MAIN_COLOUR: u32 = 16580705;
 
-fn load_prefixes() -> Vec<String> {
-    match dotenv::var("BOT_PREFIXES") {
+fn load_csv_var(key: &str) -> Vec<String> {
+    match dotenv::var(key) {
         Ok(prefixes_str) => prefixes_str
             .split(',')
             .map(|p| p.to_string())
