@@ -45,7 +45,27 @@ fn before(ctx: &mut Context, msg: &Message, cmd: &str) -> bool {
         let _ = msg.channel_id.broadcast_typing(&ctx.http);
     }
 
+    if (cmd == "fortune" || cmd == "cookie") && is_trolling() {
+        let _ = msg.channel_id.say(&ctx.http, "Quack! 🦆");
+        return false;
+    }
+
     utils::log_command(ctx, msg, cmd);
 
     true
+}
+
+fn is_trolling() -> bool {
+    use rand::prelude::*;
+    use rand::distributions::WeightedIndex;
+
+    let choices = [true, false];
+    let weights = [4, 1];
+    let dist = WeightedIndex::new(&weights).unwrap();
+
+
+    let mut rng = thread_rng();
+    let result = dist.sample(&mut rng);
+
+    choices[result]
 }
