@@ -60,7 +60,7 @@ fn is_trolling() -> bool {
     use rand::distributions::WeightedIndex;
 
     let choices = [true, false];
-    let weights = [4, 1];
+    let weights = [9, 1];
     let dist = WeightedIndex::new(&weights).unwrap();
 
 
