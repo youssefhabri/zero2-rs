@@ -23,16 +23,16 @@ time = "0.1"
 rand = "0.7"
 regex = "1"
 reqwest = { version = "0.10", features = ["blocking", "json"] }
-rust-embed = "5.1"
+rust-embed = "5.5"
 serde = "1.0"
 serde_derive = "1.0"
 serde_json = "1.0"
-sys-info = "0.5"
-sysinfo = "0.9"
+sys-info = "0.6"
+sysinfo = "0.14"
 serenity = "0.8"
 
 [dependencies.fern]
-version = "0.5"
+version = "0.6"
 features = ["colored"]
 
 [dependencies.diesel]
