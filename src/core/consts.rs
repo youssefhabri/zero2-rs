@@ -1,3 +1,4 @@
+use regex::Regex;
 use std::collections::HashMap;
 
 use crate::db::Database;
@@ -13,7 +14,9 @@ lazy_static! {
     pub static ref VIP_ROLES: Vec<String> = load_csv_var("VIP_ROLES");
 
     // RegEx
-    pub static ref MESSAGE_ID_RE: regex::Regex = regex::Regex::new(r"[0-9]{17,18}").unwrap();
+    // TODO move the rest of the regexes here
+    pub static ref MESSAGE_ID_RE: Regex = Regex::new(r"[0-9]{17,18}").unwrap();
+    pub static ref MESSAGE_LINK_RE: Regex = Regex::new(r"https://.*discordapp\.com/channels/([0-9]*)/([0-9]*)/([0-9]*)/?").unwrap();
 }
 
 pub const BOT_ID: u64 = 453773001805135883;
