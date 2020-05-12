@@ -1,10 +1,11 @@
+use serenity::builder::CreateEmbed;
 use serenity::model::{
     channel::Message,
     id::{ChannelId, GuildId, MessageId},
 };
 use serenity::prelude::Context;
 
-use crate::core::consts::{MAIN_COLOUR, MESSAGE_ID_RE};
+use crate::core::consts::{MAIN_COLOUR, MESSAGE_ID_RE, MESSAGE_LINK_RE};
 
 fn message_url(guild_id: GuildId, channel_id: ChannelId, message_id: MessageId) -> String {
     format!(
@@ -13,7 +14,37 @@ fn message_url(guild_id: GuildId, channel_id: ChannelId, message_id: MessageId) 
     )
 }
 
+fn handle_message_url(context: &Context, message: &Message) {
+    if let Some(captures) = MESSAGE_LINK_RE.captures(message.content.as_str()) {
+        let guild_id = captures
+            .get(1)
+            .map(|id| GuildId(id.as_str().parse().unwrap()))
+            .unwrap_or(message.guild_id.unwrap_or(GuildId(0)));
+
+        let channel_id = captures
+            .get(2)
+            .map(|id| ChannelId(id.as_str().parse().unwrap()))
+            .unwrap_or(message.channel_id);
+
+        let message_id: MessageId = captures
+            .get(3)
+            .map(|id| MessageId(id.as_str().parse().unwrap()))
+            .unwrap_or(message.id);
+
+        if let Ok(message) = context
+            .http
+            .get_message(*channel_id.as_u64(), *message_id.as_u64())
+        {
+            handle_message(context, guild_id, channel_id, &message);
+        }
+    }
+}
+
 pub fn message_id_monitor(context: &Context, message: &Message) {
+    if MESSAGE_LINK_RE.is_match(message.content.as_str()) {
+        return handle_message_url(context, message);
+    }
+
     let guild_id = match message.guild_id {
         Some(id) => id,
         None => return,
@@ -48,16 +79,12 @@ pub fn message_id_monitor(context: &Context, message: &Message) {
     }
 }
 
-use serenity::builder::CreateEmbed;
-
 fn handle_message(
     context: &Context,
     guild_id: GuildId,
     target_channel_id: ChannelId,
     message: &Message,
 ) {
-    dbg!(&message.embeds);
-
     if !message.embeds.is_empty() {
         let _ = target_channel_id.send_message(context, |m| {
             if !message.content.is_empty() {
