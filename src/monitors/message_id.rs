@@ -31,11 +31,13 @@ fn handle_message_url(context: &Context, message: &Message) {
             .map(|id| MessageId(id.as_str().parse().unwrap()))
             .unwrap_or(message.id);
 
+        let target_channel_id = message.channel_id;
+
         if let Ok(message) = context
             .http
             .get_message(*channel_id.as_u64(), *message_id.as_u64())
         {
-            handle_message(context, guild_id, channel_id, &message);
+            handle_message(context, guild_id, target_channel_id, &message);
         }
     }
 }
