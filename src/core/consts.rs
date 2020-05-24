@@ -41,6 +41,7 @@ fn load_csv_var(key: &str) -> Vec<String> {
     }
 }
 
+// TODO try and cache the file locally and only download it if it was changed/after a period of time
 fn load_cookies() -> Vec<String> {
     let url = "https://raw.githubusercontent.com/ianli/fortune-cookies-galore/master/fortunes.txt";
     let mut cookies = vec![];
@@ -58,6 +59,7 @@ fn load_cookies() -> Vec<String> {
     cookies
 }
 
+// TODO maybe remove this as there no longer a need for the bot to try and post emojis for non-nitro users
 fn load_emojis() -> HashMap<String, Emoji> {
     let url = "https://discordemoji.com/api/";
     let mut emojis: Vec<Emoji> = vec![];

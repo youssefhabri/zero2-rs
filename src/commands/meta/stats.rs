@@ -77,9 +77,9 @@ fn build_embed(
 ) -> &mut CreateEmbed {
     let content = stats_list
         .iter()
+        .filter(|(user_id, _)| !AT_BOT_IDS.contains(user_id.as_u64()))
         .take(10)
         .enumerate()
-        .filter(|(_, (user_id, _))| !AT_BOT_IDS.contains(user_id.as_u64()))
         .map(|(i, (user_id, msgs_count))| format!("{}. <@{}>: {}", i + 1, user_id, msgs_count))
         .collect::<Vec<String>>()
         .join("\n\n");

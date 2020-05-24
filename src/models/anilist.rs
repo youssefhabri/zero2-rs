@@ -11,7 +11,7 @@ pub mod user;
 
 pub type Variables = HashMap<String, String>;
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct QueryBody {
     pub query: String,
     pub variables: Variables,

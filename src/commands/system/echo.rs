@@ -3,10 +3,8 @@ use serenity::model::prelude::{ChannelId, Message};
 use serenity::prelude::Context;
 use serenity::utils::parse_channel;
 
-use crate::checks::*;
-
 #[command]
-#[checks(Admin)]
+#[owners_only]
 fn echo(context: &mut Context, message: &Message, args: Args) -> CommandResult {
     if args.is_empty() {
         let _ = message

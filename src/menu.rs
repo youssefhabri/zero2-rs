@@ -200,7 +200,6 @@ fn get_handler(ctx: &Context, reaction: &Reaction) -> Result<Option<HandlerFunc>
 pub fn get_page_content(context: &Context, message_id: MessageId) -> Option<CreateEmbed> {
     let data = context.data.read();
 
-    //    let paginator = data.get_mut::<MessagePaginator>().unwrap();
     let paginator = data.get::<MessagePaginator>().unwrap();
 
     paginator
