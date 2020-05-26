@@ -26,7 +26,8 @@ fn bot_info(context: &mut Context, message: &Message, _: Args) -> CommandResult 
     let owner = data
         .get::<BotOwnerContainer>()
         .expect("Failed to get owner");
-    let sys = System::new();
+    let mut sys = System::new();
+    sys.refresh_all();
 
     message.channel_id.send_message(
         &context.http,
