@@ -35,17 +35,9 @@ fn bot_info(context: &mut Context, message: &Message, _: Args) -> CommandResult 
             embed
                 .colour(Colour::new(0x005d_a9ff))
                 .description("Hi! I'm <@453773001805135883>, a general purpose bot created in [Rust](http://www.rust-lang.org/) using [Serenity](https://github.com/serenity-rs/serenity).")
-                .field("Owner", format!(
-                    "Name: {}\nID: {}"
-                    ,owner.tag()
-                    ,owner.id)
-                       ,true)
+                .field("Owner", format!("Name: {}\nID: {}", owner.tag(), owner.id), true)
                 .field("Version", format!("v{}", BOT_VERSION), true)
-                .field("Counts", format!(
-                    "Guilds: {}\nShards: {}"
-                    ,guild_count
-                    ,shard_count)
-                       ,false)
+                .field("Counts", format!("Guilds: {}\nShards: {}", guild_count, shard_count), false)
                 .thumbnail(thumbnail);
 
             if let Ok(current_pid) = get_current_pid() {
@@ -54,23 +46,31 @@ fn bot_info(context: &mut Context, message: &Message, _: Args) -> CommandResult 
                         current_time.as_secs() - process.start_time()
                     } else { 0 } as usize;
 
+                    let os_type = if sys_info::os_type().unwrap() == "Linux" {
+                        String::from("2.4")
+                    } else {
+                        sys_info::os_release().unwrap_or_else(|_| String::from("(release unknown)"))
+                    };
+
                     embed
-                        .field("System Info", format!(
-                            "Type: {} {}\nUptime: {}"
-                            ,sys_info::os_type().unwrap_or_else(|_| String::from("OS unknown"))
-                            ,if sys_info::os_type().unwrap() == "Linux" {
-                                String::from("2.4")
-                            } else {
-                                sys_info::os_release().unwrap_or_else(|_| String::from("(release unknown)"))
-                            }
-                            ,seconds_to_hrtime(sys.get_uptime() as usize))
-                            ,true)
-                        .field("Process Info", format!(
-                            "Memory Usage: {} MB\nCPU Usage {}%\nUptime: {}"
-                            ,process.memory()/1000 // convert to MB
-                            ,(process.cpu_usage()*100.0).round()/100.0 // round to 2 decimals
-                            ,seconds_to_hrtime(uptime))
-                            ,true);
+                        .field(
+                            "System Info",
+                            format!(
+                                "Type: {} {}\nUptime: {}",
+                                sys_info::os_type().unwrap_or_else(|_| String::from("OS unknown")), os_type,
+                                seconds_to_hrtime(sys.get_uptime() as usize)
+                            ),
+                            true
+                        )
+                        .field("Process Info", 
+                            format!(
+                                "Memory Usage: {} MB\nCPU Usage {}%\nUptime: {}",
+                                process.memory() / 1000, // convert to MB
+                                (process.cpu_usage() * 100.0).round() / 100.0, // round to 2 decimals
+                                seconds_to_hrtime(uptime)
+                            ),
+                            true
+                        );
                 }
             }
 
