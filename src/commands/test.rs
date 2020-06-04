@@ -8,6 +8,7 @@ use std::thread;
 use std::time::Duration;
 
 #[command]
+#[bucket = "stats_limit"]
 fn test(context: &mut Context, message: &Message, _args: Args) -> CommandResult {
     let sending = message.channel_id.send_message(&context.http, |m| {
         m.content("Test message!")
