@@ -28,7 +28,9 @@ impl Zero2Framework {
             .normal_message(|ctx, msg| {
                 monitors::message_monitors(ctx, msg);
             })
-            .bucket("stats_limit", |b| b.delay(6 * 3600))
+            .bucket("stats_limit", |b| {
+                b.delay(6 * 3600).time_span(24 * 3600).limit(4)
+            })
             .help(&commands::ZERO2_HELP)
             .group(&anilist::ANILIST_GROUP)
             .group(&urban::KNOWLEDGE_GROUP)
