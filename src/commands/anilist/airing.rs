@@ -1,4 +1,4 @@
-use chrono::{Local, Weekday};
+use chrono::{DateTime, Local, Weekday};
 use std::ops::Add;
 use time::Duration;
 
@@ -7,7 +7,7 @@ use serenity::model::channel::Message;
 use serenity::prelude::*;
 
 use crate::commands::anilist::client;
-use crate::core::utils::{next_day, to_midnight, weekday_to_string};
+use crate::core::utils::{next_day, weekday_to_string};
 use crate::models::anilist::airing_schedule::AiringSchedule;
 
 #[command]
@@ -15,15 +15,15 @@ use crate::models::anilist::airing_schedule::AiringSchedule;
 #[usage = "[weekday]"]
 #[description = "Show airing anime for a given/current day"]
 fn airing(context: &mut Context, message: &Message, args: Args) -> CommandResult {
+    let to_midnight = |datetime: DateTime<Local>| datetime.date().and_hms(0, 0, 0);
+
     let (start, day) = match args.message().parse::<Weekday>() {
         Ok(day) => (to_midnight(next_day(day)), weekday_to_string(day)),
         Err(_) => (to_midnight(Local::now()), "Today".to_owned()),
     };
 
-    let results: Vec<AiringSchedule> = client::search_airing_schedule(
-        start?.timestamp(),
-        start?.add(Duration::days(1)).timestamp(),
-    );
+    let results: Vec<AiringSchedule> =
+        client::search_airing_schedule(start.timestamp(), start.add(Duration::days(1)).timestamp());
 
     if !results.is_empty() {
         let airing_shows = results

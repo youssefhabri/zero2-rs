@@ -36,19 +36,6 @@ pub fn next_day(target: Weekday) -> DateTime<Local> {
     dt
 }
 
-/// Convert a DateTime<Local> to midnight
-pub fn to_midnight(datetime: DateTime<Local>) -> ParseResult<DateTime<FixedOffset>> {
-    let midnight = format!(
-        "{}-{:02}-{:02}T00:00:00{}",
-        datetime.date().year(),
-        datetime.date().month(),
-        datetime.date().day(),
-        "+01:00"
-    );
-
-    DateTime::parse_from_rfc3339(midnight.as_str())
-}
-
 /// Convert a Weekday enum to weekday name
 pub fn weekday_to_string(weekday: Weekday) -> String {
     let weekday: &str = match weekday {
