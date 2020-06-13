@@ -37,6 +37,7 @@ fn source(context: &mut Context, message: &Message, args: Args) -> CommandResult
     let containers: Vec<SourceContainer> = results
         .docs
         .iter()
+        .filter(|source| source.similarity >= 0.87)
         .map(SourceContainer::from_source)
         .collect();
 
