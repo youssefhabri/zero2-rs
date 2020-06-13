@@ -1,11 +1,11 @@
 use serde::{Deserialize, Serialize};
 
-use crate::models::anilist::media::Media;
 use crate::commands::anilist::client::search_media_by_id;
+use crate::models::anilist::media::Media;
 
 #[derive(Debug, Serialize)]
 pub struct Body {
-    image: String,
+    pub image: String,
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -50,7 +50,10 @@ impl Source {
         use percent_encoding::{utf8_percent_encode, NON_ALPHANUMERIC};
         format!(
             "https://trace.moe/thumbnail.php?anilist_id={}&file={}&t={}&token={}",
-            self.anilist_id, utf8_percent_encode(&self.filename, NON_ALPHANUMERIC), self.at, self.tokenthumb
+            self.anilist_id,
+            utf8_percent_encode(&self.filename, NON_ALPHANUMERIC),
+            self.at,
+            self.tokenthumb
         )
     }
 
@@ -74,9 +77,10 @@ pub struct SourceContainer {
 impl SourceContainer {
     pub fn from_source(source: &Source) -> Self {
         let media = search_media_by_id(source.anilist_id.to_string(), "ANIME".to_string()).unwrap();
-        
+
         SourceContainer {
-            media, source: source.clone()
+            media,
+            source: source.clone(),
         }
     }
 }

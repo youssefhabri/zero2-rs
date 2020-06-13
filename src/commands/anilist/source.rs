@@ -6,7 +6,7 @@ use reqwest::blocking::Client as ReqwestClient;
 
 use crate::core::store::PaginationKind;
 use crate::menu;
-use crate::models::anilist::source::{Response, SourceContainer};
+use crate::models::anilist::source::{Body, Response, SourceContainer};
 
 const BASE_URL: &str = "https://trace.moe/api/search";
 
@@ -17,19 +17,34 @@ const BASE_URL: &str = "https://trace.moe/api/search";
 #[usage = "<image_url>"]
 #[description = "Try to find the source of an anime image"]
 fn source(context: &mut Context, message: &Message, args: Args) -> CommandResult {
-    if args.len() < 1 {
-        let _ = message
-            .channel_id
-            .say(context, "You need to pass an image url.");
-        return Ok(());
-    }
-
     let client = ReqwestClient::new();
 
-    let image_url = args.message().trim_matches(|c| c == '<' || c == '>');
-    let response = client
-        .get(&format!("{}?url={}", BASE_URL, image_url))
-        .send()?;
+    let response = if args.len() < 1 {
+        if message.attachments.is_empty() || message.attachments[0].dimensions().is_none() {
+            let _ = message
+                .channel_id
+                .say(context, "You need to pass an image url or upload an image.");
+            return Ok(());
+        }
+
+        if let Ok(image_data) = message.attachments[0].download() {
+            let body = Body {
+                image: format!("data:image/jpeg;base64,{}", base64::encode(&image_data)),
+            };
+
+            client.post(BASE_URL).json(&body).send()?
+        } else {
+            let _ = message
+                .channel_id
+                .say(context, "Error while processing your request.");
+            return Ok(());
+        }
+    } else {
+        let image_url = args.message().trim_matches(|c| c == '<' || c == '>');
+        client
+            .get(&format!("{}?url={}", BASE_URL, image_url))
+            .send()?
+    };
 
     let mut results: Response = response.json()?;
     results.docs.dedup();
