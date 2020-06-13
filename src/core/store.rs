@@ -55,6 +55,7 @@ pub enum PaginationKind {
     Media,
     Staff,
     User,
+    Source,
 
     // Misc
     Urban,

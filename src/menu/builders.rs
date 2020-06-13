@@ -2,6 +2,7 @@ use serenity::{builder::CreateEmbed, utils::Colour};
 use urbandictionary::model::Definition;
 
 use crate::commands::anilist::utils::synopsis;
+use crate::models::anilist::source::SourceContainer;
 use crate::models::anilist::{
     activity::Activity,
     character::Character,
@@ -112,6 +113,27 @@ pub fn studio_embed_builder(studio: &Studio, prefix: String) -> CreateEmbed {
         .footer(|f| {
             f.icon_url("https://anilist.co/img/icons/favicon-32x32.png")
                 .text(format!("{}Powered by AniList", prefix))
+        })
+        .clone()
+}
+
+pub fn source_embed_builder(container: &SourceContainer, prefix: String) -> CreateEmbed {
+    CreateEmbed::default()
+        .color(3447003)
+        .title(&container.media.title.user_preferred)
+        .description(container.media.synopsis())
+        .thumbnail(&container.media.cover_image.large)
+        .url(&container.media.site_url)
+        .image(container.source.image_preview())
+        .field("Score", &container.media.mean_score(), true)
+        .field("More info", &container.media.tracking_sites(), true)
+        .field("Genres", &container.media.genres(), false)
+        .field("Episode", container.source.episode, true)
+        .field("At", container.source.at(), true)
+        .field("Similarity", container.source.similarity(), true)
+        .footer(|f| {
+            f.icon_url("https://trace.moe/favicon.png")
+                .text(format!("{}Powered by Trace.moe & AniList", prefix))
         })
         .clone()
 }

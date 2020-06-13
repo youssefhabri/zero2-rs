@@ -229,6 +229,9 @@ fn get_page_builder(pagination: &MessagePagination) -> Option<CreateEmbed> {
         PaginationKind::User => serde_json::from_str(data.as_str())
             .ok()
             .map(|user| builders::user_embed_builder(&user, prefix)),
+        PaginationKind::Source => serde_json::from_str(data.as_str())
+            .ok()
+            .map(|source| builders::source_embed_builder(&source, prefix)),
 
         // Urban
         PaginationKind::Urban => serde_json::from_str(data.as_str())

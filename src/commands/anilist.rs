@@ -9,6 +9,7 @@ pub mod airing;
 pub mod anime;
 pub mod character;
 pub mod manga;
+pub mod source;
 pub mod staff;
 pub mod user;
 
@@ -17,9 +18,10 @@ use self::airing::AIRING_COMMAND;
 use self::anime::ANIME_COMMAND;
 use self::character::CHARACTER_COMMAND;
 use self::manga::MANGA_COMMAND;
+use self::source::SOURCE_COMMAND;
 use self::staff::STAFF_COMMAND;
 use self::user::USER_COMMAND;
 
 #[group]
-#[commands(activity, airing, anime, character, manga, staff, user)]
+#[commands(activity, airing, anime, character, manga, staff, source, user)]
 struct Anilist;

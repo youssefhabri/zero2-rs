@@ -8,6 +8,7 @@ pub mod media;
 pub mod staff;
 pub mod studio;
 pub mod user;
+pub mod source;
 
 pub type Variables = HashMap<String, String>;
 
