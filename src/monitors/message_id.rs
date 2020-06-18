@@ -87,6 +87,8 @@ fn handle_message(
     target_channel_id: ChannelId,
     message: &Message,
 ) {
+    let url = message_url(guild_id, message.channel_id, message.id);
+
     if !message.embeds.is_empty() {
         let _ = target_channel_id.send_message(context, |m| {
             if !message.content.is_empty() {
@@ -96,6 +98,7 @@ fn handle_message(
             let embed = message.embeds[0].clone();
             m.embed(|e| {
                 e.clone_from(&CreateEmbed::from(embed));
+                e.field("Original", url, false);
                 e
             });
 
@@ -106,8 +109,6 @@ fn handle_message(
     }
 
     if !message.content.is_empty() || !message.attachments.is_empty() {
-        let url = message_url(guild_id, message.channel_id, message.id);
-
         let _ = target_channel_id.send_message(context, |m| {
             m.embed(|e| {
                 e.author(|a| {
