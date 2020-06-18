@@ -1,7 +1,17 @@
-use serde::{Deserialize, Serialize};
+use serde::{de::Deserializer, Deserialize, Serialize};
+use serde_json::Value;
 
 use crate::commands::anilist::client::search_media_by_id;
 use crate::models::anilist::media::Media;
+
+fn ok_or_default<'de, T, D>(deserializer: D) -> Result<T, D::Error>
+where
+    T: Deserialize<'de> + Default,
+    D: Deserializer<'de>,
+{
+    let v: Value = Deserialize::deserialize(deserializer)?;
+    Ok(T::deserialize(v).unwrap_or_default())
+}
 
 #[derive(Debug, Serialize)]
 pub struct Body {
@@ -19,7 +29,8 @@ pub struct Source {
     pub filename: String,
     pub tokenthumb: String,
     pub anime: String,
-    pub episode: u32,
+    #[serde(deserialize_with = "ok_or_default")]
+    pub episode: Option<u32>,
     pub similarity: f32,
     pub title: String,
     pub title_native: String,

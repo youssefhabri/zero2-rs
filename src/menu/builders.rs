@@ -128,7 +128,7 @@ pub fn source_embed_builder(container: &SourceContainer, prefix: String) -> Crea
         .field("Score", &container.media.mean_score(), true)
         .field("More info", &container.media.tracking_sites(), true)
         .field("Genres", &container.media.genres(), false)
-        .field("Episode", container.source.episode, true)
+        .field("Episode", container.source.episode.unwrap_or(1), true)
         .field("At", container.source.at(), true)
         .field("Similarity", container.source.similarity(), true)
         .footer(|f| {

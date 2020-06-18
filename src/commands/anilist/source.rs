@@ -10,7 +10,9 @@ use crate::models::anilist::source::{Body, Response, SourceContainer};
 
 const BASE_URL: &str = "https://trace.moe/api/search";
 
-// TODO add support for attachements
+// TODO source for last image in chat
+// TODO source from a message id
+// TODO I need to add a way to check the ratelimit
 
 #[command]
 #[aliases("sause")]
