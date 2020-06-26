@@ -87,6 +87,14 @@ fn handle_message(
     target_channel_id: ChannelId,
     message: &Message,
 ) {
+    let is_message_channel_nsfw = message.channel(context).unwrap().is_nsfw();
+    let is_target_channel_nsfw = target_channel_id.to_channel(context).unwrap().is_nsfw();
+
+    // Make sure that the bot doesn't post messages from nsfw channels to sfw channels
+    if is_message_channel_nsfw && !is_target_channel_nsfw {
+        return;
+    }
+
     let url = message_url(guild_id, message.channel_id, message.id);
 
     if !message.embeds.is_empty() {
