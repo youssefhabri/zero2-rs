@@ -7,6 +7,8 @@ use crate::checks::*;
 
 #[command]
 #[checks(Admin)]
+#[usage = "[<Channel> |] [<Title> |] text to embed"]
+#[description = "Create an embed with a title and content is the current channel or a different channel"]
 fn embed(context: &mut Context, message: &Message, args: Args) -> CommandResult {
     let full_message: String = args.message().to_string();
 
