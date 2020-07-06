@@ -16,7 +16,7 @@ base64 = "0.12"
 chrono = "0.4"
 dissolve = "0.2"
 dotenv = "0.15"
-indexmap = "1.3"
+indexmap = "1.4"
 lazy_static = "1.4"
 libmath = "0.2"
 log = "0.4"
@@ -38,7 +38,7 @@ version = "0.6"
 features = ["colored"]
 
 [dependencies.diesel]
-version = "1.0.0"
+version = "1.4"
 features = ["postgres", "chrono", "r2d2"]
 
 [dependencies.urbandictionary]
