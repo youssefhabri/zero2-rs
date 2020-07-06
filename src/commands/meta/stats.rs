@@ -36,7 +36,7 @@ fn stats(context: &mut Context, message: &Message, _: Args) -> CommandResult {
 
             Ok(())
         }
-        None => Err(CommandError("Error getting the channel messages.")),
+        None => Err(CommandError::from("Error getting the channel messages.")),
     }
 }
 

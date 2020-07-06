@@ -6,7 +6,7 @@ use crate::core::{consts::COOKIES, utils::random_num};
 
 #[command]
 fn cookie(context: &mut Context, message: &Message, _args: Args) -> CommandResult {
-    if &COOKIES.is_empty() {
+    if COOKIES.is_empty() {
         return Err(CommandError::from(
             "Couldn't find any fortune cookies for you. Sorry!",
         ));
