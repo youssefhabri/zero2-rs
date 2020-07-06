@@ -64,9 +64,7 @@ fn before(ctx: &mut Context, msg: &Message, cmd: &str) -> bool {
 fn after(context: &mut Context, message: &Message, _cmd: &str, error: CommandResult) {
     if let Err(why) = error {
         let error_msg = why.0;
-        let _ = message.channel_id.say(&context, &error_msg);
-
-        error!("{}", error_msg);
+        let _ = message.channel_id.say(&context, error_msg);
     }
 }
 
