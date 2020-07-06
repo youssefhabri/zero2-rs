@@ -2,7 +2,7 @@ use chrono::{DateTime, Local, Weekday};
 use std::ops::Add;
 use time::Duration;
 
-use serenity::framework::standard::{macros::command, Args, CommandResult};
+use serenity::framework::standard::{macros::command, Args, CommandError, CommandResult};
 use serenity::model::channel::Message;
 use serenity::prelude::*;
 
@@ -25,30 +25,27 @@ fn airing(context: &mut Context, message: &Message, args: Args) -> CommandResult
     let results: Vec<AiringSchedule> =
         client::search_airing_schedule(start.timestamp(), start.add(Duration::days(1)).timestamp());
 
-    if !results.is_empty() {
-        let airing_shows = results
-            .iter()
-            .map(|item| item.to_url())
-            .collect::<Vec<String>>()
-            .join("\n");
-
-        let _ = message.channel_id.send_message(&context.http, |m| {
-            m.embed(|e| {
-                e.color(3447003)
-                    .title(format!("Airing Schedule for {}", day))
-                    .description(airing_shows)
-                    .footer(|f| {
-                        f.icon_url("https://anilist.co/img/icons/favicon-32x32.png")
-                            .text("Powered by AniList")
-                    })
-            })
-        });
-    } else {
-        let _ = message.channel_id.say(
-            &context.http,
-            "Error checking the airing schedule".to_string(),
-        );
+    if results.is_empty() {
+        return Err(CommandError::from("Error checking the airing schedule"));
     }
+
+    let airing_shows = results
+        .iter()
+        .map(|item| item.to_url())
+        .collect::<Vec<String>>()
+        .join("\n");
+
+    let _ = message.channel_id.send_message(&context.http, |m| {
+        m.embed(|e| {
+            e.color(3447003)
+                .title(format!("Airing Schedule for {}", day))
+                .description(airing_shows)
+                .footer(|f| {
+                    f.icon_url("https://anilist.co/img/icons/favicon-32x32.png")
+                        .text("Powered by AniList")
+                })
+        })
+    });
 
     Ok(())
 }

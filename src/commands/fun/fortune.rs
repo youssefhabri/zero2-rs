@@ -1,4 +1,4 @@
-use serenity::framework::standard::{macros::command, Args, CommandResult};
+use serenity::framework::standard::{macros::command, Args, CommandError, CommandResult};
 use serenity::model::channel::Message;
 use serenity::prelude::*;
 
@@ -16,15 +16,13 @@ fn fortune(context: &mut Context, message: &Message, _: Args) -> CommandResult {
                         .description(fortune.message.trim())
                 })
             });
-        }
-        None => {
-            let _ = message
-                .channel_id
-                .say(&context.http, "Couldn't find any fortune for you. Sorry!");
-        }
-    };
 
-    Ok(())
+            Ok(())
+        }
+        None => Err(CommandError::from(
+            "Couldn't find any fortune for you. Sorry!",
+        )),
+    }
 }
 
 #[derive(Clone, Deserialize, Debug)]

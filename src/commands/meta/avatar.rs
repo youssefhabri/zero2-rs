@@ -16,6 +16,7 @@ fn avatar(context: &mut Context, message: &Message, mut args: Args) -> CommandRe
             .collect::<Vec<_>>()
     };
 
+    // TODO find a way to collect the errors and display them using the "new error system"
     for user_tag in user_tags {
         let user_id = parse_mention(user_tag.as_str());
 

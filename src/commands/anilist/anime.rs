@@ -1,4 +1,4 @@
-use serenity::framework::standard::{macros::command, Args, CommandResult};
+use serenity::framework::standard::{macros::command, Args, CommandError, CommandResult};
 use serenity::model::channel::Message;
 use serenity::prelude::*;
 
@@ -14,45 +14,41 @@ use crate::models::anilist::media::{Media, MediaType};
 #[description = "Search for an anime in AniList"]
 pub fn anime(context: &mut Context, message: &Message, args: Args) -> CommandResult {
     if args.is_empty() {
-        let _ = message
-            .channel_id
-            .say(&context.http, "You need to input a anime title.");
-        return Ok(());
+        return Err(CommandError::from("You need to input a anime title."));
     }
 
     let keyword = args.message().to_string();
 
     let results: Vec<Media> = client::search_media(keyword.clone(), MediaType::Anime);
 
-    if !results.is_empty() {
-        let anime: &Media = &results[0];
-        let sending = message.channel_id.send_message(&context.http, |m| {
-            m.embed(|e| {
-                e.clone_from(&builders::media_embed_builder(
-                    anime,
-                    format!("Page: {}/{} | ", 1, results.len()),
-                ));
+    if results.is_empty() {
+        return Err(CommandError(format!(
+            "No anime was found for `{}`",
+            keyword
+        )));
+    }
+    let anime: &Media = &results[0];
+    let sending = message.channel_id.send_message(&context.http, |m| {
+        m.embed(|e| {
+            e.clone_from(&builders::media_embed_builder(
+                anime,
+                format!("Page: {}/{} | ", 1, results.len()),
+            ));
 
-                e
-            })
-            .reactions(menu::reactions::default())
-        });
+            e
+        })
+        .reactions(menu::reactions::default())
+    });
 
-        if let Ok(sending_msg) = sending {
-            menu::new_pagination_with_handler(
-                context,
-                sending_msg.id,
-                message.author.id,
-                PaginationKind::Media,
-                menu::utils::serialize_entries(results),
-                None,
-            )
-        }
-    } else {
-        let _ = message.channel_id.say(
-            &context.http,
-            format!("No anime was found for: `{}`", keyword),
-        );
+    if let Ok(sending_msg) = sending {
+        menu::new_pagination_with_handler(
+            context,
+            sending_msg.id,
+            message.author.id,
+            PaginationKind::Media,
+            menu::utils::serialize_entries(results),
+            None,
+        )
     }
 
     Ok(())

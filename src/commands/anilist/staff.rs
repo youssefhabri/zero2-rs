@@ -1,4 +1,4 @@
-use serenity::framework::standard::{macros::command, Args, CommandResult};
+use serenity::framework::standard::{macros::command, Args, CommandError, CommandResult};
 use serenity::model::channel::Message;
 use serenity::prelude::*;
 
@@ -14,10 +14,7 @@ use crate::models::anilist::staff::Staff;
 #[description = "Search for a staff in AniList"]
 fn staff(context: &mut Context, message: &Message, args: Args) -> CommandResult {
     if args.is_empty() {
-        let _ = message
-            .channel_id
-            .say(&context.http, "You need to input a staff name.");
-        return Ok(());
+        return Err(CommandError::from("You need to input a staff name."));
     }
 
     let keyword = args.message().to_string();
@@ -25,34 +22,33 @@ fn staff(context: &mut Context, message: &Message, args: Args) -> CommandResult 
     let results: Vec<Staff> = client::search_staff(keyword.clone());
 
     if !results.is_empty() {
-        let staff: &Staff = &results[0];
-        let sending = message.channel_id.send_message(&context.http, |m| {
-            m.embed(|e| {
-                e.clone_from(&builders::staff_embed_builder(
-                    staff,
-                    format!("Page: {}/{} | ", 1, results.len()),
-                ));
+        return Err(CommandError(format!(
+            "No staff was found for `{}`.",
+            keyword
+        )));
+    }
+    let staff: &Staff = &results[0];
+    let sending = message.channel_id.send_message(&context.http, |m| {
+        m.embed(|e| {
+            e.clone_from(&builders::staff_embed_builder(
+                staff,
+                format!("Page: {}/{} | ", 1, results.len()),
+            ));
 
-                e
-            })
-            .reactions(menu::reactions::default())
-        });
+            e
+        })
+        .reactions(menu::reactions::default())
+    });
 
-        if let Ok(sending_msg) = sending {
-            menu::new_pagination_with_handler(
-                context,
-                sending_msg.id,
-                message.author.id,
-                PaginationKind::Staff,
-                menu::utils::serialize_entries(results),
-                None,
-            )
-        }
-    } else {
-        let _ = message.channel_id.say(
-            &context.http,
-            format!("No staff was found for: `{}`", keyword),
-        );
+    if let Ok(sending_msg) = sending {
+        menu::new_pagination_with_handler(
+            context,
+            sending_msg.id,
+            message.author.id,
+            PaginationKind::Staff,
+            menu::utils::serialize_entries(results),
+            None,
+        )
     }
 
     Ok(())
