@@ -1,6 +1,6 @@
 use indexmap::IndexMap;
 use serenity::builder::CreateEmbed;
-use serenity::framework::standard::{macros::command, Args, CommandResult};
+use serenity::framework::standard::{macros::command, Args, CommandError, CommandResult};
 use serenity::model::prelude::{Message, UserId};
 use serenity::prelude::*;
 
@@ -33,15 +33,11 @@ fn stats(context: &mut Context, message: &Message, _: Args) -> CommandResult {
             let _ = message.channel_id.send_message(&context.http, |m| {
                 m.embed(|embed| build_embed(embed, message.channel_id.name(&context), stats))
             })?;
-        }
-        None => {
-            let _ = message
-                .channel_id
-                .say(&context.http, "Error getting the channel messages.")?;
-        }
-    }
 
-    Ok(())
+            Ok(())
+        }
+        None => Err(CommandError("Error getting the channel messages.")),
+    }
 }
 
 fn get_all_messages(context: &Context, message: &Message) -> Option<Vec<Message>> {

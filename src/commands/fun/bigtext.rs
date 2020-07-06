@@ -1,4 +1,4 @@
-use serenity::framework::standard::{macros::command, Args, CommandResult};
+use serenity::framework::standard::{macros::command, Args, CommandError, CommandResult};
 use serenity::model::channel::Message;
 use serenity::prelude::*;
 
@@ -6,10 +6,7 @@ use serenity::prelude::*;
 #[aliases("bt")]
 fn bigtext(context: &mut Context, message: &Message, args: Args) -> CommandResult {
     if args.is_empty() {
-        let _ = message
-            .channel_id
-            .say(&context.http, "You need to input a message to convert");
-        return Ok(());
+        return Err(CommandError::from("You need to input a message to convert"));
     }
 
     let full_message: String = args.message().to_string();

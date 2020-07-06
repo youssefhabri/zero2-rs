@@ -1,11 +1,10 @@
-use serenity::framework::standard::{macros::command, Args, CommandResult};
+use serenity::framework::standard::{macros::command, Args, CommandError, CommandResult};
 use serenity::model::channel::Message;
 use serenity::prelude::*;
 
+use crate::core::store::PaginationKind;
 use crate::menu;
 use crate::menu::builders;
-
-use crate::core::store::PaginationKind;
 use crate::models::giphy::*;
 
 pub fn query(query: String) -> GiphyResponse {
@@ -35,34 +34,31 @@ fn giphy(context: &mut Context, message: &Message, args: Args) -> CommandResult 
     let keyword = args.message().to_string();
     let results = query(keyword.clone()).data;
 
-    if !results.is_empty() {
-        let gif: &Giphy = &results[0];
-        let sending = message.channel_id.send_message(&context.http, |m| {
-            m.embed(|e| {
-                e.clone_from(&builders::giphy_embed_builder(
-                    gif,
-                    format!("Page: {}/{} | ", 1, results.len()),
-                ));
+    if results.is_empty() {
+        return Err(CommandError(format!("No gif was found for `{}`.", keyword)));
+    }
 
-                e
-            })
-            .reactions(menu::reactions::default())
-        });
+    let gif: &Giphy = &results[0];
+    let sending = message.channel_id.send_message(&context.http, |m| {
+        m.embed(|e| {
+            e.clone_from(&builders::giphy_embed_builder(
+                gif,
+                format!("Page: {}/{} | ", 1, results.len()),
+            ));
 
-        if let Ok(sending_msg) = sending {
-            menu::new_pagination(
-                context,
-                sending_msg.id,
-                message.author.id,
-                PaginationKind::Giphy,
-                menu::utils::serialize_entries(results),
-            )
-        }
-    } else {
-        let _ = message.channel_id.say(
-            &context.http,
-            format!("No gif was found for: `{}`", keyword),
-        );
+            e
+        })
+        .reactions(menu::reactions::default())
+    });
+
+    if let Ok(sending_msg) = sending {
+        menu::new_pagination(
+            context,
+            sending_msg.id,
+            message.author.id,
+            PaginationKind::Giphy,
+            menu::utils::serialize_entries(results),
+        )
     }
 
     Ok(())

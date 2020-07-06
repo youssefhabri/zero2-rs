@@ -1,7 +1,7 @@
 use crate::core::store::ShardManagerContainer;
 use serenity::{
     client::bridge::gateway::ShardId,
-    framework::standard::{macros::command, Args, CommandResult},
+    framework::standard::{macros::command, Args, CommandError, CommandResult},
     model::channel::Message,
     prelude::*,
 };
@@ -34,9 +34,7 @@ fn ping(context: &mut Context, message: &Message, _: Args) -> CommandResult {
     let runner = match runners.get(&ShardId(context.shard_id)) {
         Some(runner) => runner,
         None => {
-            let _ = message.reply(context, "No shard found");
-
-            return Ok(());
+            return Err(CommandError::from("No shard found"));
         }
     };
 

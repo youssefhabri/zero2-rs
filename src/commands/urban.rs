@@ -2,7 +2,7 @@ use reqwest::blocking::Client;
 use serenity::{
     framework::standard::{
         macros::{command, group},
-        Args, CommandResult,
+        Args, CommandError, CommandResult,
     },
     model::channel::Message,
     prelude::*,
@@ -25,10 +25,7 @@ struct Knowledge;
 #[description = "Search for a definition in Urban Dictionary"]
 fn urban(context: &mut Context, message: &Message, args: Args) -> CommandResult {
     if args.is_empty() {
-        let _ = message
-            .channel_id
-            .say(&context.http, "You need to input a keyword.");
-        return Ok(());
+        return Err(CommandError::from("You need to input a keyword."));
     }
 
     let keyword = args.message().to_string();
@@ -40,10 +37,8 @@ fn urban(context: &mut Context, message: &Message, args: Args) -> CommandResult 
         Ok(res) => res.definitions,
         Err(why) => {
             error!("Err requesting UB definition: {:#?}", why);
-            let _ = message
-                .channel_id
-                .say(&context.http, "Error requesting UB definition!");
-            vec![]
+
+            return Err(CommandError::from("Error requesting UB definition!"));
         }
     };
 

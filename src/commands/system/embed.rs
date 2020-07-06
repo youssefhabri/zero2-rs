@@ -1,4 +1,4 @@
-use serenity::framework::standard::{macros::command, Args, CommandResult};
+use serenity::framework::standard::{macros::command, Args, CommandError, CommandResult};
 use serenity::model::prelude::{ChannelId, Message};
 use serenity::prelude::Context;
 use serenity::utils::parse_channel;
@@ -20,10 +20,9 @@ fn embed(context: &mut Context, message: &Message, args: Args) -> CommandResult 
         .collect();
 
     if segments.is_empty() {
-        let _ = message
-            .channel_id
-            .say(&context.http, "_Echo echo. Test 1 2 3, test A B C ..._");
-        return Ok(());
+        return Err(CommandError::from(
+            "_Echo echo. Test 1 2 3, test A B C ..._",
+        ));
     }
 
     let channel = match parse_channel(segments[0]) {

@@ -1,4 +1,4 @@
-use serenity::framework::standard::{macros::command, Args, CommandResult};
+use serenity::framework::standard::{macros::command, Args, CommandError, CommandResult};
 use serenity::model::channel::Message;
 use serenity::prelude::*;
 
@@ -14,10 +14,7 @@ use crate::models::anilist::character::Character;
 #[description = "Search for a character in AniList"]
 fn character(context: &mut Context, message: &Message, args: Args) -> CommandResult {
     if args.is_empty() {
-        let _ = message
-            .channel_id
-            .say(&context.http, "You need to input a character name.");
-        return Ok(());
+        return Err(CommandError::from("You need to input a character name."));
     }
 
     let keyword = args.message().to_string();
@@ -25,35 +22,35 @@ fn character(context: &mut Context, message: &Message, args: Args) -> CommandRes
     let results: Vec<Character> = client::search_characters(keyword.clone());
 
     if !results.is_empty() {
-        let character: &Character = &results[0];
-        let sending = message.channel_id.send_message(&context.http, |m| {
-            m.embed(|e| {
-                e.clone_from(&builders::character_embed_builder(
-                    character,
-                    format!("Page: {}/{} | ", 1, results.len()),
-                ));
+        return Err(CommandError(format!(
+            "No user was found for `{}`.",
+            keyword
+        )));
+    }
 
-                e
-            })
-            .reactions(menu::reactions::default())
-        });
+    let character: &Character = &results[0];
+    let sending = message.channel_id.send_message(&context.http, |m| {
+        m.embed(|e| {
+            e.clone_from(&builders::character_embed_builder(
+                character,
+                format!("Page: {}/{} | ", 1, results.len()),
+            ));
 
-        match sending {
-            Ok(sending_msg) => menu::new_pagination_with_handler(
-                context,
-                sending_msg.id,
-                message.author.id,
-                PaginationKind::Character,
-                menu::utils::serialize_entries(results),
-                None,
-            ),
-            Err(why) => error!("Err sending character embed: {:?}", why),
-        }
-    } else {
-        let _ = message.channel_id.say(
-            &context.http,
-            format!("No user was found for: `{}`", keyword),
-        );
+            e
+        })
+        .reactions(menu::reactions::default())
+    });
+
+    match sending {
+        Ok(sending_msg) => menu::new_pagination_with_handler(
+            context,
+            sending_msg.id,
+            message.author.id,
+            PaginationKind::Character,
+            menu::utils::serialize_entries(results),
+            None,
+        ),
+        Err(why) => error!("Err sending character embed: {:?}", why),
     }
 
     Ok(())

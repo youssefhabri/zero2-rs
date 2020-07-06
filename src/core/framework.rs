@@ -1,4 +1,4 @@
-use serenity::framework::standard::StandardFramework;
+use serenity::framework::standard::{CommandResult, StandardFramework};
 use serenity::model::prelude::{Message, UserId};
 use serenity::prelude::Context;
 use std::collections::HashSet;
@@ -25,6 +25,7 @@ impl Zero2Framework {
                     .prefixes(PREFIXES.to_vec())
             })
             .before(before)
+            .after(after)
             .normal_message(|ctx, msg| {
                 monitors::message_monitors(ctx, msg);
             })
@@ -39,6 +40,9 @@ impl Zero2Framework {
             .group(&nekoslife::NEKOSLIFE_GROUP)
             .group(&system::SYSTEM_GROUP)
             .group(&commands::NOCATEGORY_GROUP)
+            .on_dispatch_error(|_ctx, _msg, _err| {
+                // USed for errors that happen before the command is ran
+            })
     }
 }
 
@@ -55,6 +59,15 @@ fn before(ctx: &mut Context, msg: &Message, cmd: &str) -> bool {
     utils::log_command(ctx, msg, cmd);
 
     true
+}
+
+fn after(context: &mut Context, message: &Message, _cmd: &str, error: CommandResult) {
+    if let Err(why) = error {
+        let error_msg = why.0;
+        let _ = message.channel_id.say(&context, &error_msg);
+
+        error!("{}", error_msg);
+    }
 }
 
 fn is_trolling() -> bool {

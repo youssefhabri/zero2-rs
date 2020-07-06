@@ -1,4 +1,4 @@
-use serenity::framework::standard::{macros::command, Args, CommandResult};
+use serenity::framework::standard::{macros::command, Args, CommandError, CommandResult};
 use serenity::model::prelude::*;
 use serenity::prelude::*;
 
@@ -23,23 +23,22 @@ fn source(context: &mut Context, message: &Message, args: Args) -> CommandResult
 
     let response = if args.len() < 1 {
         if message.attachments.is_empty() || message.attachments[0].dimensions().is_none() {
-            let _ = message
-                .channel_id
-                .say(context, "You need to pass an image url or upload an image.");
-            return Ok(());
+            return Err(CommandError::from(
+                "You need to pass an image url or upload an image.",
+            ));
         }
 
-        if let Ok(image_data) = message.attachments[0].download() {
-            let body = Body {
-                image: format!("data:image/jpeg;base64,{}", base64::encode(&image_data)),
-            };
+        match message.attachments[0].download() {
+            Ok(image_data) => {
+                let body = Body {
+                    image: format!("data:image/jpeg;base64,{}", base64::encode(&image_data)),
+                };
 
-            client.post(BASE_URL).json(&body).send()?
-        } else {
-            let _ = message
-                .channel_id
-                .say(context, "Error while processing your request.");
-            return Ok(());
+                client.post(BASE_URL).json(&body).send()?
+            }
+            Err(_why) => {
+                return Err(CommandError::from("Error while processing your request."));
+            }
         }
     } else {
         let image_url = args.message().trim_matches(|c| c == '<' || c == '>');
@@ -58,34 +57,31 @@ fn source(context: &mut Context, message: &Message, args: Args) -> CommandResult
         .map(SourceContainer::from_source)
         .collect();
 
-    if !containers.is_empty() {
-        let container: &SourceContainer = &containers[0];
-        let sending = message.channel_id.send_message(&context.http, |m| {
-            m.embed(|e| {
-                e.clone_from(&menu::builders::source_embed_builder(
-                    container,
-                    format!("Page: {}/{} | ", 1, containers.len()),
-                ));
+    if containers.is_empty() {
+        return Err(CommandError(format!("No source was found for the image.")));
+    }
+    let container: &SourceContainer = &containers[0];
+    let sending = message.channel_id.send_message(&context.http, |m| {
+        m.embed(|e| {
+            e.clone_from(&menu::builders::source_embed_builder(
+                container,
+                format!("Page: {}/{} | ", 1, containers.len()),
+            ));
 
-                e
-            })
-            .reactions(menu::reactions::default())
-        });
+            e
+        })
+        .reactions(menu::reactions::default())
+    });
 
-        if let Ok(sending_msg) = sending {
-            menu::new_pagination_with_handler(
-                context,
-                sending_msg.id,
-                message.author.id,
-                PaginationKind::Source,
-                menu::utils::serialize_entries(containers),
-                None,
-            )
-        }
-    } else {
-        let _ = message
-            .channel_id
-            .say(&context.http, format!("No source was found for the image."));
+    if let Ok(sending_msg) = sending {
+        menu::new_pagination_with_handler(
+            context,
+            sending_msg.id,
+            message.author.id,
+            PaginationKind::Source,
+            menu::utils::serialize_entries(containers),
+            None,
+        )
     }
 
     Ok(())
