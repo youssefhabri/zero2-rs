@@ -2134,7 +2134,7 @@ dependencies = [
 
 [[package]]
 name = "zero2_rs"
-version = "0.5.2"
+version = "0.6.0"
 dependencies = [
  "base64 0.12.3 (registry+https://github.com/rust-lang/crates.io-index)",
  "chrono 0.4.13 (registry+https://github.com/rust-lang/crates.io-index)",
