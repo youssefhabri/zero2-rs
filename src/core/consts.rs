@@ -8,6 +8,7 @@ lazy_static! {
     pub static ref DB: Database = Database::connect();
     pub static ref COOKIES: Vec<String> = load_cookies();
     pub static ref EMOJIS: HashMap<String, Emoji> = load_emojis();
+    pub static ref GREETINGS: Vec<String> = load_greetings();
     pub static ref OWNER_ID: String = dotenv::var("OWNER_ID").expect("OWNER_ID");
     pub static ref PREFIX: String = dotenv::var("BOT_PREFIX").expect("BOT_PREFIX");
     pub static ref PREFIXES: Vec<String> = load_csv_var("BOT_PREFIXES");
@@ -39,6 +40,13 @@ fn load_csv_var(key: &str) -> Vec<String> {
             .collect::<Vec<String>>(),
         Err(_) => vec![],
     }
+}
+
+fn load_greetings() -> Vec<String> {
+    include_str!("../../assets/greetings.txt")
+        .lines()
+        .map(|line| line.to_string())
+        .collect::<Vec<String>>()
 }
 
 // TODO try and cache the file locally and only download it if it was changed/after a period of time

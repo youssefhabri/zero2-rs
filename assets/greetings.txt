@@ -1,0 +1,3 @@
+Hello {user}! Welcome to the **{guild}** server! {owner} is the owner and developr of the bot!
+{user} Sup!
+Everyone, please welcome our new ~~cult~~ member!
