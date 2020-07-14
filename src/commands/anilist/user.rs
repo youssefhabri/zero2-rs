@@ -21,12 +21,13 @@ fn user(context: &mut Context, message: &Message, args: Args) -> CommandResult {
 
     let results: Vec<User> = client::search_users(keyword.clone());
 
-    if !results.is_empty() {
+    if results.is_empty() {
         return Err(CommandError(format!(
             "No user was found for `{}`.",
             keyword
         )));
     }
+
     let user: &User = &results[0];
     let sending = message.channel_id.send_message(&context.http, |m| {
         m.embed(|e| {
