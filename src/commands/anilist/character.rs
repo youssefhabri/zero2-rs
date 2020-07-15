@@ -21,9 +21,9 @@ fn character(context: &mut Context, message: &Message, args: Args) -> CommandRes
 
     let results: Vec<Character> = client::search_characters(keyword.clone());
 
-    if !results.is_empty() {
+    if results.is_empty() {
         return Err(CommandError(format!(
-            "No user was found for `{}`.",
+            "No character was found for `{}`.",
             keyword
         )));
     }
