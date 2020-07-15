@@ -21,7 +21,7 @@ fn staff(context: &mut Context, message: &Message, args: Args) -> CommandResult 
 
     let results: Vec<Staff> = client::search_staff(keyword.clone());
 
-    if !results.is_empty() {
+    if results.is_empty() {
         return Err(CommandError(format!(
             "No staff was found for `{}`.",
             keyword
