@@ -5,6 +5,7 @@ use serenity::{
     model::channel::Message,
     prelude::*,
 };
+use std::time::Duration;
 
 #[command]
 fn ping(context: &mut Context, message: &Message, _: Args) -> CommandResult {
@@ -38,13 +39,12 @@ fn ping(context: &mut Context, message: &Message, _: Args) -> CommandResult {
         }
     };
 
-    let _ = message.reply(
-        context,
-        &format!(
-            "The shard latency is {}ms",
-            runner.latency.unwrap().as_millis()
-        ),
-    );
+    let latency = runner
+        .latency
+        .unwrap_or_else(|| Duration::from_millis(0))
+        .as_millis();
+
+    let _ = message.reply(context, &format!("The shard latency is {}ms", latency));
 
     Ok(())
 }
