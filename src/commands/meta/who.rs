@@ -56,7 +56,14 @@ fn user_id_from_message(message: &Message, mut args: Args) -> Result<UserId, Com
     }
 
     let arg = args.single::<String>()?;
-    parse_mention(arg)
-        .map(|id| UserId(id))
-        .ok_or_else(|| CommandError::from("Error parsing mention"))
+
+    if let Some(user_id) = parse_mention(arg.clone()).map(UserId) {
+        return Ok(user_id);
+    }
+
+    if let Ok(user_id) = arg.parse::<UserId>() {
+        return Ok(user_id);
+    }
+
+    Err(CommandError::from("Error parsing mention"))
 }
