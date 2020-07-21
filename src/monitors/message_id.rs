@@ -19,7 +19,7 @@ fn handle_message_url(context: &Context, message: &Message) {
         let guild_id = captures
             .get(1)
             .map(|id| GuildId(id.as_str().parse().unwrap()))
-            .unwrap_or(message.guild_id.unwrap_or(GuildId(0)));
+            .unwrap_or_else(|| message.guild_id.unwrap_or(GuildId(0)));
 
         let channel_id = captures
             .get(2)

@@ -16,39 +16,39 @@ fn clean_spoilers(content: String) -> String {
     content
 }
 
-fn parse_markdown(mut content: String) -> String {
+fn parse_markdown(content: &str) -> String {
     let re = Regex::new(r"(img|webm|youtube)[0-9]{0,3}%?\((.*?)\)").unwrap();
 
-    for cap in re.captures_iter(content.clone().as_str()) {
-        match &cap[1] {
+    let mut new_content = content.to_string();
+    for cap in re.captures_iter(content) {
+        new_content = match &cap[1] {
             "img" | "webm" => {
-                content = content.replace(&cap[0], format!("[image]({})", &cap[2]).as_str())
+                new_content.replace(&cap[0], format!("[image]({})", &cap[2]).as_str())
             }
-            "youtube" => {
-                content = content.replace(&cap[0], format!("[video]({})", &cap[2]).as_str())
-            }
-            _ => (),
+            "youtube" => new_content.replace(&cap[0], format!("[video]({})", &cap[2]).as_str()),
+            _ => continue,
         }
     }
 
-    content
+    new_content
 }
 
-fn parse_markdown_links(mut content: String) -> String {
+fn parse_markdown_links(content: &str) -> String {
     let re = Regex::new(r"\[ (img|webm)[0-9]{0,3}%?\((.*?)\) ]\((.*?)\)").unwrap();
 
-    for cap in re.captures_iter(content.clone().as_str()) {
-        content = content.replace(&cap[0], format!("[image link]({})", &cap[3]).as_str());
+    let mut new_content = content.to_string();
+    for cap in re.captures_iter(content) {
+        new_content = new_content.replace(&cap[0], format!("[image link]({})", &cap[3]).as_str());
     }
 
-    content
+    new_content
 }
 
 pub fn synopsis(description: &str, length: usize) -> String {
     let mut synopsis = description.to_string();
 
-    synopsis = parse_markdown_links(synopsis);
-    synopsis = parse_markdown(synopsis);
+    synopsis = parse_markdown_links(&synopsis);
+    synopsis = parse_markdown(&synopsis);
 
     if synopsis.len() > length {
         // Slicing by nth character rather and a simple index
@@ -83,7 +83,7 @@ mod tests {
     fn test_clean_markdown_links() {
         let content = "This is a test post. Please ignore.\n[image link](http://google.com)";
         assert_eq!(
-            parse_markdown_links(content.to_string()),
+            parse_markdown_links(&content.to_string()),
             "This is a test post. Please ignore.\n[image link](http://google.com)"
         );
     }
@@ -92,7 +92,7 @@ mod tests {
     fn test_clean_markdown() {
         let content = "This is a test post. Please ignore.\n[image](http://google.com)";
         assert_eq!(
-            parse_markdown(content.to_string()),
+            parse_markdown(&content.to_string()),
             "This is a test post. Please ignore.\n[image](http://google.com)"
         );
     }

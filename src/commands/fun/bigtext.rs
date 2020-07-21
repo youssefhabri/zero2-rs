@@ -24,7 +24,7 @@ fn text_to_bigtext(text: String) -> String {
         .join("")
 }
 
-fn map_char_to_emoji<'a>(c: char) -> String {
+fn map_char_to_emoji(c: char) -> String {
     match c {
         'a'..='z' | 'A'..='Z' => format!(":regional_indicator_{}:", c.to_lowercase()),
         '0'..='9' => match c {

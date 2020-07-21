@@ -21,7 +21,7 @@ const BASE_URL: &str = "https://trace.moe/api/search";
 fn source(context: &mut Context, message: &Message, args: Args) -> CommandResult {
     let client = ReqwestClient::new();
 
-    let response = if args.len() < 1 {
+    let response = if args.is_empty() {
         if message.attachments.is_empty() || message.attachments[0].dimensions().is_none() {
             return Err(CommandError::from(
                 "You need to pass an image url or upload an image.",
@@ -58,7 +58,7 @@ fn source(context: &mut Context, message: &Message, args: Args) -> CommandResult
         .collect();
 
     if containers.is_empty() {
-        return Err(CommandError(format!("No source was found for the image.")));
+        return Err(CommandError::from("No source was found for the image."));
     }
     let container: &SourceContainer = &containers[0];
     let sending = message.channel_id.send_message(&context.http, |m| {

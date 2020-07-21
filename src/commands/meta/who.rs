@@ -10,16 +10,20 @@ fn who(context: &mut Context, message: &Message, args: Args) -> CommandResult {
     let user_id: UserId = user_id_from_message(message, args)?;
 
     let member: Member = match message.guild_id {
-        Some(guild_id) => guild_id.member(&context, user_id)?,
+        Some(guild_id) => guild_id
+            .member(&context, user_id)
+            .map_err(|_| CommandError::from("The user is not a member of this guild."))?,
         None => return Err(CommandError::from("Unexpected Error! Seek help!")),
     };
 
-    let colour = member.colour(&context).unwrap_or(Colour::new(MAIN_COLOUR));
+    let colour = member
+        .colour(&context)
+        .unwrap_or_else(|| Colour::new(MAIN_COLOUR));
 
     let nick = member
         .nick
         .clone()
-        .unwrap_or(member.display_name().to_string());
+        .unwrap_or_else(|| member.display_name().to_string());
 
     let joined_date = match member.joined_at {
         Some(date) => date.format("%a, %B %e, %Y at %H:%M:%S").to_string(),
@@ -57,7 +61,7 @@ fn user_id_from_message(message: &Message, mut args: Args) -> Result<UserId, Com
 
     let arg = args.single::<String>()?;
 
-    if let Some(user_id) = parse_mention(arg.clone()).map(UserId) {
+    if let Some(user_id) = parse_mention(&arg).map(UserId) {
         return Ok(user_id);
     }
 
