@@ -1,3 +1,6 @@
-Hello {user}! Welcome to the **{guild}** server!
 {user} Sup!
-Everyone, please welcome our new ~~cult~~ member!
+{user} Yahallo!
+Hello {user}! Welcome to the **{guild}** server!
+Everyone, please welcome our new ~~cult~~ member, {user}!
+Hey, {user}! Welcome to {guild}\nWe hope you enjoy your stay here!\nThanks for joining!
+Welcome home, {user}! Would you like dinner? A bath? Or perhaps... **me**?
