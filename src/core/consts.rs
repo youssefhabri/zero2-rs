@@ -45,7 +45,7 @@ fn load_csv_var(key: &str) -> Vec<String> {
 fn load_greetings() -> Vec<String> {
     include_str!("../../assets/greetings.txt")
         .lines()
-        .map(|line| line.to_string())
+        .map(|line| line.to_string().replace("\\n", "\n"))
         .collect::<Vec<String>>()
 }
 
