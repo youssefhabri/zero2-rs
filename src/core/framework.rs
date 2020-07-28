@@ -69,15 +69,8 @@ fn after(context: &mut Context, message: &Message, _cmd: &str, error: CommandRes
 }
 
 fn is_trolling() -> bool {
-    use rand::distributions::WeightedIndex;
-    use rand::prelude::*;
+    let choices = vec![true, false];
+    let weights = vec![1, 9];
 
-    let choices = [true, false];
-    let weights = [1, 9];
-    let dist = WeightedIndex::new(&weights).unwrap();
-
-    let mut rng = thread_rng();
-    let result = dist.sample(&mut rng);
-
-    choices[result]
+    utils::random_with_weights(&choices, &weights).unwrap_or(false)
 }

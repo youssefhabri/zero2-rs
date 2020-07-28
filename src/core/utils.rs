@@ -1,5 +1,6 @@
 use chrono::prelude::*;
 use math::round::floor;
+use rand::distributions::WeightedIndex;
 use rand::prelude::*;
 use std::ops::Add;
 use time::Duration;
@@ -101,6 +102,19 @@ pub fn _format_time_long(time_minutes: f64) -> String {
 /// Generate a random number between the min & max values
 pub fn random_num(min: usize, max: usize) -> usize {
     rand::thread_rng().gen_range(min, max)
+}
+
+pub fn random_with_weights<T: Clone>(choices: &Vec<T>, weights: &Vec<u32>) -> Result<T, String> {
+    if choices.len() != weights.len() {
+        return Err("choices and weights need to be the same size.".to_string());
+    }
+
+    let mut rng = thread_rng();
+
+    let dist = WeightedIndex::new(weights).unwrap();
+    let result = dist.sample(&mut rng);
+
+    Ok(choices[result].clone())
 }
 
 /// Converts a time in seconds to a human readable string
