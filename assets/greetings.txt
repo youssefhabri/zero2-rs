@@ -1,6 +1,6 @@
-{user} Sup!
-{user} Yahallo!
-Hello {user}! Welcome to the **{guild}** server!
-Everyone, please welcome our new ~~cult~~ member, {user}!
-Hey, {user}! Welcome to {guild}\nWe hope you enjoy your stay here!\nThanks for joining!
-Welcome home, {user}! Would you like dinner? A bath? Or perhaps... **me**?
+2<SP>{user} Sup!
+2<SP>{user} Yahallo!
+2<SP>Hello {user}! Welcome to the **{guild}** server!
+2<SP>Everyone, please welcome our new ~~cult~~ member, {user}!
+2<SP>Hey, {user}! Welcome to {guild}\nWe hope you enjoy your stay here!\nThanks for joining!
+1<SP>Welcome home, {user}! Would you like dinner? A bath? Or perhaps... **me**?
