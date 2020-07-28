@@ -17,4 +17,4 @@ the bot has won
 
 Thank you very much.
 
-Written by [Trivernis](https://github.com/Trivernis/)
+README & Poem written by [Trivernis](https://github.com/Trivernis/)
