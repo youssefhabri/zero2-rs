@@ -96,6 +96,10 @@ fn handle_message(
     }
 
     let url = message_url(guild_id, message.channel_id, message.id);
+    let datetime = message
+        .timestamp
+        .format("%a, %B %e, %Y at %H:%M:%S")
+        .to_string();
 
     if !message.embeds.is_empty() {
         let _ = target_channel_id.send_message(context, |m| {
@@ -107,6 +111,7 @@ fn handle_message(
             m.embed(|e| {
                 e.clone_from(&CreateEmbed::from(embed));
                 e.field("Original", url, false);
+                e.footer(|f| f.text(datetime));
                 e
             });
 
@@ -135,6 +140,7 @@ fn handle_message(
                 })
                 .colour(MAIN_COLOUR)
                 .description(message.content.clone())
+                .footer(|f| f.text(datetime))
                 .field("Original", url, false);
 
                 if !message.attachments.is_empty() {
