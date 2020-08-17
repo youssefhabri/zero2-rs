@@ -90,7 +90,7 @@ pub struct Media {
     #[serde(rename = "nextAiringEpisode")]
     pub next_airing_episode: Option<AiringSchedule>,
 
-    pub status: String,
+    pub status: Option<String>,
 
     #[serde(rename = "isAdult")]
     pub is_adult: bool,
@@ -219,9 +219,9 @@ impl Media {
     }
 
     pub fn status(&self) -> String {
-        match self.status.as_str() {
-            "FINISHED" => "Finished".to_string(),
-            "RELEASING" => {
+        match &self.status {
+            Some(status) if status == "FINISHED" => "Finished".to_string(),
+            Some(status) if status == "RELEASING" => {
                 if self.media_type == MediaType::Anime {
                     match &self.next_airing_episode {
                         Some(next) => {
@@ -242,13 +242,13 @@ impl Media {
                     "Releasing".to_string()
                 }
             }
-            "NOT_YET_RELEASED" => "Not Yet Released".to_string(),
-            "CANCELLED" => "Cancelled".to_string(),
+            Some(status) if status == "NOT_YET_RELEASED" => "Not Yet Released".to_string(),
+            Some(status) if status == "CANCELLED" => "Cancelled".to_string(),
             _ => "Unknown Status".to_string(),
         }
     }
 
     pub fn is_releasing(&self) -> bool {
-        self.status == "RELEASING"
+        self.status == Some("RELEASING".to_string())
     }
 }
