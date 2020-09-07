@@ -30,14 +30,13 @@ fn who(context: &mut Context, message: &Message, args: Args) -> CommandResult {
         None => "N/A".to_string(),
     };
 
-    let roles = {
-        member
-            .roles
-            .into_iter()
-            .map(|role_id| format!("<@&{}>", role_id))
-            .collect::<Vec<String>>()
-            .join(" ")
-    };
+    let mut roles = member
+        .roles
+        .into_iter()
+        .map(|role_id| format!("<@&{}>", role_id))
+        .collect::<Vec<String>>();
+
+    roles.push("@everyone".to_string());
 
     let avatar_url = { member.user.read().face() };
 
@@ -46,7 +45,7 @@ fn who(context: &mut Context, message: &Message, args: Args) -> CommandResult {
             e.title(nick)
                 .colour(colour)
                 .thumbnail(avatar_url)
-                .field("Roles", roles, false)
+                .field("Roles", roles.join(" "), false)
                 .field("Joined", joined_date, false)
         })
     });
