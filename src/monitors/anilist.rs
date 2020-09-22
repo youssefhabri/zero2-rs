@@ -53,17 +53,17 @@ pub fn anilist_links_monitor(context: &Context, message: &Message) {
     let cap = &matches[0];
 
     match &cap[1] {
-        "anime" | "manga" => {
-            handle_media(context, message, &cap[1], &cap[2]);
-        }
+        // "anime" | "manga" => {
+        //     handle_media(context, message, &cap[1], &cap[2]);
+        // }
+        // "user" => {
+        //     handle_user(context, message, &cap[3]);
+        // }
         "activity" => {
             handle_activity(context, message, &cap[2]);
         }
         "character" => {
             handle_character(context, message, &cap[2]);
-        }
-        "user" => {
-            handle_user(context, message, &cap[3]);
         }
         "studio" => {
             handle_studio(context, message, &cap[2]);
@@ -76,7 +76,7 @@ pub fn anilist_links_monitor(context: &Context, message: &Message) {
 }
 
 /// Handles media embeds for the AniList Links Monitor
-fn handle_media(context: &Context, message: &Message, media_type: &str, media_id: &str) {
+fn _handle_media(context: &Context, message: &Message, media_type: &str, media_id: &str) {
     let media: Option<Media> =
         client::search_media_by_id(media_id.to_string(), media_type.to_uppercase());
 
@@ -103,7 +103,7 @@ fn handle_character(context: &Context, message: &Message, character_id: &str) {
 }
 
 /// Handles user embeds for the AniList Links Monitor
-fn handle_user(context: &Context, message: &Message, username: &str) {
+fn _handle_user(context: &Context, message: &Message, username: &str) {
     let user: Option<User> = client::search_user(username.into());
 
     match_send!(context, message, user, builders::user_embed_builder);
