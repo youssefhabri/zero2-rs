@@ -1,0 +1,15 @@
+query($search: String) {
+  Page(perPage: 50) {
+    items: characters(search: $search, sort: SEARCH_MATCH) {
+      ...CharacterBase
+      media {
+        edges {
+          node {
+            ...MediaBase
+          }
+          characterRole
+        }
+      }
+    }
+  }
+}

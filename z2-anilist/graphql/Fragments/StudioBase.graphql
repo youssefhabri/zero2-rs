@@ -1,0 +1,5 @@
+fragment StudioBase on Studio {
+  id
+  name
+  siteUrl
+}

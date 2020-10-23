@@ -1,0 +1,13 @@
+query($id: Int) {
+  item: Character(id: $id) {
+    ...CharacterBase
+    media {
+      edges {
+        node {
+          ...MediaBase
+        }
+        characterRole
+      }
+    }
+  }
+}

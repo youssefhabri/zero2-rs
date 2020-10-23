@@ -1,0 +1,17 @@
+fragment CharacterBase on Character {
+  id
+  name {
+    first
+    last
+    full
+    native
+    alternative
+  }
+  image {
+    large
+    medium
+  }
+  description
+  siteUrl
+  favourites
+}

@@ -1,0 +1,19 @@
+query MediaSearch($search: String, $type: MediaType) {
+  Page {
+    items: media(search: $search, type: $type) {
+      ...MediaFull
+      recommendations {
+        nodes {
+          id
+          rating
+          mediaRecommendation {
+            ...MediaBase
+          }
+        }
+        pageInfo {
+          ...PageInfoFragment
+        }
+      }
+    }
+  }
+}

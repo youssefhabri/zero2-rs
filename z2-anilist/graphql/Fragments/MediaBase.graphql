@@ -1,0 +1,13 @@
+fragment MediaBase on Media {
+  id
+  title {
+    userPreferred
+  }
+  type
+  siteUrl
+  averageScore
+  episodes
+  chapters
+  status
+  duration
+}

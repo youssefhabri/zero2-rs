@@ -1,0 +1,61 @@
+fragment MediaFull on Media {
+  id
+  idMal
+  title {
+    romaji
+    english
+    native
+    userPreferred
+  }
+  type
+  status
+  description
+  coverImage {
+    extraLarge
+    large
+    medium
+    color
+  }
+  episodes
+  chapters
+  volumes
+  bannerImage
+  genres
+  synonyms
+  averageScore
+  meanScore
+  popularity
+  favourites
+  siteUrl
+  nextAiringEpisode {
+    id
+    airingAt
+    episode
+    timeUntilAiring
+  }
+  rankings {
+    id
+    rank
+    type
+    format
+    year
+    season
+    allTime
+    context
+  }
+  stats {
+    scoreDistribution {
+      amount
+      score
+    }
+    statusDistribution {
+      amount
+      status
+    }
+  }
+  externalLinks {
+    id
+    site
+    url
+  }
+}

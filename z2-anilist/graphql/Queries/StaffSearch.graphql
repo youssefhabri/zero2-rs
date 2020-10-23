@@ -1,0 +1,36 @@
+query ($search: String) {
+  Page {
+    items: staff(search: $search) {
+      id
+      name {
+        first
+        last
+        full
+        native
+        alternative
+      }
+      image {
+        large
+        medium
+      }
+      description
+      siteUrl
+      staffMedia {
+        edges {
+          node {
+            ...MediaBase
+          }
+          staffRole
+        }
+      }
+      characters {
+        edges {
+          node {
+            ...CharacterBase
+          }
+        }
+      }
+      favourites
+    }
+  }
+}

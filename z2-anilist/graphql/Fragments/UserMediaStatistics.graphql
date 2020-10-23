@@ -1,0 +1,18 @@
+fragment UserMediaStatistics on UserStatistics {
+  count
+  meanScore
+  standardDeviation
+  minutesWatched
+  episodesWatched
+  chaptersRead
+  genres(sort: COUNT_DESC) {
+    genre
+    count
+  }
+  statuses {
+    count
+    status
+    minutesWatched
+    chaptersRead
+  }
+}

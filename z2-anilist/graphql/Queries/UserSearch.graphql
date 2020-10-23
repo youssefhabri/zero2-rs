@@ -1,0 +1,50 @@
+query($search: String, $perPage: Int = 50) {
+  Page(perPage: $perPage) {
+    items: users(search: $search) {
+      id
+      name
+      about
+      avatar {
+        large
+        medium
+      }
+      siteUrl
+      bannerImage
+      favourites {
+        anime {
+          nodes {
+            ...MediaBase
+          }
+        }
+        manga {
+          nodes {
+            ...MediaBase
+          }
+        }
+        characters {
+          nodes {
+            ...CharacterBase
+          }
+        }
+        studios {
+          nodes {
+            ...StudioBase
+          }
+        }
+        staff {
+          nodes {
+            ...StaffBase
+          }
+        }
+      }
+      statistics {
+        anime {
+          ...UserMediaStatistics
+        }
+        manga {
+          ...UserMediaStatistics
+        }
+      }
+    }
+  }
+}

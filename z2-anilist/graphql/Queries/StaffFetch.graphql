@@ -1,0 +1,34 @@
+query ($id: Int) {
+  item: Staff(id: $id) {
+    id
+    name {
+      first
+      last
+      full
+      native
+      alternative
+    }
+    image {
+      large
+      medium
+    }
+    description
+    siteUrl
+    staffMedia {
+      edges {
+        node {
+          ...MediaBase
+        }
+        staffRole
+      }
+    }
+    characters {
+      edges {
+        node {
+          ...CharacterBase
+        }
+      }
+    }
+    favourites
+  }
+}

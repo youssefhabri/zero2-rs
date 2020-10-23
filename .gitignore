@@ -1,0 +1,15 @@
+#!/usr/bin/env sh
+
+/target
+**/*.rs.bk
+cloc.sh
+
+.idea
+
+.env
+
+# TODO This a temporary. Remove it!
+/old-src
+
+# This is here to ignore a weird folder that gets created for me
+/~

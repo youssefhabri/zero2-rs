@@ -1,0 +1,13 @@
+schema: graphql/schema.graphql
+documents: graphql/**/*.graphql
+extensions:
+  endpoints:
+    default:
+      url: https://graphql.anilist.co
+
+projects:
+  prod:
+    schemaPath: graphql/schema.graphql
+    extensions:
+      endpoints:
+        default: https://graphql.anilist.co

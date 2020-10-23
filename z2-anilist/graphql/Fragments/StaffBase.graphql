@@ -1,0 +1,12 @@
+fragment StaffBase on Staff {
+  id
+  name {
+    full
+  }
+  image {
+    large
+    medium
+  }
+  description
+  siteUrl
+}

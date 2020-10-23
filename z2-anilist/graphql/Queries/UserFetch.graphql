@@ -1,0 +1,63 @@
+query($id: Int) {
+  item: User(id: $id) {
+    id
+    name
+    about
+    avatar {
+      large
+      medium
+    }
+    siteUrl
+    bannerImage
+    favourites {
+      anime {
+        edges {
+          favouriteOrder
+          node {
+            ...MediaBase
+          }
+        }
+      }
+      manga {
+        edges {
+          favouriteOrder
+          node {
+            ...MediaBase
+          }
+        }
+      }
+      characters {
+        edges {
+          favouriteOrder
+          node {
+            ...CharacterBase
+          }
+        }
+      }
+      studios {
+        edges {
+          favouriteOrder
+          node {
+            ...StudioBase
+          }
+        }
+      }
+      staff {
+        edges {
+          favouriteOrder
+          node {
+            ...StaffBase
+          }
+        }
+      }
+    }
+    statistics {
+      anime {
+        ...UserMediaStatistics
+      }
+      manga {
+        ...UserMediaStatistics
+      }
+    }
+  }
+}

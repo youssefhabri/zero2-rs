@@ -1,0 +1,17 @@
+query MediaSearch($id: Int) {
+  item: Media(id: $id) {
+    ...MediaFull
+    recommendations {
+      nodes {
+        id
+        rating
+        mediaRecommendation {
+          ...MediaBase
+        }
+      }
+      pageInfo {
+        ...PageInfoFragment
+      }
+    }
+  }
+}
