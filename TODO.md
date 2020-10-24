@@ -20,7 +20,7 @@
   - [ ] `fortune`
   - [ ] `owo`
   
- - Meta commads:
+- Meta commads:
   - [ ] `avatar`
   - [ ] `bot_info`
   - [ ] `who`
