@@ -1,3 +1,4 @@
+use menu::types::PaginationContainer;
 use serenity::client::Client as SerenityClient;
 use serenity::http::Http;
 use serenity::prelude::{Mutex, SerenityError};
@@ -6,12 +7,11 @@ use std::sync::Arc;
 
 use crate::core::event_handler::Zero2EventHandler;
 use crate::core::framework::Zero2Framework;
-use crate::core::store::{PaginationContainer, ShardManagerContainer};
+use crate::core::store::ShardManagerContainer;
 
 pub struct Zero2Client {
     client: SerenityClient,
 }
-
 
 impl Zero2Client {
     pub async fn new() -> Zero2Client {

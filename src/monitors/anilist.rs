@@ -1,8 +1,7 @@
 use regex::Regex;
 use serenity::model::channel::Message;
 use serenity::prelude::Context;
-
-use crate::menu::anilist::AniListPagination;
+use menu::anilist::AniListPagination;
 
 lazy_static! {
     static ref RE: Regex = Regex::new(

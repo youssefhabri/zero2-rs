@@ -4,8 +4,8 @@ use serenity::{builder::CreateEmbed, prelude::Context};
 
 use anilist::models::AniListID;
 
-use super::types::AniListPaginationKind;
-use crate::core::store::Pagination;
+use crate::anilist::types::AniListPaginationKind;
+use crate::types::Pagination;
 
 pub struct AniListPagination {
     pub(crate) ids: Vec<AniListID>,

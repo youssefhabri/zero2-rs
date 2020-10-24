@@ -5,13 +5,13 @@ use serenity::model::prelude::{Message, Reaction, ReactionType};
 use serenity::prelude::Context;
 
 use super::AniListPagination;
-use crate::core::store::Pagination;
-use crate::menu::anilist::embeds::{
+use crate::anilist::embeds::{
     media_overview_embed, media_recommendations_embed, media_stats_embed,
 };
-use crate::menu::anilist::types::AniListMediaView;
-use crate::menu::anilist::AniListPaginationKind;
-use crate::menu::{reactions, utils};
+use crate::anilist::types::AniListMediaView;
+use crate::anilist::AniListPaginationKind;
+use crate::types::Pagination;
+use crate::{reactions, utils};
 
 impl AniListPagination {
     pub async fn new_media_pagination(

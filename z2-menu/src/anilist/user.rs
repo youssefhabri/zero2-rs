@@ -4,11 +4,11 @@ use serenity::framework::standard::CommandResult;
 use serenity::model::prelude::{Message, Reaction, ReactionType};
 use serenity::prelude::Context;
 
-use super::embeds::{user_favourites_embed, user_overview_embed, user_stats_embed};
-use super::types::{AniListPaginationKind, AniListUserView};
-use super::AniListPagination;
-use crate::core::store::Pagination;
-use crate::menu::{reactions, utils};
+use crate::anilist::embeds::{user_favourites_embed, user_overview_embed, user_stats_embed};
+use crate::anilist::types::{AniListPaginationKind, AniListUserView};
+use crate::anilist::AniListPagination;
+use crate::types::Pagination;
+use crate::{reactions, utils};
 
 impl AniListPagination {
     pub async fn new_user_pagination(

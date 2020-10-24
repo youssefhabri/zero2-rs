@@ -1,9 +1,10 @@
-use crate::core::store::{Pagination, PaginationContainer, PaginationInfo};
 use serenity::builder::CreateEmbed;
 use serenity::framework::standard::CommandResult;
 use serenity::model::channel::{Message, ReactionType};
 use serenity::model::id::{MessageId, UserId};
 use serenity::prelude::Context;
+
+use crate::types::{Pagination, PaginationContainer, PaginationInfo};
 
 pub async fn send_embed_message(
     context: &Context,

@@ -5,7 +5,7 @@ use serenity::prelude::Context;
 
 use anilist::models::MediaType;
 
-use crate::menu::anilist::{
+use menu::anilist::{
     AniListCharacterView, AniListMediaView, AniListPagination, AniListStaffView, AniListUserView,
 };
 

@@ -46,7 +46,7 @@ pub struct AniListError {
 #[derive(Debug, Deserialize)]
 pub struct AniListResponse<T> {
     pub data: T,
-    errors: Option<Vec<AniListError>>,
+    pub errors: Option<Vec<AniListError>>,
 }
 
 make_response!(MediaResponse, Media, media);

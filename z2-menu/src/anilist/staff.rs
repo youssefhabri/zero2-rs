@@ -4,11 +4,12 @@ use serenity::framework::standard::CommandResult;
 use serenity::model::channel::{Message, Reaction, ReactionType};
 use serenity::prelude::Context;
 
-use crate::core::store::Pagination;
-use crate::menu::{reactions, utils};
-
-use super::embeds::{staff_overview_embed, staff_related_anime_embed, staff_related_manga_embed};
-use super::{AniListPagination, AniListPaginationKind, AniListStaffView};
+use crate::anilist::embeds::{
+    staff_overview_embed, staff_related_anime_embed, staff_related_manga_embed,
+};
+use crate::anilist::{AniListPagination, AniListPaginationKind, AniListStaffView};
+use crate::types::Pagination;
+use crate::{reactions, utils};
 
 impl AniListPagination {
     pub async fn new_staff_pagination(

@@ -1,10 +1,15 @@
-use crate::core::store::PaginationContainer;
+#[macro_use]
+extern crate log;
+
 use serenity::model::id::UserId;
 use serenity::model::prelude::{Reaction, ReactionType};
 use serenity::prelude::Context;
 
+use crate::types::PaginationContainer;
+
 pub mod anilist;
 pub mod reactions;
+pub mod types;
 pub mod utils;
 
 pub async fn handle_reaction(context: &Context, reaction: &Reaction) {

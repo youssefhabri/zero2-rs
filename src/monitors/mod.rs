@@ -1,8 +1,6 @@
 use serenity::model::prelude::{Message, Reaction};
 use serenity::prelude::Context;
 
-use crate::menu;
-
 mod anilist;
 mod discord;
 
