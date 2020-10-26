@@ -1,3 +1,5 @@
+use crate::models::media::MediaBase;
+
 #[inline]
 pub fn na_str() -> String {
     "N/A".to_string()
@@ -61,4 +63,25 @@ pub fn num_to_emoji(num: u32) -> String {
         9 => ":nine:".to_string(),
         _ => num.to_string(),
     }
+}
+
+pub fn media_base_to_legend(media: &[MediaBase]) -> Option<String> {
+    let mut statuses = media
+        .iter()
+        .map(|media| media.status.clone())
+        .collect::<Vec<_>>();
+    statuses.sort_by(|a, b| b.cmp(&a));
+    statuses.dedup_by_key(|status| status.clone());
+
+    let legend: String = statuses
+        .iter()
+        .map(|status| status.to_string_with_emoji())
+        .collect::<Vec<_>>()
+        .join(" - ");
+
+    if !legend.is_empty() {
+        return Some(legend);
+    }
+
+    None
 }
