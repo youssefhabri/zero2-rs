@@ -123,4 +123,5 @@ pub enum AniListPaginationKind {
     Media(AniListMediaView),
     User(AniListUserView),
     Staff(AniListStaffView),
+    Studio,
 }

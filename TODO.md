@@ -18,7 +18,7 @@
       - [x] `staff`
       - [ ] `source`
       - [x] `user`
-      - [ ] `studio`
+      - [x] `studio`
 
     - Knowledge commands:
 

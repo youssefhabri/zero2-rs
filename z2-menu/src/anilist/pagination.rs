@@ -29,6 +29,7 @@ impl Pagination for AniListPagination {
             AniListPaginationKind::Media(_) => self._media_handler(&context, &reaction).await,
             AniListPaginationKind::User(_) => self._user_handler(&context, &reaction).await,
             AniListPaginationKind::Staff(_) => self._staff_handler(&context, &reaction).await,
+            AniListPaginationKind::Studio => self._studio_handler(&context, &reaction).await,
         }
     }
 
@@ -84,6 +85,7 @@ impl AniListPagination {
             AniListPaginationKind::Media(_) => self.set_media_view(reaction),
             AniListPaginationKind::User(_) => self.set_user_view(reaction),
             AniListPaginationKind::Staff(_) => self.set_staff_view(reaction),
+            AniListPaginationKind::Studio => {}
         }
 
         self.kind != prev_kind || self.cursor() != self.prev_cursor

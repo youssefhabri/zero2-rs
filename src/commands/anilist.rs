@@ -10,7 +10,7 @@ use menu::anilist::{
 };
 
 #[group]
-#[commands(anime, manga, character, user, staff)]
+#[commands(anime, manga, character, user, staff, studio)]
 struct AniList;
 
 fn keyword_from_args(args: &mut Args) -> String {
@@ -103,6 +103,15 @@ async fn staff(context: &Context, message: &Message, mut args: Args) -> CommandR
 }
 
 #[command]
-async fn activity(_context: &Context, _message: &Message, _args: Args) -> CommandResult {
+#[aliases(sd)]
+async fn studio(context: &Context, message: &Message, mut args: Args) -> CommandResult {
+    if args.is_empty() {
+        return Err(CommandError::from("No studio name was entered."));
+    }
+
+    let keyword = keyword_from_args(&mut args);
+    let studio = anilist::client::search_studio(keyword).await?;
+    AniListPagination::new_studio_pagination(&context, &message, &studio).await?;
+
     Ok(())
 }

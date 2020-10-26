@@ -7,7 +7,7 @@ use crate::utils::{media_base_to_legend, na_long_str};
 #[derive(Clone, Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Studio {
-    id: AniListID,
+    pub id: AniListID,
     pub name: String,
     pub site_url: String,
     media: MediaConnection,

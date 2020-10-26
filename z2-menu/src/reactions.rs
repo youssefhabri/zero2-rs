@@ -46,11 +46,8 @@ fn _many_pages_reactions(reactions: Vec<&str>) -> Vec<ReactionType> {
         .collect()
 }
 
-pub fn _default<'a>() -> Vec<ReactionType> {
-    [FIRST, PREV, NEXT, LAST, STOP]
-        .iter()
-        .map(|r| ReactionType::Unicode(r.to_string()))
-        .collect()
+pub fn default(num_pages: usize) -> Vec<ReactionType> {
+    make_reactions(vec![], num_pages)
 }
 
 pub fn make_reactions(reactions: Vec<&str>, number_of_pages: usize) -> Vec<ReactionType> {

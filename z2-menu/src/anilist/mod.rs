@@ -3,6 +3,7 @@ pub mod embeds;
 mod media;
 pub mod pagination;
 mod staff;
+mod studio;
 mod types;
 mod user;
 

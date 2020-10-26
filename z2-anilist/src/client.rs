@@ -279,7 +279,7 @@ pub async fn fetch_activity(id: AniListID) -> AniListResult<Activity> {
 pub async fn search_studio(keyword: impl ToString) -> AniListResult<Vec<Studio>> {
     use GQLFile::*;
 
-    let query_parts = vec![Query("StudioFetch"), Fragment("MediaBase")];
+    let query_parts = vec![Query("StudioSearch"), Fragment("MediaBase")];
 
     let variables = StandardVariables::default().search(keyword).clone();
     let response: PagedStudioResponse = make_request(query_parts, Box::new(variables)).await?;
