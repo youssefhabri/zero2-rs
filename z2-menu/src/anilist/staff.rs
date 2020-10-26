@@ -74,7 +74,7 @@ impl AniListPagination {
 
     pub(crate) async fn _staff_handler(&mut self, context: &Context, reaction: &Reaction) {
         let response = anilist::client::fetch_staff(self.ids[self.cursor]).await;
-        let user = match response {
+        let staff = match response {
             Ok(staff) => staff,
             Err(why) => {
                 println!("StaffFetch error: {}", why);
@@ -82,7 +82,7 @@ impl AniListPagination {
             }
         };
 
-        let embed = self.staff_embed(&user);
+        let embed = self.staff_embed(&staff);
         self.update_message(&context, &reaction, embed).await;
     }
 }
