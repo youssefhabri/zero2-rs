@@ -1,6 +1,6 @@
 use serde::Deserialize;
 
-use super::{Character, Media, Staff, User};
+use super::{Activity, Character, Media, Staff, Studio, User};
 
 pub type AniListID = u64;
 
@@ -49,6 +49,8 @@ pub struct AniListResponse<T> {
     pub errors: Option<Vec<AniListError>>,
 }
 
+make_response!(ActivityResponse, Activity, activity);
+
 make_response!(MediaResponse, Media, media);
 make_paged_response!(PagedMediaResponse, Media, media);
 
@@ -60,3 +62,6 @@ make_paged_response!(PagedCharacterResponse, Character, characters);
 
 make_response!(StaffResponse, Staff, staff);
 make_paged_response!(PagedStaffResponse, Staff, staff);
+
+make_response!(StudioResponse, Studio, studio);
+make_paged_response!(PagedStudioResponse, Studio, studios);
