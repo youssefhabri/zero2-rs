@@ -667,6 +667,7 @@ version = "0.1.0"
 dependencies = [
  "anilist",
  "async-trait",
+ "chrono",
  "log",
  "serenity",
 ]
