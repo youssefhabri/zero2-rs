@@ -1,0 +1,42 @@
+query($id: Int) {
+  item: Activity(id: $id) {
+    __typename
+    ... on TextActivity {
+      id
+      createdAt
+      type
+      siteUrl
+      user {
+        ...UserBase
+      }
+      text(asHtml: false)
+    }
+    ... on ListActivity {
+      id
+      createdAt
+      type
+      siteUrl
+      user {
+        ...UserBase
+      }
+      status
+      progress
+      media {
+        ...MediaBase
+      }
+    }
+    ... on MessageActivity {
+      id
+      createdAt
+      type
+      siteUrl
+      recipient {
+        ...UserBase
+      }
+      messenger {
+        ...UserBase
+      }
+      message(asHtml: false)
+    }
+  }
+}

@@ -3,7 +3,7 @@ use std::time::{SystemTime, UNIX_EPOCH};
 
 use super::character::CharacterRole;
 use super::shared::{AniListID, FuzzyDate, PageInfo};
-use crate::utils::{format_time, na_long_str, na_str, synopsis};
+use crate::utils::{format_time, media_base_to_legend, na_long_str, na_str, synopsis};
 
 mod enums;
 
@@ -67,7 +67,7 @@ pub struct MediaEdge {
 #[serde(rename_all = "camelCase")]
 pub struct MediaConnection {
     pub edges: Option<Vec<MediaEdge>>,
-    nodes: Option<Vec<MediaBase>>,
+    pub nodes: Option<Vec<MediaBase>>,
     page_info: Option<PageInfo>,
 }
 
@@ -196,10 +196,11 @@ pub struct MediaStats {
 #[serde(rename_all = "camelCase")]
 pub struct MediaBase {
     id: AniListID,
-    title: MediaTitle,
+    pub title: MediaTitle,
     pub status: MediaStatus,
-    site_url: String,
+    pub site_url: String,
     pub r#type: MediaType,
+    pub cover_image: MediaCoverImage,
     episodes: Option<u32>,
     duration: Option<u32>,
     chapters: Option<u32>,
@@ -213,10 +214,17 @@ impl MediaBase {
 
     pub fn markdown_link_with_status(&self) -> String {
         format!(
-            "{} [{}]({})",
+            "{} {}",
             self.status.to_discord_emoji(),
-            self.title.user_preferred,
-            self.site_url
+            self.markdown_link()
+        )
+    }
+
+    pub fn markdown_link_with_status_and_score(&self) -> String {
+        format!(
+            "{} [Score: {}]",
+            self.markdown_link_with_status(),
+            self.average_score.map_or_else(na_str, |s| s.to_string())
         )
     }
 }
@@ -440,5 +448,18 @@ impl Media {
         }
 
         na_long_str()
+    }
+
+    pub fn recommendations_legend(&self) -> Option<String> {
+        let recommendations = self.recommendations.as_ref()?;
+        let media = recommendations
+            .nodes
+            .iter()
+            .map(|recommendation| recommendation.media_recommendation.as_ref())
+            .flatten()
+            .cloned()
+            .collect::<Vec<MediaBase>>();
+
+        media_base_to_legend(&media)
     }
 }

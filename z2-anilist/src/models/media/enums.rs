@@ -32,7 +32,7 @@ pub enum MediaFormat {
     OneShot,
 }
 
-#[derive(Clone, Debug, Deserialize, Eq, PartialEq)]
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Ord, PartialOrd)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum MediaStatus {
     Finished,
@@ -50,6 +50,10 @@ impl MediaStatus {
             MediaStatus::Cancelled => ":black_small_square:",
         }
         .to_string()
+    }
+
+    pub fn to_string_with_emoji(&self) -> String {
+        format!("{}: {}", self.to_string(), self.to_discord_emoji())
     }
 }
 

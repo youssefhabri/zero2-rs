@@ -1,0 +1,15 @@
+query ($search: String) {
+  Page {
+    items: studios(search: $search) {
+      id
+      name
+      siteUrl
+      favourites
+      media(sort: SCORE_DESC, perPage: 10) {
+        nodes {
+          ...MediaBase
+        }
+      }
+    }
+  }
+}

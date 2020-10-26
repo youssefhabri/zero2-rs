@@ -1,0 +1,13 @@
+query($id: Int) {
+  item: Studio(id: $id) {
+    id
+    name
+    siteUrl
+    favourites
+    media(sort: SCORE_DESC, perPage: 10) {
+      nodes {
+        ...MediaBase
+      }
+    }
+  }
+}

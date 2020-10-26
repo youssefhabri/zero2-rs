@@ -1,4 +1,8 @@
-use anilist::models::{Character, Media, MediaType, Staff, User};
+use anilist::models::{
+    activity::ActivityUnion, user::UserBase, Activity, Character, Media, MediaType, Staff, Studio,
+    User,
+};
+use chrono::NaiveDateTime;
 use serenity::builder::CreateEmbed;
 
 const ANILIST_COLOR: u32 = 3447003;
@@ -9,11 +13,11 @@ fn base_anilist_embed(footer: Option<String>) -> CreateEmbed {
 
     CreateEmbed::default()
         .colour(ANILIST_COLOR)
-        .footer(|f| f.icon_url(ANILIST_ICON).text(format!("{}", footer)))
+        .footer(|f| f.icon_url(ANILIST_ICON).text(footer.to_string()))
         .to_owned()
 }
 
-/// MEDIA EMBEDS
+// MEDIA EMBEDS
 pub fn media_overview_embed(media: &Media, footer: Option<String>) -> CreateEmbed {
     let (field_name, value) = match &media.r#type {
         MediaType::Anime => ("Episodes", media.episodes()),
@@ -48,16 +52,22 @@ pub fn media_stats_embed(media: &Media, footer: Option<String>) -> CreateEmbed {
 }
 
 pub fn media_recommendations_embed(media: &Media, footer: Option<String>) -> CreateEmbed {
+    let mut fields = Vec::new();
+
+    if let Some(legend) = media.recommendations_legend() {
+        fields.push(("Legend", legend, false));
+    }
+
     base_anilist_embed(footer)
         .title(format!("{} - Recommendations", &media.title.user_preferred))
-        .url(format!("{}", &media.site_url))
+        .url(&media.site_url.to_string())
         .thumbnail(&media.cover_image.large)
         .description(media.recommendations())
-        .field("Legend", "**Finished:** :white_small_square:  - **Releasing:** :small_blue_diamond: - **Not Yet Released:** :small_orange_diamond: - **Cancelled:** :black_small_square:", false)
+        .fields(fields)
         .to_owned()
 }
 
-/// USER EMBEDS
+// USER EMBEDS
 pub fn user_overview_embed(user: &User, footer: Option<String>) -> CreateEmbed {
     base_anilist_embed(footer)
         .title(&user.name)
@@ -101,7 +111,7 @@ pub fn user_favourites_embed(user: &User, footer: Option<String>) -> CreateEmbed
         .to_owned()
 }
 
-/// CHARACTER EMBEDS
+// CHARACTER EMBEDS
 pub fn character_overview_embed(character: &Character, footer: Option<String>) -> CreateEmbed {
     base_anilist_embed(footer)
         .title(character.name())
@@ -112,27 +122,38 @@ pub fn character_overview_embed(character: &Character, footer: Option<String>) -
 }
 
 pub fn character_related_anime_embed(character: &Character, footer: Option<String>) -> CreateEmbed {
+    let mut fields = Vec::new();
+
+    if let Some(legend) = character.anime_legend() {
+        fields.push(("Legend", legend, false));
+    }
+
     base_anilist_embed(footer)
         .title(character.name())
         .url(&character.site_url)
         .thumbnail(character.avatar())
-        .field("Related Anime", character.related_anime(), true)
-        .field("Legend", "**Finished:** :white_small_square:  - **Releasing:** :small_blue_diamond: - **Not Yet Released:** :small_orange_diamond: - **Cancelled:** :black_small_square:", false)
+        .description(format!("**Related Anime**\n{}", character.related_anime()))
+        .fields(fields)
         .to_owned()
 }
 
 pub fn character_related_manga_embed(character: &Character, footer: Option<String>) -> CreateEmbed {
+    let mut fields = Vec::new();
+
+    if let Some(legend) = character.manga_legend() {
+        fields.push(("Legend", legend, false));
+    }
+
     base_anilist_embed(footer)
         .title(character.name())
         .url(&character.site_url)
         .thumbnail(character.avatar())
-        .field("Related Manga", character.related_manga(), true)
-        .field("Legend", "**Finished:** :white_small_square:  - **Releasing:** :small_blue_diamond: - **Not Yet Released:** :small_orange_diamond: - **Cancelled:** :black_small_square:", false)
+        .description(format!("**Related Manga**\n{}", character.related_manga()))
+        .fields(fields)
         .to_owned()
 }
 
-/// STAFF EMBEDS
-
+// STAFF EMBEDS
 pub fn staff_overview_embed(staff: &Staff, footer: Option<String>) -> CreateEmbed {
     base_anilist_embed(footer)
         .title(staff.name())
@@ -143,21 +164,97 @@ pub fn staff_overview_embed(staff: &Staff, footer: Option<String>) -> CreateEmbe
 }
 
 pub fn staff_related_anime_embed(staff: &Staff, footer: Option<String>) -> CreateEmbed {
+    let mut fields = Vec::new();
+
+    if let Some(legend) = staff.anime_legend() {
+        fields.push(("Legend", legend, false));
+    }
+
     base_anilist_embed(footer)
         .title(staff.name())
         .url(&staff.site_url)
         .thumbnail(staff.avatar())
-        .field("Related Anime", staff.related_anime(), true)
-        .field("Legend", "**Finished:** :white_small_square:  - **Releasing:** :small_blue_diamond: - **Not Yet Released:** :small_orange_diamond: - **Cancelled:** :black_small_square:", false)
+        .description(format!("**Related Anime**\n{}", staff.related_anime()))
+        .fields(fields)
         .to_owned()
 }
 
 pub fn staff_related_manga_embed(staff: &Staff, footer: Option<String>) -> CreateEmbed {
+    let mut fields = Vec::new();
+
+    if let Some(legend) = staff.manga_legend() {
+        fields.push(("Legend", legend, false));
+    }
+
     base_anilist_embed(footer)
         .title(staff.name())
         .url(&staff.site_url)
         .thumbnail(staff.avatar())
-        .field("Related Manga", staff.related_manga(), true)
-        .field("Legend", "**Finished:** :white_small_square:  - **Releasing:** :small_blue_diamond: - **Not Yet Released:** :small_orange_diamond: - **Cancelled:** :black_small_square:", false)
+        .description(format!("**Related Manga**\n{}", staff.related_manga()))
+        .fields(fields)
+        .to_owned()
+}
+
+// ACTIVITY EMBEDS
+pub fn activity_embed(activity: &Activity) -> CreateEmbed {
+    match activity.__typename {
+        ActivityUnion::TextActivity => text_activity_embed(activity),
+        ActivityUnion::ListActivity => list_activity_embed(activity),
+        ActivityUnion::MessageActivity => message_activity_embed(activity),
+    }
+}
+
+fn base_activity_embed(activity: &Activity, author: &UserBase) -> CreateEmbed {
+    let datetime = NaiveDateTime::from_timestamp(activity.created_at as i64, 0)
+        .format("%a, %B %e, %Y at %H:%M:%S")
+        .to_string();
+    let footer = Some(format!("Powered by AniList | {}", datetime));
+
+    base_anilist_embed(footer)
+        .description(activity.description())
+        .author(|a| {
+            a.name(author.name.as_str())
+                .url(author.site_url.as_str())
+                .icon_url(author.avatar())
+        })
+        .to_owned()
+}
+
+fn text_activity_embed(activity: &Activity) -> CreateEmbed {
+    let author = activity.user.clone().unwrap();
+    base_activity_embed(&activity, &author)
+        .title("Open activity in the browser")
+        .url(&activity.site_url)
+        .to_owned()
+}
+
+fn list_activity_embed(activity: &Activity) -> CreateEmbed {
+    let media = activity.media.clone().unwrap();
+    let author = activity.user.clone().unwrap();
+    base_activity_embed(&activity, &author)
+        .thumbnail(&media.cover_image.large)
+        .to_owned()
+}
+
+fn message_activity_embed(activity: &Activity) -> CreateEmbed {
+    let author = activity.messenger.clone().unwrap();
+    base_activity_embed(&activity, &author)
+        .title("Open activity in the browser")
+        .url(&activity.site_url)
+        .to_owned()
+}
+
+// STUDIO EMBEDS
+pub fn studio_embed(studio: &Studio, footer: Option<String>) -> CreateEmbed {
+    let mut fields = vec![("Anime", studio.media(), false)];
+
+    if let Some(legend) = studio.media_legend() {
+        fields.push(("Legend", legend, false));
+    }
+
+    base_anilist_embed(footer)
+        .title(&studio.name)
+        .url(&studio.site_url)
+        .fields(fields)
         .to_owned()
 }

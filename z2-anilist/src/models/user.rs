@@ -200,6 +200,24 @@ impl UserStatisticsTypes {
     }
 }
 
+#[derive(Clone, Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
+pub struct UserBase {
+    pub id: u32,
+    pub name: String,
+    pub site_url: String,
+    pub avatar: UserAvatar,
+}
+
+impl UserBase {
+    pub fn avatar(&self) -> String {
+        self.avatar
+            .clone()
+            .large
+            .unwrap_or_else(User::default_avatar)
+    }
+}
+
 #[derive(Clone, Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct User {
@@ -225,6 +243,14 @@ impl User {
     }
 
     pub fn avatar(&self) -> String {
-        self.avatar.clone().large.unwrap_or_default()
+        self.avatar
+            .clone()
+            .large
+            .unwrap_or_else(Self::default_avatar)
+    }
+
+    #[inline]
+    pub fn default_avatar() -> String {
+        "https://s4.anilist.co/file/anilistcdn/user/avatar/large/default.png".to_string()
     }
 }

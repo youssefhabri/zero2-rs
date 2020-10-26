@@ -1,21 +1,41 @@
+use menu::anilist::AniListPagination;
 use regex::Regex;
 use serenity::model::channel::Message;
 use serenity::prelude::Context;
-use menu::anilist::AniListPagination;
 
 lazy_static! {
-    static ref RE: Regex = Regex::new(
-        r"https://anilist\.co/(anime|manga|character|activity|user|studio|staff)/([0-9]+)?/?([^/]+)?/?",
-    )
-    .unwrap();
+    static ref RE: Regex =
+        Regex::new(r"https://anilist\.co/(character|activity|studio|staff)/([0-9]+)?/?([^/]+)?/?",)
+            .unwrap();
 }
 
 macro_rules! ok_or_return {
     ($e:expr) => {
         match $e {
             Ok(value) => value,
-            Err(_) => return,
+            Err(why) => {
+                error!("{}", why);
+                return;
+            }
         };
+    };
+}
+
+macro_rules! match_send {
+    ($context:expr, $message:expr, $embed:expr) => {
+        let sending = $message
+            .channel_id
+            .send_message($context, |m| {
+                m.embed(|embed| {
+                    embed.clone_from($embed);
+
+                    embed
+                })
+            })
+            .await;
+        if let Err(why) = sending {
+            error!("{}", why);
+        }
     };
 }
 
@@ -36,20 +56,22 @@ pub async fn anilist_links_monitor(context: &Context, new_message: &Message) {
     let matches: Vec<_> = RE.captures_iter(new_message.content.as_str()).collect();
     let caps = &matches[0];
     match &caps[1] {
-        "activity" => {}
+        "activity" => handle_activity(&context, &new_message, &caps[2]).await,
         "character" => handle_character(&context, &new_message, &caps[2]).await,
-        "studio" => {}
+        "studio" => handle_studio(&context, &new_message, &caps[2]).await,
         "staff" => handle_staff(&context, &new_message, &caps[2]).await,
         _ => {}
     }
 }
 
-/// Handles activity embeds for the AniList Links Monitor
-// fn handle_activity(context: &Context, message: &Message, activity_id: &str) {
-//     let activity = client::search_activity(activity_id.into());
-//
-//     match_send!(context, message, activity, builders::activity_embed_builder);
-// }
+// Handles activity embeds for the AniList Links Monitor
+async fn handle_activity(context: &Context, message: &Message, activity_id: &str) {
+    let id: u64 = ok_or_return!(activity_id.parse());
+    let activity = ok_or_return!(anilist::client::fetch_activity(id).await);
+    let embed = menu::anilist::embeds::activity_embed(&activity);
+
+    match_send!(&context, &message, &embed);
+}
 
 /// Handles character embeds for the AniList Links Monitor
 async fn handle_character(context: &Context, message: &Message, character_id: &str) {
@@ -65,12 +87,14 @@ async fn handle_character(context: &Context, message: &Message, character_id: &s
     .await;
 }
 
-/// Handles studio embeds for the AniList Links Monitor
-// fn handle_studio(context: &Context, message: &Message, studio_id: &str) {
-//     let studio: Option<Studio> = client::search_studio(studio_id.into());
-//
-//     match_send!(context, message, studio, builders::studio_embed_builder);
-// }
+// Handles studio embeds for the AniList Links Monitor
+async fn handle_studio(context: &Context, message: &Message, studio_id: &str) {
+    let id: u64 = ok_or_return!(studio_id.parse());
+    let studio = ok_or_return!(anilist::client::fetch_studio(id).await);
+    let embed = menu::anilist::embeds::studio_embed(&studio, None);
+
+    match_send!(&context, &message, &embed);
+}
 
 /// Handles staff embeds for the AniList Links Monitor
 async fn handle_staff(context: &Context, message: &Message, staff_id: &str) {

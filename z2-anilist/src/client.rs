@@ -5,10 +5,11 @@ use std::result::Result as StdResult;
 use thiserror::Error;
 
 use crate::models::shared::{
-    AniListError, AniListID, CharacterResponse, MediaResponse, PagedCharacterResponse,
-    PagedMediaResponse, PagedStaffResponse, PagedUserResponse, StaffResponse, UserResponse,
+    ActivityResponse, AniListError, AniListID, CharacterResponse, MediaResponse,
+    PagedCharacterResponse, PagedMediaResponse, PagedStaffResponse, PagedStudioResponse,
+    PagedUserResponse, StaffResponse, StudioResponse, UserResponse,
 };
-use crate::models::{Character, Media, MediaType, Staff, User};
+use crate::models::{Activity, Character, Media, MediaType, Staff, Studio, User};
 use crate::query_variables::{MediaVariables, StandardVariables, Variables};
 
 const API_URL: &str = "https://graphql.anilist.co";
@@ -17,6 +18,9 @@ const API_URL: &str = "https://graphql.anilist.co";
 pub enum Error {
     #[error("Reqwest error: {0}")]
     ReqwestError(#[from] ReqwestError),
+
+    #[error("AniList Activity (id: {0}) not found")]
+    ActivityNotFound(AniListID),
 
     #[error("AniList Media (id: {0}) not found")]
     MediaNotFound(AniListID),
@@ -29,6 +33,9 @@ pub enum Error {
 
     #[error("AniList Staff (id: {0}) not found")]
     StaffNotFound(AniListID),
+
+    #[error("AniList Studio (id: {0}) not found")]
+    StudioNotFound(AniListID),
 
     #[error("AniList returned some errors: {0:?}")]
     AniListErrors(Vec<AniListError>),
@@ -88,6 +95,14 @@ async fn make_request<T: DeserializeOwned>(
     Ok(response.json::<T>().await?)
 }
 
+macro_rules! check_anilist_errors {
+    ($errors:expr) => {
+        if let Some(errors) = $errors {
+            return Err(Error::AniListErrors(errors));
+        }
+    };
+}
+
 pub async fn search_media(
     keyword: impl ToString,
     media_type: MediaType,
@@ -115,11 +130,9 @@ pub async fn search_media_with_adult(
         .clone();
     let response: PagedMediaResponse = make_request(query_parts, Box::new(variables)).await?;
 
-    if let Some(errors) = response.errors {
-        return Err(Error::AniListErrors(errors));
-    }
+    check_anilist_errors!(response.errors);
 
-    Ok(response.media().clone())
+    Ok(response.media())
 }
 
 pub async fn fetch_media(id: AniListID) -> AniListResult<Media> {
@@ -137,7 +150,9 @@ pub async fn fetch_media_with_adult(id: AniListID, is_adult: bool) -> AniListRes
     let variables = MediaVariables::default().id(id).is_adult(is_adult).clone();
     let response: MediaResponse = make_request(query_parts, Box::new(variables)).await?;
 
-    response.media().clone().ok_or(Error::MediaNotFound(id))
+    check_anilist_errors!(response.errors);
+
+    response.media().ok_or(Error::MediaNotFound(id))
 }
 
 pub async fn search_user(keyword: impl ToString) -> AniListResult<Vec<User>> {
@@ -158,7 +173,7 @@ pub async fn search_user(keyword: impl ToString) -> AniListResult<Vec<User>> {
         return Err(Error::AniListErrors(errors));
     }
 
-    Ok(response.users().clone())
+    Ok(response.users())
 }
 
 pub async fn fetch_user(id: AniListID) -> AniListResult<User> {
@@ -175,25 +190,25 @@ pub async fn fetch_user(id: AniListID) -> AniListResult<User> {
     let variables = StandardVariables::default().id(id).clone();
     let response: UserResponse = make_request(query_parts, Box::new(variables)).await?;
 
-    response.user().clone().ok_or(Error::UserNotFound(id))
+    check_anilist_errors!(response.errors);
+
+    response.user().ok_or(Error::UserNotFound(id))
 }
 
 pub async fn search_character(keyword: impl ToString) -> AniListResult<Vec<Character>> {
     use GQLFile::*;
 
     let query_parts = vec![
-        Query("CharacterFetch"),
+        Query("CharacterSearch"),
         Fragment("CharacterBase"),
         Fragment("MediaBase"),
     ];
     let variables = StandardVariables::default().search(keyword).clone();
     let response: PagedCharacterResponse = make_request(query_parts, Box::new(variables)).await?;
 
-    if let Some(errors) = response.errors {
-        return Err(Error::AniListErrors(errors));
-    }
+    check_anilist_errors!(response.errors);
 
-    Ok(response.characters().clone())
+    Ok(response.characters())
 }
 
 pub async fn fetch_character(id: AniListID) -> AniListResult<Character> {
@@ -207,10 +222,9 @@ pub async fn fetch_character(id: AniListID) -> AniListResult<Character> {
     let variables = StandardVariables::default().id(id).clone();
     let response: CharacterResponse = make_request(query_parts, Box::new(variables)).await?;
 
-    response
-        .character()
-        .clone()
-        .ok_or(Error::CharacterNotFound(id))
+    check_anilist_errors!(response.errors);
+
+    response.character().ok_or(Error::CharacterNotFound(id))
 }
 
 pub async fn search_staff(keyword: impl ToString) -> AniListResult<Vec<Staff>> {
@@ -224,11 +238,9 @@ pub async fn search_staff(keyword: impl ToString) -> AniListResult<Vec<Staff>> {
     let variables = StandardVariables::default().search(keyword).clone();
     let response: PagedStaffResponse = make_request(query_parts, Box::new(variables)).await?;
 
-    if let Some(errors) = response.errors {
-        return Err(Error::AniListErrors(errors));
-    }
+    check_anilist_errors!(response.errors);
 
-    Ok(response.staff().clone())
+    Ok(response.staff())
 }
 
 pub async fn fetch_staff(id: AniListID) -> AniListResult<Staff> {
@@ -242,5 +254,50 @@ pub async fn fetch_staff(id: AniListID) -> AniListResult<Staff> {
     let variables = StandardVariables::default().id(id).clone();
     let response: StaffResponse = make_request(query_parts, Box::new(variables)).await?;
 
-    response.staff().clone().ok_or(Error::StaffNotFound(id))
+    check_anilist_errors!(response.errors);
+
+    response.staff().ok_or(Error::StaffNotFound(id))
+}
+
+pub async fn fetch_activity(id: AniListID) -> AniListResult<Activity> {
+    use GQLFile::*;
+
+    let query_parts = vec![
+        Query("ActivityFetch"),
+        Fragment("UserBase"),
+        Fragment("MediaBase"),
+    ];
+
+    let variables = StandardVariables::default().id(id).clone();
+    let response: ActivityResponse = make_request(query_parts, Box::new(variables)).await?;
+
+    check_anilist_errors!(response.errors);
+
+    response.activity().ok_or(Error::ActivityNotFound(id))
+}
+
+pub async fn search_studio(keyword: impl ToString) -> AniListResult<Vec<Studio>> {
+    use GQLFile::*;
+
+    let query_parts = vec![Query("StudioFetch"), Fragment("MediaBase")];
+
+    let variables = StandardVariables::default().search(keyword).clone();
+    let response: PagedStudioResponse = make_request(query_parts, Box::new(variables)).await?;
+
+    check_anilist_errors!(response.errors);
+
+    Ok(response.studios())
+}
+
+pub async fn fetch_studio(id: AniListID) -> AniListResult<Studio> {
+    use GQLFile::*;
+
+    let query_parts = vec![Query("StudioFetch"), Fragment("MediaBase")];
+
+    let variables = StandardVariables::default().id(id).clone();
+    let response: StudioResponse = make_request(query_parts, Box::new(variables)).await?;
+
+    check_anilist_errors!(response.errors);
+
+    response.studio().ok_or(Error::StudioNotFound(id))
 }
