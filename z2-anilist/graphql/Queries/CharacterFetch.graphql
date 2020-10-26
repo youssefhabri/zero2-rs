@@ -1,7 +1,7 @@
 query($id: Int) {
   item: Character(id: $id) {
     ...CharacterBase
-    media {
+    media(sort: [SCORE_DESC]) {
       edges {
         node {
           ...MediaBase

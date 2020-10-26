@@ -4,6 +4,11 @@ fragment MediaBase on Media {
     userPreferred
   }
   type
+  coverImage {
+    medium
+    large
+    extraLarge
+  }
   siteUrl
   averageScore
   episodes

@@ -14,7 +14,7 @@ query ($id: Int) {
     }
     description
     siteUrl
-    staffMedia {
+    staffMedia(sort: [SCORE_DESC]) {
       edges {
         node {
           ...MediaBase

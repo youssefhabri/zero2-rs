@@ -2,7 +2,7 @@ query($search: String) {
   Page(perPage: 50) {
     items: characters(search: $search, sort: SEARCH_MATCH) {
       ...CharacterBase
-      media {
+      media(sort: [SCORE_DESC]) {
         edges {
           node {
             ...MediaBase
