@@ -1,5 +1,14 @@
 # Zero Two v4 TODOs
 
+- General works to be done:
+
+  - [ ] Move utils functions to a separate crate
+  - [ ] Generalize the duplicate pagination functions
+  - [ ] Per-guild on/off switches for features
+    - [x] Load/Save configs
+    - [ ] Config menu to for boolean configs
+        - [ ] Use "wait for use answer" for non-boolean configs
+
 - Bot features:
 
   - [x] Monitors
@@ -10,7 +19,7 @@
   - [ ] Commands
 
     - AniList commands:
-    
+
       - [ ] `airing`
       - [x] `anime`
       - [x] `character`
@@ -54,5 +63,5 @@
       - [ ] `reboot`
 
     - No Category commands:
-    
+
       - [ ] `giphy`
