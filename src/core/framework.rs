@@ -9,6 +9,7 @@ use std::collections::HashSet;
 
 use super::consts::{PREFIX, PREFIXES};
 use crate::commands::anilist::ANILIST_GROUP;
+use crate::commands::config::CONFIGURATION_GROUP;
 use crate::commands::ROOT_GROUP;
 
 pub struct Zero2Framework;
@@ -31,6 +32,7 @@ impl Zero2Framework {
             .help(&MY_HELP)
             .group(&ROOT_GROUP)
             .group(&ANILIST_GROUP)
+            .group(&CONFIGURATION_GROUP)
     }
 }
 

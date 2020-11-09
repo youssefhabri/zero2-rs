@@ -8,7 +8,10 @@ extern crate log;
 mod client;
 mod commands;
 mod core;
+#[macro_use]
+mod macros;
 mod monitors;
+mod utils;
 
 use crate::client::Zero2Client;
 

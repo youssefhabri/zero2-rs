@@ -190,7 +190,7 @@ type AiringProgression {
 "Media Airing Schedule"
 type AiringSchedule {
   "The time the episode airs at"
-  airingAt: Int!
+  airing_at: Int!
   "The airing episode number"
   episode: Int!
   "The id of the airing schedule item"
@@ -487,7 +487,7 @@ type InternalPage {
   ): [ActivityReply]
   airingSchedules(
     "Filter by the time of airing"
-    airingAt: Int,
+    airing_at: Int,
     "Filter by the time of airing"
     airingAt_greater: Int,
     "Filter by the time of airing"
@@ -1911,7 +1911,7 @@ type Page {
   ): [ActivityReply]
   airingSchedules(
     "Filter by the time of airing"
-    airingAt: Int,
+    airing_at: Int,
     "Filter by the time of airing"
     airingAt_greater: Int,
     "Filter by the time of airing"
@@ -2418,7 +2418,7 @@ type Query {
   "Airing schedule query"
   AiringSchedule(
     "Filter by the time of airing"
-    airingAt: Int,
+    airing_at: Int,
     "Filter by the time of airing"
     airingAt_greater: Int,
     "Filter by the time of airing"
@@ -4329,7 +4329,7 @@ enum UserTitleLanguage {
 }
 
 input AiringScheduleInput {
-  airingAt: Int
+  airing_at: Int
   episode: Int
   timeUntilAiring: Int
 }
