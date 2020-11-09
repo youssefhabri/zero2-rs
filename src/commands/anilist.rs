@@ -1,7 +1,9 @@
+use chrono::Weekday;
 use serenity::framework::standard::macros::{command, group};
 use serenity::framework::standard::{Args, CommandError, CommandResult};
 use serenity::model::prelude::Message;
 use serenity::prelude::Context;
+use std::str::FromStr;
 
 use anilist::models::MediaType;
 
@@ -10,7 +12,7 @@ use menu::anilist::{
 };
 
 #[group]
-#[commands(anime, manga, character, user, staff, studio)]
+#[commands(airing, anime, manga, character, user, staff, studio)]
 struct AniList;
 
 fn keyword_from_args(args: &mut Args) -> String {
@@ -112,6 +114,21 @@ async fn studio(context: &Context, message: &Message, mut args: Args) -> Command
     let keyword = keyword_from_args(&mut args);
     let studio = anilist::client::search_studio(keyword).await?;
     AniListPagination::new_studio_pagination(&context, &message, &studio).await?;
+
+    Ok(())
+}
+
+#[command]
+#[aliases(air)]
+async fn airing(context: &Context, message: &Message, args: Args) -> CommandResult {
+    let weekday = if !args.is_empty() {
+        let args = args.message();
+        Weekday::from_str(args).ok()
+    } else {
+        None
+    };
+
+    AniListPagination::new_airing_schedule_pagination(&context, &message, weekday).await?;
 
     Ok(())
 }

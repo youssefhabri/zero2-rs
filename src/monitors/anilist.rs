@@ -1,42 +1,12 @@
 use menu::anilist::AniListPagination;
 use regex::Regex;
-use serenity::model::channel::Message;
+use serenity::model::prelude::Message;
 use serenity::prelude::Context;
 
 lazy_static! {
     static ref RE: Regex =
         Regex::new(r"https://anilist\.co/(character|activity|studio|staff)/([0-9]+)?/?([^/]+)?/?",)
             .unwrap();
-}
-
-macro_rules! ok_or_return {
-    ($e:expr) => {
-        match $e {
-            Ok(value) => value,
-            Err(why) => {
-                error!("{}", why);
-                return;
-            }
-        };
-    };
-}
-
-macro_rules! match_send {
-    ($context:expr, $message:expr, $embed:expr) => {
-        let sending = $message
-            .channel_id
-            .send_message($context, |m| {
-                m.embed(|embed| {
-                    embed.clone_from($embed);
-
-                    embed
-                })
-            })
-            .await;
-        if let Err(why) = sending {
-            error!("{}", why);
-        }
-    };
 }
 
 fn should_embed(message: &str) -> bool {

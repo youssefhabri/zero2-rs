@@ -1,0 +1,14 @@
+query($startDate: Int, $endDate: Int) {
+  Page(perPage: 50) {
+    items: airingSchedules(airingAt_greater: $startDate, airingAt_lesser: $endDate) {
+      id
+      airingAt
+      episode
+      media {
+        ...MediaFull
+      }
+      mediaId
+      timeUntilAiring
+    }
+  }
+}

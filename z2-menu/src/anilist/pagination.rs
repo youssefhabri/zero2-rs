@@ -10,6 +10,7 @@ use crate::types::Pagination;
 pub struct AniListPagination {
     pub(crate) ids: Vec<AniListID>,
     pub(crate) kind: AniListPaginationKind,
+    pub(crate) prev_kind: AniListPaginationKind,
     pub(crate) cursor: usize,
     pub(crate) prev_cursor: usize,
 }
@@ -18,11 +19,14 @@ pub struct AniListPagination {
 impl Pagination for AniListPagination {
     async fn handle(&mut self, context: &Context, reaction: &Reaction) {
         // Stop if neither the view nor the page has changed
-        if !self.should_update(reaction) {
+        if !self.should_update(reaction).await {
             return;
         }
 
         match self.kind {
+            AniListPaginationKind::AiringSchedule(_) => {
+                self._airing_schedule_handler(&context, &reaction).await
+            }
             AniListPaginationKind::Character(_) => {
                 self._character_handler(&context, &reaction).await
             }
@@ -51,7 +55,8 @@ impl AniListPagination {
     pub fn new(ids: Vec<AniListID>, kind: AniListPaginationKind) -> AniListPagination {
         AniListPagination {
             ids,
-            kind,
+            kind: kind.clone(),
+            prev_kind: kind,
             cursor: 0,
             prev_cursor: 0,
         }
@@ -78,9 +83,12 @@ impl AniListPagination {
         }
     }
 
-    fn should_update(&mut self, reaction: &Reaction) -> bool {
+    async fn should_update(&mut self, reaction: &Reaction) -> bool {
         let prev_kind = self.kind.clone();
         match self.kind {
+            AniListPaginationKind::AiringSchedule(_) => {
+                self.set_airing_schedule_view(reaction).await
+            }
             AniListPaginationKind::Character(_) => self.set_character_view(reaction),
             AniListPaginationKind::Media(_) => self.set_media_view(reaction),
             AniListPaginationKind::User(_) => self.set_user_view(reaction),

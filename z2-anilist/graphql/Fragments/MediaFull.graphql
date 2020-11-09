@@ -29,6 +29,7 @@ fragment MediaFull on Media {
   siteUrl
   nextAiringEpisode {
     id
+    mediaId
     airingAt
     episode
     timeUntilAiring

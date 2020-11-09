@@ -1,3 +1,4 @@
+use chrono::Weekday;
 use std::str::FromStr;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -118,10 +119,41 @@ impl FromStr for AniListStaffView {
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
+pub enum ALAiringScheduleView {
+    Main,
+    Schedule,
+}
+
+impl Default for ALAiringScheduleView {
+    fn default() -> Self {
+        ALAiringScheduleView::Main
+    }
+}
+
+impl From<Option<Weekday>> for ALAiringScheduleView {
+    fn from(weekday: Option<Weekday>) -> Self {
+        match weekday {
+            Some(_) => Self::Schedule,
+            None => Self::Main,
+        }
+    }
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub enum AniListPaginationKind {
+    AiringSchedule(ALAiringScheduleView),
     Character(AniListCharacterView),
     Media(AniListMediaView),
     User(AniListUserView),
     Staff(AniListStaffView),
     Studio,
+}
+
+impl AniListPaginationKind {
+    pub(crate) fn airing_schedule_view(&self) -> Option<ALAiringScheduleView> {
+        match &self {
+            AniListPaginationKind::AiringSchedule(view) => Some(view.clone()),
+            _ => None,
+        }
+    }
 }

@@ -5,12 +5,15 @@ use std::result::Result as StdResult;
 use thiserror::Error;
 
 use crate::models::shared::{
-    ActivityResponse, AniListError, AniListID, CharacterResponse, MediaResponse,
-    PagedCharacterResponse, PagedMediaResponse, PagedStaffResponse, PagedStudioResponse,
-    PagedUserResponse, StaffResponse, StudioResponse, UserResponse,
+    ActivityResponse, AiringScheduleResponse, AniListError, AniListID, CharacterResponse,
+    MediaResponse, PagedAiringScheduleResponse, PagedCharacterResponse, PagedMediaResponse,
+    PagedStaffResponse, PagedStudioResponse, PagedUserResponse, StaffResponse, StudioResponse,
+    UserResponse,
 };
-use crate::models::{Activity, Character, Media, MediaType, Staff, Studio, User};
-use crate::query_variables::{MediaVariables, StandardVariables, Variables};
+use crate::models::{Activity, AiringSchedule, Character, Media, MediaType, Staff, Studio, User};
+use crate::query_variables::{
+    AiringScheduleVariables, MediaVariables, StandardVariables, Variables,
+};
 
 const API_URL: &str = "https://graphql.anilist.co";
 
@@ -21,6 +24,9 @@ pub enum Error {
 
     #[error("AniList Activity (id: {0}) not found")]
     ActivityNotFound(AniListID),
+
+    #[error("AniList AiringSchedule (id: {0}) not found")]
+    AiringScheduleNotFound(AniListID),
 
     #[error("AniList Media (id: {0}) not found")]
     MediaNotFound(AniListID),
@@ -300,4 +306,32 @@ pub async fn fetch_studio(id: AniListID) -> AniListResult<Studio> {
     check_anilist_errors!(response.errors);
 
     response.studio().ok_or(Error::StudioNotFound(id))
+}
+
+pub async fn fetch_airing_schedule_list(
+    start_date: u64,
+    end_date: u64,
+) -> AniListResult<Vec<AiringSchedule>> {
+    use GQLFile::*;
+    let query_parts = vec![Query("AiringScheduleList"), Fragment("MediaFull")];
+    let variables = AiringScheduleVariables::new(start_date, end_date);
+    let response: PagedAiringScheduleResponse =
+        make_request(query_parts, Box::new(variables)).await?;
+
+    check_anilist_errors!(response.errors);
+
+    Ok(response.airing_schedules())
+}
+
+pub async fn fetch_airing_schedule_with_media_id(id: AniListID) -> AniListResult<AiringSchedule> {
+    use GQLFile::*;
+    let query_parts = vec![Query("AiringSchedule"), Fragment("MediaFull")];
+    let variables = StandardVariables::default().id(id).clone();
+    let response: AiringScheduleResponse = make_request(query_parts, Box::new(variables)).await?;
+
+    check_anilist_errors!(response.errors);
+
+    response
+        .airing_schedule()
+        .ok_or(Error::AiringScheduleNotFound(id))
 }

@@ -1,3 +1,4 @@
+use chrono::Weekday;
 use serenity::model::prelude::ReactionType;
 
 pub const PREV: &str = "⬅";
@@ -5,6 +6,15 @@ pub const NEXT: &str = "➡";
 pub const FIRST: &str = "⏮️";
 pub const LAST: &str = "⏭️";
 pub const STOP: &str = "❌";
+pub const HOME: &str = "🔢";
+
+pub const ONE: &str = "1⃣";
+pub const TWO: &str = "2⃣";
+pub const THREE: &str = "3⃣";
+pub const FOUR: &str = "4⃣";
+pub const FIVE: &str = "5⃣";
+pub const SIX: &str = "6⃣";
+pub const SEVEN: &str = "7⃣";
 
 pub const ANIME: &str = "🇦";
 pub const MANGA: &str = "🇲";
@@ -72,4 +82,22 @@ pub fn character(num_pages: usize) -> Vec<ReactionType> {
 
 pub fn staff(num_pages: usize) -> Vec<ReactionType> {
     make_reactions(vec![OVERVIEW, ANIME, MANGA], num_pages)
+}
+
+pub fn airing_schedule_main() -> Vec<ReactionType> {
+    _single_page_reactions(vec![ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN])
+}
+
+pub fn airing_schedule_media(num_pages: usize) -> Vec<ReactionType> {
+    make_reactions(vec![HOME], num_pages)
+}
+
+pub fn airing_schedule_from_weekday(
+    weekday: Option<Weekday>,
+    num_pages: usize,
+) -> Vec<ReactionType> {
+    match weekday {
+        Some(_) => make_reactions(vec![HOME], num_pages),
+        None => airing_schedule_main(),
+    }
 }

@@ -69,3 +69,21 @@ impl StandardVariables {
         self
     }
 }
+
+#[derive(Clone, Debug, Default, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct AiringScheduleVariables {
+    start_date: u64,
+    end_date: u64,
+}
+
+impl Variables for AiringScheduleVariables {}
+
+impl AiringScheduleVariables {
+    pub fn new(start_date: u64, end_date: u64) -> Self {
+        AiringScheduleVariables {
+            start_date,
+            end_date,
+        }
+    }
+}

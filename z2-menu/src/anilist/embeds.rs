@@ -1,8 +1,8 @@
 use anilist::models::{
-    activity::ActivityUnion, user::UserBase, Activity, Character, Media, MediaType, Staff, Studio,
-    User,
+    activity::ActivityUnion, user::UserBase, Activity, AiringSchedule, Character, Media, MediaType,
+    Staff, Studio, User,
 };
-use chrono::NaiveDateTime;
+use chrono::{Datelike, NaiveDateTime, Utc, Weekday};
 use serenity::builder::CreateEmbed;
 
 const ANILIST_COLOR: u32 = 3447003;
@@ -256,5 +256,72 @@ pub fn studio_embed(studio: &Studio, footer: Option<String>) -> CreateEmbed {
         .title(&studio.name)
         .url(&studio.site_url)
         .fields(fields)
+        .to_owned()
+}
+
+fn _weekday_to_string(weekday: Weekday) -> String {
+    match weekday {
+        Weekday::Mon => "Monday",
+        Weekday::Tue => "Tuesday",
+        Weekday::Wed => "Wednesday",
+        Weekday::Thu => "Thursday",
+        Weekday::Fri => "Friday",
+        Weekday::Sat => "Saturday",
+        Weekday::Sun => "Sunday",
+    }
+    .to_string()
+}
+
+// TODO move those two functions somewhere else
+fn _weekday_to_md(weekday: Weekday) -> String {
+    let emoji = crate::utils::num_to_emoji(weekday as u32 + 1);
+    let day = _weekday_to_string(weekday);
+    let mut is_today = "";
+    if weekday == Utc::today().weekday() {
+        is_today = "**(Today)**";
+    }
+
+    format!("{} {} {}", emoji, day, is_today)
+}
+
+// AIRING SCHEDULE EMBEDS
+pub fn airing_schedule_main_embed(footer: Option<String>) -> CreateEmbed {
+    let weekdays = vec![
+        Weekday::Mon,
+        Weekday::Tue,
+        Weekday::Wed,
+        Weekday::Thu,
+        Weekday::Fri,
+        Weekday::Sat,
+        Weekday::Sun,
+    ];
+    let days_md: Vec<String> = weekdays.into_iter().map(_weekday_to_md).collect();
+    let description = format!(
+        "Please select a Day to show the Airing Schedule for:\n{}",
+        days_md.join("\n")
+    );
+    base_anilist_embed(footer)
+        .description(description)
+        .to_owned()
+}
+
+pub fn airing_schedule_embed(
+    airing_schedule: &AiringSchedule,
+    footer: Option<String>,
+) -> CreateEmbed {
+    let media = &airing_schedule.media;
+    let (field_name, value) = match &media.r#type {
+        MediaType::Anime => ("Episodes", media.episodes()),
+        MediaType::Manga => ("Chapters", media.chapters()),
+    };
+    base_anilist_embed(footer)
+        .title(&media.title.user_preferred)
+        .url(&media.site_url)
+        .description(&media.synopsis())
+        .image(&media.banner_image())
+        .thumbnail(&media.cover_image.large)
+        .field(field_name, value, true)
+        .field("Score", &media.mean_score(), true)
+        .field("Genres", media.genre_links(), true)
         .to_owned()
 }

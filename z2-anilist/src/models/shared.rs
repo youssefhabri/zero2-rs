@@ -1,6 +1,7 @@
 use serde::Deserialize;
 
 use super::{Activity, Character, Media, Staff, Studio, User};
+use crate::models::AiringSchedule;
 
 pub type AniListID = u64;
 
@@ -65,3 +66,10 @@ make_paged_response!(PagedStaffResponse, Staff, staff);
 
 make_response!(StudioResponse, Studio, studio);
 make_paged_response!(PagedStudioResponse, Studio, studios);
+
+make_response!(AiringScheduleResponse, AiringSchedule, airing_schedule);
+make_paged_response!(
+    PagedAiringScheduleResponse,
+    AiringSchedule,
+    airing_schedules
+);

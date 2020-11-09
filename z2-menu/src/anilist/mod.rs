@@ -1,3 +1,4 @@
+mod airing_schedule;
 mod character;
 pub mod embeds;
 mod media;
