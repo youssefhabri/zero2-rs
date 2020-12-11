@@ -5,9 +5,12 @@
   - [ ] Move utils functions to a separate crate
   - [x] Generalize the duplicate pagination functions
   - [ ] Per-guild on/off switches for features
+
     - [x] Load/Save configs (using PostgreSQL)
     - [ ] Config menu for boolean configs
       - [ ] Use "wait for use answer" for non-boolean configs
+
+  - [ ] Setup the commands permissions
 
 - Bot features:
 
@@ -42,6 +45,7 @@
       - [x] `owo`
       - [x] `next`
       - [x] `giphy`
+      - [x] `nlimage`
 
     - Meta commands:
 
@@ -49,10 +53,6 @@
       - [x] `bot_info`
       - [x] `who`
       - [x] `ping`
-
-    - Neko's Life commands
-
-      - [ ] `nlimage`
 
     - System commands:
 
