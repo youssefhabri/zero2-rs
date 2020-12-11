@@ -40,7 +40,7 @@
       - [ ] `golender`
       - [x] `fortune`
       - [x] `owo`
-      - [ ] `next`
+      - [x] `next`
 
     - Meta commands:
 
