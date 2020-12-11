@@ -45,9 +45,9 @@
     - Meta commands:
 
       - [x] `avatar`
-      - [ ] `bot_info`
+      - [x] `bot_info`
       - [x] `who`
-      - [ ] `ping`
+      - [x] `ping`
 
     - Neko's Life commands
 

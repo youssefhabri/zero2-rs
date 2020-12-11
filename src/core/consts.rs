@@ -6,6 +6,9 @@ lazy_static! {
     pub static ref PREFIXES: Vec<String> = load_csv_var("BOT_PREFIXES");
 }
 
+pub const OWNER_ID: u64 = 139360031102599168;
+pub const BOT_ID: u64 = 453773001805135883;
+
 pub const MAIN_COLOUR: u32 = 16580705;
 
 fn load_csv_var(name: &str) -> Vec<String> {
