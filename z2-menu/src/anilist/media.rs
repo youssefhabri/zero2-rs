@@ -10,7 +10,7 @@ use crate::anilist::embeds::{
 };
 use crate::anilist::types::AniListMediaView;
 use crate::anilist::AniListPaginationKind;
-use crate::types::Pagination;
+use crate::types::{Pagination, PaginationResult};
 use crate::{reactions, utils};
 
 impl AniListPagination {
@@ -28,8 +28,7 @@ impl AniListPagination {
         let reactions = reactions::media(media.len());
         let sent = utils::send_embed_message(&context, &message, &embed, reactions).await?;
 
-        utils::add_pagination_to_store(&context, Box::new(pagination), sent.id, message.author.id)
-            .await;
+        utils::add_pagination_to_store(&context, pagination, sent.id, message.author.id).await;
 
         Ok(())
     }
@@ -77,17 +76,15 @@ impl AniListPagination {
         }
     }
 
-    pub(crate) async fn _media_handler(&mut self, context: &Context, reaction: &Reaction) {
-        let response = anilist::client::fetch_media(self.ids[self.cursor]).await;
-        let media = match response {
-            Ok(media) => media,
-            Err(why) => {
-                error!("MediaFetch error: {}", why);
-                return;
-            }
-        };
-
+    pub(crate) async fn _media_handler(
+        &mut self,
+        context: &Context,
+        reaction: &Reaction,
+    ) -> PaginationResult {
+        let media = anilist::client::fetch_media(self.ids[self.cursor]).await?;
         let embed = self.media_embed(&media);
         self.update_message(&context, &reaction, embed).await;
+
+        Ok(())
     }
 }

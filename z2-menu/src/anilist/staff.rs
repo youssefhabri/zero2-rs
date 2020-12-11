@@ -8,7 +8,7 @@ use crate::anilist::embeds::{
     staff_overview_embed, staff_related_anime_embed, staff_related_manga_embed,
 };
 use crate::anilist::{AniListPagination, AniListPaginationKind, AniListStaffView};
-use crate::types::Pagination;
+use crate::types::PaginationResult;
 use crate::{reactions, utils};
 
 impl AniListPagination {
@@ -26,8 +26,7 @@ impl AniListPagination {
         let reactions = reactions::staff(staff.len());
         let sent = utils::send_embed_message(&context, &message, &embed, reactions).await?;
 
-        utils::add_pagination_to_store(&context, Box::new(pagination), sent.id, message.author.id)
-            .await;
+        utils::add_pagination_to_store(&context, pagination, sent.id, message.author.id).await;
 
         Ok(())
     }
@@ -47,21 +46,10 @@ impl AniListPagination {
         }
     }
 
-    fn staff_footer(&self) -> String {
-        let footer = "Powered by AniList".to_string();
-
-        // Page: 1/6 | Powered by AniList
-        if self.ids.len() > 1 {
-            return format!("Page: {}/{} | {}", self.cursor() + 1, self.len(), footer);
-        }
-
-        footer
-    }
-
     pub fn staff_embed(&self, staff: &Staff) -> CreateEmbed {
         match &self.kind {
             AniListPaginationKind::Staff(view) => {
-                let footer = Some(self.staff_footer());
+                let footer = Some(self.standard_footer());
                 match view {
                     AniListStaffView::Overview => staff_overview_embed(&staff, footer),
                     AniListStaffView::RelatedAnime => staff_related_anime_embed(&staff, footer),
@@ -72,17 +60,15 @@ impl AniListPagination {
         }
     }
 
-    pub(crate) async fn _staff_handler(&mut self, context: &Context, reaction: &Reaction) {
-        let response = anilist::client::fetch_staff(self.ids[self.cursor]).await;
-        let staff = match response {
-            Ok(staff) => staff,
-            Err(why) => {
-                println!("StaffFetch error: {}", why);
-                return;
-            }
-        };
-
+    pub(crate) async fn _staff_handler(
+        &mut self,
+        context: &Context,
+        reaction: &Reaction,
+    ) -> PaginationResult {
+        let staff = anilist::client::fetch_staff(self.ids[self.cursor]).await?;
         let embed = self.staff_embed(&staff);
         self.update_message(&context, &reaction, embed).await;
+
+        Ok(())
     }
 }

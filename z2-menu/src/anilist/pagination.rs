@@ -5,7 +5,7 @@ use serenity::{builder::CreateEmbed, prelude::Context};
 use anilist::models::AniListID;
 
 use crate::anilist::types::AniListPaginationKind;
-use crate::types::Pagination;
+use crate::types::{Pagination, PaginationResult};
 
 pub struct AniListPagination {
     pub(crate) ids: Vec<AniListID>,
@@ -17,10 +17,10 @@ pub struct AniListPagination {
 
 #[async_trait]
 impl Pagination for AniListPagination {
-    async fn handle(&mut self, context: &Context, reaction: &Reaction) {
+    async fn handle(&mut self, context: &Context, reaction: &Reaction) -> PaginationResult {
         // Stop if neither the view nor the page has changed
         if !self.should_update(reaction).await {
-            return;
+            return Ok(());
         }
 
         match self.kind {
@@ -81,6 +81,17 @@ impl AniListPagination {
         if let Err(why) = sent {
             error!("UpdateMessage Error: {}", why);
         }
+    }
+
+    pub(crate) fn standard_footer(&self) -> String {
+        let footer = "Powered by AniList".to_string();
+
+        // Page: 1/6 | Powered by AniList
+        if self.ids.len() > 1 {
+            return format!("Page: {}/{} | {}", self.cursor() + 1, self.len(), footer);
+        }
+
+        footer
     }
 
     async fn should_update(&mut self, reaction: &Reaction) -> bool {

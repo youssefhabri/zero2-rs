@@ -1,7 +1,7 @@
 use crate::anilist::embeds::{airing_schedule_embed, airing_schedule_main_embed};
 use crate::anilist::types::ALAiringScheduleView;
 use crate::anilist::{AniListPagination, AniListPaginationKind};
-use crate::types::Pagination;
+use crate::types::{Pagination, PaginationResult};
 use crate::{reactions, utils};
 use anilist::models::AiringSchedule;
 use chrono::Weekday;
@@ -38,8 +38,7 @@ impl AniListPagination {
 
         let sent = utils::send_embed_message(&context, &message, &embed, reactions).await?;
 
-        utils::add_pagination_to_store(&context, Box::new(pagination), sent.id, message.author.id)
-            .await;
+        utils::add_pagination_to_store(&context, pagination, sent.id, message.author.id).await;
 
         Ok(())
     }
@@ -130,7 +129,7 @@ impl AniListPagination {
         &mut self,
         context: &Context,
         reaction: &Reaction,
-    ) {
+    ) -> PaginationResult {
         let airing_schedule = match self.kind.airing_schedule_view() {
             Some(ALAiringScheduleView::Schedule) => {
                 let id = self.ids[self.cursor];
@@ -144,5 +143,7 @@ impl AniListPagination {
         let embed = self.airing_schedule_embed(airing_schedule);
         self.update_message(&context, &reaction, embed).await;
         self.set_new_reaction(&context, &reaction).await;
+
+        Ok(())
     }
 }

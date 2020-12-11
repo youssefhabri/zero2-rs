@@ -7,7 +7,7 @@ use serenity::prelude::Context;
 use crate::anilist::embeds::{user_favourites_embed, user_overview_embed, user_stats_embed};
 use crate::anilist::types::{AniListPaginationKind, AniListUserView};
 use crate::anilist::AniListPagination;
-use crate::types::Pagination;
+use crate::types::PaginationResult;
 use crate::{reactions, utils};
 
 impl AniListPagination {
@@ -25,8 +25,7 @@ impl AniListPagination {
         let reactions = reactions::user(users.len());
         let sent = utils::send_embed_message(&context, &message, &embed, reactions).await?;
 
-        utils::add_pagination_to_store(&context, Box::new(pagination), sent.id, message.author.id)
-            .await;
+        utils::add_pagination_to_store(&context, pagination, sent.id, message.author.id).await;
 
         Ok(())
     }
@@ -46,21 +45,10 @@ impl AniListPagination {
         };
     }
 
-    fn user_footer(&self) -> String {
-        let footer = "Powered by AniList".to_string();
-
-        // Page: 1/6 | Powered by AniList
-        if self.ids.len() > 1 {
-            return format!("Page: {}/{} | {}", self.cursor() + 1, self.len(), footer);
-        }
-
-        footer
-    }
-
     pub fn user_embed(&self, user: &User) -> CreateEmbed {
         match &self.kind {
             AniListPaginationKind::User(view) => {
-                let footer = Some(self.user_footer());
+                let footer = Some(self.standard_footer());
                 match view {
                     AniListUserView::Overview => user_overview_embed(&user, footer),
                     AniListUserView::Stats => user_stats_embed(&user, footer),
@@ -71,17 +59,15 @@ impl AniListPagination {
         }
     }
 
-    pub(crate) async fn _user_handler(&mut self, context: &Context, reaction: &Reaction) {
-        let response = anilist::client::fetch_user(self.ids[self.cursor]).await;
-        let user = match response {
-            Ok(user) => user,
-            Err(why) => {
-                println!("UserFetch error: {}", why);
-                return;
-            }
-        };
-
+    pub(crate) async fn _user_handler(
+        &mut self,
+        context: &Context,
+        reaction: &Reaction,
+    ) -> PaginationResult {
+        let user = anilist::client::fetch_user(self.ids[self.cursor]).await?;
         let embed = self.user_embed(&user);
         self.update_message(&context, &reaction, embed).await;
+
+        Ok(())
     }
 }

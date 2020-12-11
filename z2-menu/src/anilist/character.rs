@@ -8,7 +8,7 @@ use crate::anilist::embeds::{
     character_overview_embed, character_related_anime_embed, character_related_manga_embed,
 };
 use crate::anilist::{AniListCharacterView, AniListPagination, AniListPaginationKind};
-use crate::types::Pagination;
+use crate::types::PaginationResult;
 use crate::{reactions, utils};
 
 impl AniListPagination {
@@ -26,8 +26,7 @@ impl AniListPagination {
 
         let sent = utils::send_embed_message(&context, &message, &embed, reactions).await?;
 
-        utils::add_pagination_to_store(&context, Box::new(pagination), sent.id, message.author.id)
-            .await;
+        utils::add_pagination_to_store(&context, pagination, sent.id, message.author.id).await;
 
         Ok(())
     }
@@ -47,21 +46,10 @@ impl AniListPagination {
         };
     }
 
-    fn character_footer(&self) -> String {
-        let footer = "Powered by AniList".to_string();
-
-        // Page: 1/6 | Powered by AniList
-        if self.ids.len() > 1 {
-            return format!("Page: {}/{} | {}", self.cursor() + 1, self.len(), footer);
-        }
-
-        footer
-    }
-
     pub(crate) fn character_embed(&self, character: &Character) -> CreateEmbed {
         match &self.kind {
             AniListPaginationKind::Character(view) => {
-                let footer = Some(self.character_footer());
+                let footer = Some(self.standard_footer());
                 match view {
                     AniListCharacterView::Overview => character_overview_embed(&character, footer),
                     AniListCharacterView::RelatedAnime => {
@@ -76,17 +64,15 @@ impl AniListPagination {
         }
     }
 
-    pub(crate) async fn _character_handler(&mut self, context: &Context, reaction: &Reaction) {
-        let response = anilist::client::fetch_character(self.ids[self.cursor]).await;
-        let character = match response {
-            Ok(user) => user,
-            Err(why) => {
-                println!("UserFetch error: {}", why);
-                return;
-            }
-        };
-
+    pub(crate) async fn _character_handler(
+        &mut self,
+        context: &Context,
+        reaction: &Reaction,
+    ) -> PaginationResult {
+        let character = anilist::client::fetch_character(self.ids[self.cursor]).await?;
         let embed = self.character_embed(&character);
         self.update_message(&context, &reaction, embed).await;
+
+        Ok(())
     }
 }
