@@ -1,3 +1,5 @@
+#![feature(type_alias_impl_trait)]
+
 #[macro_use]
 extern crate log;
 
@@ -8,6 +10,8 @@ use serenity::prelude::Context;
 use crate::types::PaginationContainer;
 
 pub mod anilist;
+pub mod urban;
+
 pub mod reactions;
 pub mod types;
 pub mod utils;
@@ -32,7 +36,7 @@ pub async fn handle_reaction(context: &Context, reaction: &Reaction) {
 
     // Maybe after acquiring the Pagination lock, release the context.data lock? is that even possible?
     let mut container = match data.get_mut::<PaginationContainer>() {
-        Some(container) => container.lock().await,
+        Some(container) => container.write().await,
         None => return,
     };
 
@@ -92,5 +96,7 @@ pub async fn handle_reaction(context: &Context, reaction: &Reaction) {
         _ => {}
     }
 
-    pagination.handle(&context, &reaction).await
+    if let Err(why) = pagination.handle(&context, &reaction).await {
+        error!("{}", why);
+    }
 }

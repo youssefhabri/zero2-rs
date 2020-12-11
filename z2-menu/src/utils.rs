@@ -19,7 +19,7 @@ pub async fn send_embed_message(
         .channel_id
         .send_message(&context, |m| {
             m.embed(|e| {
-                e.clone_from(&embed);
+                e.clone_from(embed);
                 e
             })
             .reactions(reactions)
@@ -29,32 +29,35 @@ pub async fn send_embed_message(
     Ok(sent)
 }
 
-pub async fn add_pagination_to_store(
+pub async fn add_pagination_to_store<P>(
     context: &Context,
-    pagination: Box<dyn Pagination>,
+    pagination: P,
     message_id: MessageId,
     author_id: UserId,
-) {
+) where
+    P: Pagination + 'static,
+{
     let data = context.data.write().await;
     let container = data.get::<PaginationContainer>().unwrap();
     let pagination_info = PaginationInfo::new(author_id, pagination);
-    container.lock().await.insert(message_id, pagination_info);
+    container.write().await.insert(message_id, pagination_info);
 }
 
 pub fn num_to_emoji(num: u32) -> String {
     match num {
-        0 => ":zero:".to_string(),
-        1 => ":one:".to_string(),
-        2 => ":two:".to_string(),
-        3 => ":three:".to_string(),
-        4 => ":four:".to_string(),
-        5 => ":five:".to_string(),
-        6 => ":six:".to_string(),
-        7 => ":seven:".to_string(),
-        8 => ":eight:".to_string(),
-        9 => ":nine:".to_string(),
-        _ => num.to_string(),
+        0 => ":zero:",
+        1 => ":one:",
+        2 => ":two:",
+        3 => ":three:",
+        4 => ":four:",
+        5 => ":five:",
+        6 => ":six:",
+        7 => ":seven:",
+        8 => ":eight:",
+        9 => ":nine:",
+        _ => unreachable!("Input should not be a number above 9."),
     }
+    .to_string()
 }
 
 pub fn reaction_to_weekday(reaction: &str) -> Option<Weekday> {

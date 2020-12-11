@@ -10,6 +10,9 @@ use std::collections::HashSet;
 use super::consts::{PREFIX, PREFIXES};
 use crate::commands::anilist::ANILIST_GROUP;
 use crate::commands::config::CONFIGURATION_GROUP;
+use crate::commands::fun::FUN_GROUP;
+use crate::commands::knowledge::KNOWLEDGE_GROUP;
+use crate::commands::meta::META_GROUP;
 use crate::commands::ROOT_GROUP;
 
 pub struct Zero2Framework;
@@ -33,6 +36,9 @@ impl Zero2Framework {
             .group(&ROOT_GROUP)
             .group(&ANILIST_GROUP)
             .group(&CONFIGURATION_GROUP)
+            .group(&FUN_GROUP)
+            .group(&KNOWLEDGE_GROUP)
+            .group(&META_GROUP)
     }
 }
 
@@ -42,9 +48,16 @@ async fn before(_context: &Context, _message: &Message, _command_name: &str) -> 
 }
 
 #[hook]
-async fn after(_ctx: &Context, _msg: &Message, command_name: &str, command_result: CommandResult) {
+async fn after(
+    _context: &Context,
+    _msg: &Message,
+    command_name: &str,
+    command_result: CommandResult,
+) {
     if let Err(why) = command_result {
-        println!("Error in {}: {}", command_name, why);
+        let error = format!("Error in {}: {}", command_name, why);
+        error!("{}", &error);
+        let _ = _msg.channel_id.say(&_context, error).await;
     }
 }
 
