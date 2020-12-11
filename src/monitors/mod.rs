@@ -1,10 +1,11 @@
-use serenity::model::prelude::{GuildId, Message, Reaction};
+use serenity::model::prelude::{GuildId, Member, Message, Reaction};
 use serenity::prelude::Context;
 
 use crate::core::config::{get_global_config_with_default, get_guild_config_with_default};
 
 mod anilist;
 mod discord;
+mod greeting;
 
 async fn can_run_monitor(
     context: &Context,
@@ -43,4 +44,10 @@ pub async fn reaction_add_monitor(context: &Context, reaction: &Reaction) {
     }
 
     menu::handle_reaction(&context, &reaction).await;
+}
+
+pub async fn new_member_monitor(context: &Context, guild_id: GuildId, new_member: &Member) {
+    if can_run_monitor(&context, Some(guild_id), "greeting", true).await {
+        greeting::greeting_monitor(&context, guild_id, new_member).await;
+    }
 }

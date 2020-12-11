@@ -1,0 +1,8 @@
+1<SP>{user} Sup!
+1<SP>{user} Yahallo!
+1<SP>Hello {user}! Welcome to the **{guild}** server!
+1<SP>Everyone, please welcome our new ~~cult~~ member, {user}!
+1<SP>Hey, {user}! Welcome to {guild}\nWe hope you enjoy your stay here!\nThanks for joining!
+1<SP>Welcome home, {user}! Would you like dinner? A bath? Or perhaps... **me**?
+1<SP>Oh? You're approaching me, {user}?
+1<SP>{user}, there you are! We were waiting for you!

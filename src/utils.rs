@@ -1,8 +1,22 @@
-use rand::distributions::uniform::SampleUniform;
-use rand::prelude::Rng;
+use rand::distributions::WeightedIndex;
+use rand::prelude::{thread_rng, Distribution, Rng};
 
-pub fn random_number<T: SampleUniform>(min: T, max: T) -> T {
+/// Generate a random number between the min & max values
+pub fn random_number(min: usize, max: usize) -> usize {
     rand::thread_rng().gen_range(min, max)
+}
+
+pub fn random_with_weights<T: Clone>(choices: &Vec<T>, weights: &Vec<u32>) -> Result<T, String> {
+    if choices.len() != weights.len() {
+        return Err("choices and weights need to be the same size.".to_string());
+    }
+
+    let mut rng = thread_rng();
+
+    let dist = WeightedIndex::new(weights).unwrap();
+    let result = dist.sample(&mut rng);
+
+    Ok(choices[result].clone())
 }
 
 /// Converts a time in seconds to a human readable string
