@@ -29,8 +29,9 @@ fn _single_page_reactions(mut reactions: Vec<&str>) -> Vec<ReactionType> {
     reactions.push(STOP);
 
     reactions
-        .iter()
-        .map(|r| ReactionType::Unicode(r.to_string()))
+        .into_iter()
+        .map(str::to_string)
+        .map(ReactionType::Unicode)
         .collect()
 }
 
@@ -40,8 +41,9 @@ fn _few_pages_reactions(reactions: Vec<&str>) -> Vec<ReactionType> {
     new_reactions.append(&mut vec![NEXT, STOP]);
 
     new_reactions
-        .iter()
-        .map(|r| ReactionType::Unicode(r.to_string()))
+        .into_iter()
+        .map(str::to_string)
+        .map(ReactionType::Unicode)
         .collect()
 }
 
@@ -51,8 +53,9 @@ fn _many_pages_reactions(reactions: Vec<&str>) -> Vec<ReactionType> {
     new_reactions.append(&mut vec![NEXT, LAST, STOP]);
 
     new_reactions
-        .iter()
-        .map(|r| ReactionType::Unicode(r.to_string()))
+        .into_iter()
+        .map(str::to_string)
+        .map(ReactionType::Unicode)
         .collect()
 }
 

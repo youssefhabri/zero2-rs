@@ -53,9 +53,9 @@ pub enum Error {
 type AniListResult<T> = StdResult<T, Error>;
 
 #[derive(Serialize)]
-pub struct QueryBody {
+pub struct QueryBody<'a> {
     pub query: String,
-    pub variables: Box<dyn Variables>,
+    pub variables: Box<dyn Variables + 'a>,
 }
 
 enum GQLFile<'a> {
@@ -74,26 +74,31 @@ fn load_graphql(file: &GQLFile<'_>) -> AniListResult<String> {
     };
     let asset = GraphQL::get(&path).ok_or(Error::GraphQLLoadError)?;
     std::str::from_utf8(&asset)
-        .map(|asset| asset.to_string())
+        .map(str::to_string)
         .map_err(|_| Error::GraphQLLoadError)
 }
 
 fn query_from_parts(query_parts: Vec<GQLFile<'_>>) -> AniListResult<String> {
     let query = query_parts
         .iter()
-        .filter_map(|file| load_graphql(file).ok())
+        .map(load_graphql)
+        .filter_map(Result::ok)
         .collect::<Vec<_>>()
         .join("\n");
 
     Ok(query)
 }
 
-async fn make_request<T: DeserializeOwned>(
-    query_parts: Vec<GQLFile<'_>>,
-    variables: Box<dyn Variables>,
-) -> AniListResult<T> {
+async fn make_request<V, T>(query_parts: Vec<GQLFile<'_>>, variables: V) -> AniListResult<T>
+where
+    V: Variables,
+    T: DeserializeOwned,
+{
     let query = query_from_parts(query_parts)?;
-    let query_body = QueryBody { query, variables };
+    let query_body = QueryBody {
+        query,
+        variables: Box::new(variables),
+    };
 
     let http = ReqwestClient::new();
     let response = http.post(API_URL).json(&query_body).send().await?;
@@ -133,8 +138,8 @@ pub async fn search_media_with_adult(
         .search(keyword)
         .is_adult(is_adult)
         .r#type(media_type)
-        .clone();
-    let response: PagedMediaResponse = make_request(query_parts, Box::new(variables)).await?;
+        .to_owned();
+    let response: PagedMediaResponse = make_request(query_parts, variables).await?;
 
     check_anilist_errors!(response.errors);
 
@@ -153,8 +158,11 @@ pub async fn fetch_media_with_adult(id: AniListID, is_adult: bool) -> AniListRes
         Fragment("MediaBase"),
         Fragment("PageInfo"),
     ];
-    let variables = MediaVariables::default().id(id).is_adult(is_adult).clone();
-    let response: MediaResponse = make_request(query_parts, Box::new(variables)).await?;
+    let variables = MediaVariables::default()
+        .id(id)
+        .is_adult(is_adult)
+        .to_owned();
+    let response: MediaResponse = make_request(query_parts, variables).await?;
 
     check_anilist_errors!(response.errors);
 
@@ -172,8 +180,8 @@ pub async fn search_user(keyword: impl ToString) -> AniListResult<Vec<User>> {
         Fragment("StudioBase"),
         Fragment("UserMediaStatistics"),
     ];
-    let variables = StandardVariables::default().search(keyword).clone();
-    let response: PagedUserResponse = make_request(query_parts, Box::new(variables)).await?;
+    let variables = StandardVariables::default().search(keyword).to_owned();
+    let response: PagedUserResponse = make_request(query_parts, variables).await?;
 
     if let Some(errors) = response.errors {
         return Err(Error::AniListErrors(errors));
@@ -193,8 +201,8 @@ pub async fn fetch_user(id: AniListID) -> AniListResult<User> {
         Fragment("StudioBase"),
         Fragment("UserMediaStatistics"),
     ];
-    let variables = StandardVariables::default().id(id).clone();
-    let response: UserResponse = make_request(query_parts, Box::new(variables)).await?;
+    let variables = StandardVariables::default().id(id).to_owned();
+    let response: UserResponse = make_request(query_parts, variables).await?;
 
     check_anilist_errors!(response.errors);
 
@@ -209,8 +217,8 @@ pub async fn search_character(keyword: impl ToString) -> AniListResult<Vec<Chara
         Fragment("CharacterBase"),
         Fragment("MediaBase"),
     ];
-    let variables = StandardVariables::default().search(keyword).clone();
-    let response: PagedCharacterResponse = make_request(query_parts, Box::new(variables)).await?;
+    let variables = StandardVariables::default().search(keyword).to_owned();
+    let response: PagedCharacterResponse = make_request(query_parts, variables).await?;
 
     check_anilist_errors!(response.errors);
 
@@ -225,8 +233,8 @@ pub async fn fetch_character(id: AniListID) -> AniListResult<Character> {
         Fragment("CharacterBase"),
         Fragment("MediaBase"),
     ];
-    let variables = StandardVariables::default().id(id).clone();
-    let response: CharacterResponse = make_request(query_parts, Box::new(variables)).await?;
+    let variables = StandardVariables::default().id(id).to_owned();
+    let response: CharacterResponse = make_request(query_parts, variables).await?;
 
     check_anilist_errors!(response.errors);
 
@@ -241,8 +249,8 @@ pub async fn search_staff(keyword: impl ToString) -> AniListResult<Vec<Staff>> {
         Fragment("MediaBase"),
         Fragment("CharacterBase"),
     ];
-    let variables = StandardVariables::default().search(keyword).clone();
-    let response: PagedStaffResponse = make_request(query_parts, Box::new(variables)).await?;
+    let variables = StandardVariables::default().search(keyword).to_owned();
+    let response: PagedStaffResponse = make_request(query_parts, variables).await?;
 
     check_anilist_errors!(response.errors);
 
@@ -257,8 +265,8 @@ pub async fn fetch_staff(id: AniListID) -> AniListResult<Staff> {
         Fragment("MediaBase"),
         Fragment("CharacterBase"),
     ];
-    let variables = StandardVariables::default().id(id).clone();
-    let response: StaffResponse = make_request(query_parts, Box::new(variables)).await?;
+    let variables = StandardVariables::default().id(id).to_owned();
+    let response: StaffResponse = make_request(query_parts, variables).await?;
 
     check_anilist_errors!(response.errors);
 
@@ -274,8 +282,8 @@ pub async fn fetch_activity(id: AniListID) -> AniListResult<Activity> {
         Fragment("MediaBase"),
     ];
 
-    let variables = StandardVariables::default().id(id).clone();
-    let response: ActivityResponse = make_request(query_parts, Box::new(variables)).await?;
+    let variables = StandardVariables::default().id(id).to_owned();
+    let response: ActivityResponse = make_request(query_parts, variables).await?;
 
     check_anilist_errors!(response.errors);
 
@@ -287,8 +295,8 @@ pub async fn search_studio(keyword: impl ToString) -> AniListResult<Vec<Studio>>
 
     let query_parts = vec![Query("StudioSearch"), Fragment("MediaBase")];
 
-    let variables = StandardVariables::default().search(keyword).clone();
-    let response: PagedStudioResponse = make_request(query_parts, Box::new(variables)).await?;
+    let variables = StandardVariables::default().search(keyword).to_owned();
+    let response: PagedStudioResponse = make_request(query_parts, variables).await?;
 
     check_anilist_errors!(response.errors);
 
@@ -300,8 +308,8 @@ pub async fn fetch_studio(id: AniListID) -> AniListResult<Studio> {
 
     let query_parts = vec![Query("StudioFetch"), Fragment("MediaBase")];
 
-    let variables = StandardVariables::default().id(id).clone();
-    let response: StudioResponse = make_request(query_parts, Box::new(variables)).await?;
+    let variables = StandardVariables::default().id(id).to_owned();
+    let response: StudioResponse = make_request(query_parts, variables).await?;
 
     check_anilist_errors!(response.errors);
 
@@ -315,8 +323,7 @@ pub async fn fetch_airing_schedule_list(
     use GQLFile::*;
     let query_parts = vec![Query("AiringScheduleList"), Fragment("MediaFull")];
     let variables = AiringScheduleVariables::new(start_date, end_date);
-    let response: PagedAiringScheduleResponse =
-        make_request(query_parts, Box::new(variables)).await?;
+    let response: PagedAiringScheduleResponse = make_request(query_parts, variables).await?;
 
     check_anilist_errors!(response.errors);
 
@@ -326,8 +333,8 @@ pub async fn fetch_airing_schedule_list(
 pub async fn fetch_airing_schedule_with_media_id(id: AniListID) -> AniListResult<AiringSchedule> {
     use GQLFile::*;
     let query_parts = vec![Query("AiringSchedule"), Fragment("MediaFull")];
-    let variables = StandardVariables::default().id(id).clone();
-    let response: AiringScheduleResponse = make_request(query_parts, Box::new(variables)).await?;
+    let variables = StandardVariables::default().id(id).to_owned();
+    let response: AiringScheduleResponse = make_request(query_parts, variables).await?;
 
     check_anilist_errors!(response.errors);
 

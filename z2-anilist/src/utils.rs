@@ -1,4 +1,4 @@
-use crate::models::media::MediaBase;
+use crate::models::media::{MediaBase, MediaStatus};
 
 #[inline]
 pub fn na_str() -> String {
@@ -18,7 +18,9 @@ pub fn format_time(time_minutes: f64) -> String {
 
     if days > 0.0 {
         return format!("{} days, {}:{:02}", days, hours, minutes);
-    } else if hours > 0.0 {
+    }
+
+    if hours > 0.0 {
         return format!("{} hours, {} minutes", hours, minutes);
     }
 
@@ -51,18 +53,19 @@ pub fn synopsis(text: impl ToString, length: usize) -> String {
 
 pub fn num_to_emoji(num: u32) -> String {
     match num {
-        0 => ":zero:".to_string(),
-        1 => ":one:".to_string(),
-        2 => ":two:".to_string(),
-        3 => ":three:".to_string(),
-        4 => ":four:".to_string(),
-        5 => ":five:".to_string(),
-        6 => ":six:".to_string(),
-        7 => ":seven:".to_string(),
-        8 => ":eight:".to_string(),
-        9 => ":nine:".to_string(),
-        _ => num.to_string(),
+        0 => ":zero:",
+        1 => ":one:",
+        2 => ":two:",
+        3 => ":three:",
+        4 => ":four:",
+        5 => ":five:",
+        6 => ":six:",
+        7 => ":seven:",
+        8 => ":eight:",
+        9 => ":nine:",
+        _ => unreachable!("Input should not be a number above 9."),
     }
+    .to_string()
 }
 
 pub fn media_base_to_legend(media: &[MediaBase]) -> Option<String> {
@@ -75,13 +78,9 @@ pub fn media_base_to_legend(media: &[MediaBase]) -> Option<String> {
 
     let legend: String = statuses
         .iter()
-        .map(|status| status.to_string_with_emoji())
+        .map(MediaStatus::to_string_with_emoji)
         .collect::<Vec<_>>()
         .join(" - ");
 
-    if !legend.is_empty() {
-        return Some(legend);
-    }
-
-    None
+    Some(legend).filter(String::is_empty)
 }

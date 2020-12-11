@@ -46,12 +46,12 @@ async fn handle_activity(context: &Context, message: &Message, activity_id: &str
 /// Handles character embeds for the AniList Links Monitor
 async fn handle_character(context: &Context, message: &Message, character_id: &str) {
     let id: u64 = ok_or_return!(character_id.parse());
-    let characters = vec![ok_or_return!(anilist::client::fetch_character(id).await)];
+    let character = ok_or_return!(anilist::client::fetch_character(id).await);
 
     let _ = AniListPagination::new_character_pagination(
         &context,
         &message,
-        &characters,
+        &[character],
         Default::default(),
     )
     .await;
@@ -61,16 +61,15 @@ async fn handle_character(context: &Context, message: &Message, character_id: &s
 async fn handle_studio(context: &Context, message: &Message, studio_id: &str) {
     let id: u64 = ok_or_return!(studio_id.parse());
     let studio = ok_or_return!(anilist::client::fetch_studio(id).await);
-    let embed = menu::anilist::embeds::studio_embed(&studio, None);
-
-    match_send!(&context, &message, &embed);
+    let _ = AniListPagination::new_studio_pagination(&context, &message, &[studio]).await;
 }
 
 /// Handles staff embeds for the AniList Links Monitor
 async fn handle_staff(context: &Context, message: &Message, staff_id: &str) {
     let id: u64 = ok_or_return!(staff_id.parse());
-    let staff = vec![ok_or_return!(anilist::client::fetch_staff(id).await)];
+    let staff = ok_or_return!(anilist::client::fetch_staff(id).await);
 
-    let _ = AniListPagination::new_staff_pagination(&context, &message, &staff, Default::default())
-        .await;
+    let _ =
+        AniListPagination::new_staff_pagination(&context, &message, &[staff], Default::default())
+            .await;
 }
