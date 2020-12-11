@@ -20,7 +20,7 @@
 
     - AniList commands:
 
-      - [ ] `airing`
+      - [x] `airing`
       - [x] `anime`
       - [x] `character`
       - [x] `manga`
@@ -46,7 +46,7 @@
 
       - [x] `avatar`
       - [ ] `bot_info`
-      - [ ] `who`
+      - [x] `who`
       - [ ] `ping`
 
     - Neko's Life commands
