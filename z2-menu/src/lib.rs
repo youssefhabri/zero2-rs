@@ -10,6 +10,7 @@ use serenity::prelude::Context;
 use crate::types::PaginationContainer;
 
 pub mod anilist;
+pub mod giphy;
 pub mod urban;
 
 pub mod reactions;

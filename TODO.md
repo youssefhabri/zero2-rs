@@ -41,6 +41,7 @@
       - [x] `fortune`
       - [x] `owo`
       - [x] `next`
+      - [x] `giphy`
 
     - Meta commands:
 
@@ -62,7 +63,3 @@
       - [ ] `log`
       - [ ] `shutdown`
       - [ ] `reboot`
-
-    - No Category commands:
-
-      - [ ] `giphy`
