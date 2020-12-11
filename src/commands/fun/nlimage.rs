@@ -1,9 +1,8 @@
 use rand::Rng;
 use serde::Deserialize;
 use serenity::framework::standard::{macros::command, Args, CommandResult};
-use serenity::model::{channel::Message, id::UserId, user::User};
+use serenity::model::channel::Message;
 use serenity::prelude::Context;
-use serenity::utils::parse_username;
 
 const TYPE_LIST: [&str; 17] = [
     "tickle",
@@ -34,37 +33,10 @@ pub struct NLImage {
 
 #[command]
 #[aliases("nl", "nlimg")]
-#[usage = "[keyword:optional] [user:optional]"]
+#[usage = "[keyword:optional]"]
 #[description = "Get gifs from nekos.life."]
-async fn nlimage(context: &Context, message: &Message, mut args: Args) -> CommandResult {
-    let params = if !args.is_empty() {
-        let mut list: Vec<String> = Vec::new();
-
-        for arg in args.iter::<String>() {
-            if let Ok(arg) = arg {
-                list.push(arg);
-            }
-        }
-
-        list
-    } else {
-        vec![]
-    };
-
-    let keyword = if !params.is_empty() {
-        params[0].clone()
-    } else {
-        String::new()
-    };
-    let user: Option<User> = if params.len() > 1 {
-        match parse_username(&params[1]).map(UserId) {
-            Some(user_id) => user_id.to_user(&context).await.ok(),
-            None => None,
-        }
-    } else {
-        None
-    };
-
+async fn nlimage(context: &Context, message: &Message, args: Args) -> CommandResult {
+    let keyword = args.message().to_string();
     let selection: String = selection(&context, message, keyword).await;
 
     let image: NLImage = query(selection.clone()).await;
@@ -73,23 +45,7 @@ async fn nlimage(context: &Context, message: &Message, mut args: Args) -> Comman
     let _ = message
         .channel_id
         .send_message(&context.http, |m| {
-            m.embed(|embed| {
-                embed.image(image.url.clone());
-
-                if let Some(user) = user {
-                    let _ = message.delete(&context);
-                    let _ = message.channel_id.send_message(&context.http, |m| {
-                        m.content(format!(
-                            "<@{}>: <@{}> sent you a {}",
-                            user.id, message.author.id, image_title
-                        ))
-                    });
-                } else {
-                    embed.url(image.url).title(image_title);
-                }
-
-                embed
-            })
+            m.embed(|embed| embed.image(&image.url).url(image.url).title(image_title))
         })
         .await?;
 
