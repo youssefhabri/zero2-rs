@@ -1,7 +1,9 @@
-use serenity::framework::standard::{macros::command, Args, CommandResult};
-use serenity::model::prelude::{Message, UserId};
+use serenity::framework::standard::{macros::command, Args, CommandError, CommandResult};
+use serenity::model::prelude::{Member, Message, UserId};
 use serenity::prelude::Context;
-use serenity::utils::parse_username;
+use serenity::utils::{parse_username, Colour};
+
+use crate::core::consts::MAIN_COLOUR;
 
 fn user_id_from_message(message: &Message, mut args: Args) -> Result<UserId, CommandError> {
     if args.is_empty() {
@@ -10,7 +12,7 @@ fn user_id_from_message(message: &Message, mut args: Args) -> Result<UserId, Com
 
     let arg = args.single::<String>()?;
 
-    if let Some(user_id) = parse_mention(&arg).map(UserId) {
+    if let Some(user_id) = parse_username(&arg).map(UserId) {
         return Ok(user_id);
     }
 
@@ -23,7 +25,7 @@ fn user_id_from_message(message: &Message, mut args: Args) -> Result<UserId, Com
 
 #[command]
 async fn who(context: &Context, message: &Message, args: Args) -> CommandResult {
-    let user_id = user_id_from_message(&message, args);
+    let user_id = user_id_from_message(&message, args)?;
 
     let member: Member = match message.guild_id {
         Some(guild_id) => guild_id
@@ -48,6 +50,11 @@ async fn who(context: &Context, message: &Message, args: Args) -> CommandResult 
         None => "N/A".to_string(),
     };
 
+    let avatar_url = member
+        .user
+        .avatar_url()
+        .unwrap_or_else(|| member.user.default_avatar_url());
+
     let mut roles = member
         .roles
         .into_iter()
@@ -55,8 +62,6 @@ async fn who(context: &Context, message: &Message, args: Args) -> CommandResult 
         .collect::<Vec<String>>();
 
     roles.push("@everyone".to_string());
-
-    let avatar_url = { member.user.read().face() };
 
     let _ = message
         .channel_id
