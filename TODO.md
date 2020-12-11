@@ -3,11 +3,11 @@
 - General works to be done:
 
   - [ ] Move utils functions to a separate crate
-  - [ ] Generalize the duplicate pagination functions
+  - [x] Generalize the duplicate pagination functions
   - [ ] Per-guild on/off switches for features
-    - [x] Load/Save configs
-    - [ ] Config menu to for boolean configs
-        - [ ] Use "wait for use answer" for non-boolean configs
+    - [x] Load/Save configs (using PostgreSQL)
+    - [ ] Config menu for boolean configs
+      - [ ] Use "wait for use answer" for non-boolean configs
 
 - Bot features:
 
@@ -31,19 +31,20 @@
 
     - Knowledge commands:
 
-      - [ ] `urban`
+      - [x] `urban`
 
     - Fun commands:
 
-      - [ ] `bigtext`
-      - [ ] `cookie`
+      - [x] `bigtext`
+      - [x] `cookie`
       - [ ] `golender`
-      - [ ] `fortune`
-      - [ ] `owo`
+      - [x] `fortune`
+      - [x] `owo`
+      - [ ] `next`
 
     - Meta commands:
 
-      - [ ] `avatar`
+      - [x] `avatar`
       - [ ] `bot_info`
       - [ ] `who`
       - [ ] `ping`
