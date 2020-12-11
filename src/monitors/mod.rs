@@ -2,6 +2,7 @@ use serenity::model::prelude::{GuildId, Member, Message, Reaction};
 use serenity::prelude::Context;
 
 use crate::core::config::{get_global_config_with_default, get_guild_config_with_default};
+use crate::core::consts::{BOT_ID, DEV_BOT_ID};
 
 mod anilist;
 mod discord;
@@ -39,7 +40,7 @@ pub async fn message_monitor(context: &Context, new_message: &Message) {
 /// Runs reaction monitors
 pub async fn reaction_add_monitor(context: &Context, reaction: &Reaction) {
     match reaction.user_id {
-        Some(user_id) if *user_id.as_u64() == 510136293968183317 => return,
+        Some(user_id) if [BOT_ID, DEV_BOT_ID].contains(user_id.as_u64()) => return,
         _ => {}
     }
 

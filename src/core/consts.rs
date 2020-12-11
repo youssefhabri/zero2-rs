@@ -8,6 +8,7 @@ lazy_static! {
 
 pub const OWNER_ID: u64 = 139360031102599168;
 pub const BOT_ID: u64 = 453773001805135883;
+pub const DEV_BOT_ID: u64 = 510136293968183317;
 
 pub const MAIN_COLOUR: u32 = 16580705;
 
