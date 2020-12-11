@@ -1,65 +1,45 @@
-use pickledb::{error::Error as PickleDdError, PickleDb, PickleDbDumpPolicy, SerializationMethod};
-use serde::{de::DeserializeOwned, Serialize};
-use serenity::model::prelude::GuildId;
-use serenity::prelude::{RwLock, TypeMapKey};
-use std::sync::Arc;
+use serenity::{model::id::GuildId, prelude::Context};
+use std::str::FromStr;
 
-pub struct Zero2ConfigContainer {
-    db: PickleDb,
+use crate::core::consts::DB;
+
+pub fn get_global_config_with_default<K, V>(context: &Context, key: K, default: V) -> V
+where
+    K: ToString,
+    V: FromStr,
+{
+    get_global_config(context, key).unwrap_or(default)
 }
 
-impl TypeMapKey for Zero2ConfigContainer {
-    type Value = Arc<RwLock<Zero2ConfigContainer>>;
+pub fn get_global_config<K, V>(_context: &Context, key: K) -> Option<V>
+where
+    K: ToString,
+    V: FromStr,
+{
+    let config = DB.get_config(key, None);
+
+    config.ok()?.value.parse::<V>().ok()
 }
 
-impl Zero2ConfigContainer {
-    pub fn new() -> Zero2ConfigContainer {
-        let db = PickleDb::load(
-            "data/config.json",
-            PickleDbDumpPolicy::AutoDump,
-            SerializationMethod::Json,
-        )
-        .unwrap();
-        Zero2ConfigContainer { db }
-    }
+pub fn get_guild_config_with_default<K, V>(
+    context: &Context,
+    guild_id: GuildId,
+    key: K,
+    default: V,
+) -> V
+where
+    K: ToString,
+    V: FromStr,
+{
+    get_guild_config(context, guild_id, key).unwrap_or(default)
+}
 
-    pub fn guild_config<K, V>(&self, guild_id: GuildId, config: K) -> Option<V>
-    where
-        K: ToString,
-        V: DeserializeOwned,
-    {
-        let key = format!("guild:{}:{}", guild_id.as_u64(), config.to_string());
-        self.db.get::<V>(&key)
-    }
+pub fn get_guild_config<K, V>(_context: &Context, guild_id: GuildId, key: K) -> Option<V>
+where
+    K: ToString,
+    V: FromStr,
+{
+    let config = DB.get_config(key, Some(*guild_id.as_u64())).ok()?;
 
-    pub fn set_guild_config<V>(
-        &mut self,
-        guild_id: GuildId,
-        config: impl ToString,
-        value: impl Serialize,
-    ) -> Result<(), PickleDdError>
-    where
-        V: DeserializeOwned,
-    {
-        let key = format!("guild:{}:{}", guild_id.as_u64(), config.to_string());
-        self.db.set(&key, &value)
-    }
-
-    pub fn global_config<K, V>(&self, config: K) -> Option<V>
-    where
-        K: ToString,
-        V: DeserializeOwned,
-    {
-        let key = format!("global:{}", config.to_string());
-        self.db.get::<V>(&key)
-    }
-
-    pub fn set_global_config(
-        &mut self,
-        config: impl ToString,
-        value: impl Serialize,
-    ) -> Result<(), PickleDdError> {
-        let key = format!("global:{}", config.to_string());
-        self.db.set(&key, &value)
-    }
+    config.value.parse::<V>().ok()
 }

@@ -4,8 +4,8 @@ use serenity::model::prelude::Message;
 use serenity::prelude::Context;
 
 use crate::{
-    core::config::Zero2ConfigContainer,
-    utils::{get_global_config, get_guild_config},
+    core::config::{get_global_config, get_guild_config},
+    core::consts::DB,
 };
 
 #[group]
@@ -29,14 +29,12 @@ async fn get(context: &Context, message: &Message, mut args: Args) -> CommandRes
                 .remains()
                 .ok_or_else(|| CommandError::from("Error parsing remaining args"))?;
             dbg!(&config_name);
-            get_global_config::<_, String>(&context, config_name).await
+            get_global_config::<_, bool>(&context, config_name)
         }
         _ => {
             let config_name = args.message();
             match message.guild_id {
-                Some(guild_id) => {
-                    get_guild_config::<_, String>(&context, guild_id, config_name).await
-                }
+                Some(guild_id) => get_guild_config::<_, bool>(&context, guild_id, config_name),
                 None => None,
             }
         }
@@ -58,18 +56,11 @@ async fn set(context: &Context, message: &Message, mut args: Args) -> CommandRes
         .remains()
         .ok_or_else(|| CommandError::from("Error parsing remaining args"))?;
 
-    let mut data = context.data.write().await;
-    let mut container = data
-        .get_mut::<Zero2ConfigContainer>()
-        .ok_or_else(|| CommandError::from("Error getting Zero2ConfigContainer"))?
-        .write()
-        .await;
-
-    let result = container.set_global_config(config_name, config_value);
+    let config = DB.set_config(config_name, config_value, None);
 
     let _ = message
         .channel_id
-        .say(&context, format!("{:?}", result))
+        .say(&context, format!("{:?}", config))
         .await;
 
     Ok(())

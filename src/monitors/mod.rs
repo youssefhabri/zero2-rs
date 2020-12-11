@@ -1,7 +1,7 @@
 use serenity::model::prelude::{GuildId, Message, Reaction};
 use serenity::prelude::Context;
 
-use crate::utils::{get_global_config_with_default, get_guild_config_with_default};
+use crate::core::config::{get_global_config_with_default, get_guild_config_with_default};
 
 mod anilist;
 mod discord;
@@ -14,8 +14,8 @@ async fn can_run_monitor(
 ) -> bool {
     if let Some(guild_id) = guild_id {
         let key = format!("{}_monitor_enable", name);
-        let global_config = get_global_config_with_default(&context, key.clone(), default).await;
-        let guild_config = get_guild_config_with_default(&context, guild_id, key, default).await;
+        let global_config = get_global_config_with_default(&context, key.clone(), default);
+        let guild_config = get_guild_config_with_default(&context, guild_id, key, default);
 
         return guild_config && global_config;
     }

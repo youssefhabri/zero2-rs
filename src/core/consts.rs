@@ -1,4 +1,7 @@
+use database::Database;
+
 lazy_static! {
+    pub static ref DB: Database = Database::connect();
     pub static ref PREFIX: String = kankyo::key("BOT_PREFIX").expect("bot PREFIX not found");
     pub static ref PREFIXES: Vec<String> = load_csv_var("BOT_PREFIXES");
 }

@@ -1,11 +1,10 @@
 use menu::types::PaginationContainer;
 use serenity::client::Client as SerenityClient;
 use serenity::http::Http;
-use serenity::prelude::{Mutex, RwLock, SerenityError};
+use serenity::prelude::{RwLock, SerenityError};
 use std::collections::{HashMap, HashSet};
 use std::sync::Arc;
 
-use crate::core::config::Zero2ConfigContainer;
 use crate::core::event_handler::Zero2EventHandler;
 use crate::core::framework::Zero2Framework;
 use crate::core::store::ShardManagerContainer;
@@ -37,8 +36,7 @@ impl Zero2Client {
         {
             let mut data = client.data.write().await;
             data.insert::<ShardManagerContainer>(Arc::clone(&client.shard_manager));
-            data.insert::<PaginationContainer>(Arc::new(Mutex::new(HashMap::new())));
-            data.insert::<Zero2ConfigContainer>(Arc::new(RwLock::new(Zero2ConfigContainer::new())))
+            data.insert::<PaginationContainer>(Arc::new(RwLock::new(HashMap::new())));
         }
 
         Zero2Client { client }
