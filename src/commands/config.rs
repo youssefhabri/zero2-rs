@@ -3,15 +3,16 @@ use serenity::framework::standard::{Args, CommandError, CommandResult};
 use serenity::model::prelude::Message;
 use serenity::prelude::Context;
 
-use crate::{
-    core::config::{get_global_config, get_guild_config},
-    core::consts::DB,
-};
+use crate::core::checks::OWNER_CHECK;
+use crate::core::config::{get_global_config, get_guild_config};
+use crate::core::consts::DB;
 
 #[group]
 #[prefix(config)]
 #[commands(get, set)]
 #[default_command(get)]
+#[owners_only]
+#[checks(Owner)]
 struct Configuration;
 
 #[command]

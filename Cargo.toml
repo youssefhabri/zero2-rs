@@ -47,7 +47,7 @@ features = ["derive"]
 
 [dependencies.tokio]
 version = "0.2"
-features = ["macros"]
+features = ["macros", "signal"]
 
 [dependencies.urbandictionary]
 git = "https://github.com/youssefhabri/urbandictionary.rs"
