@@ -18,11 +18,6 @@ pub mod types;
 pub mod utils;
 
 pub async fn handle_reaction(context: &Context, reaction: &Reaction) {
-    match reaction.delete(&context).await {
-        Ok(_) => (),
-        Err(why) => error!("Err deleting reaction: {:?}", why),
-    }
-
     // TODO fix scoping to limit the time the lock is acquired
     //  This should not be an issue for Zero Two as its not used in a lot of servers,
     //  but it would be better to fix this anyways.
@@ -45,6 +40,11 @@ pub async fn handle_reaction(context: &Context, reaction: &Reaction) {
         Some(pagination_info) => pagination_info,
         None => return,
     };
+
+    match reaction.delete(&context).await {
+        Ok(_) => (),
+        Err(why) => error!("Err deleting reaction: {:?}", why),
+    }
 
     if Some(pagination_info.author) != reaction.user_id
         // TODO change this from a hardcoded owner id
