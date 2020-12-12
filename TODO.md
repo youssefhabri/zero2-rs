@@ -11,6 +11,7 @@
       - [ ] Use "wait for use answer" for non-boolean configs
 
   - [ ] Setup the commands permissions
+  - [ ] Fix the markdown parsing
 
 - Bot features:
 
