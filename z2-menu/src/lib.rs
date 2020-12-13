@@ -46,10 +46,9 @@ pub async fn handle_reaction(context: &Context, reaction: &Reaction) {
         Err(why) => error!("Err deleting reaction: {:?}", why),
     }
 
-    if (Some(pagination_info.author) != reaction.user_id
-        && pagination_info.author != UserId(139360031102599168))
-        || pagination_info.ended
-    {
+    let is_author = reaction.user_id == Some(pagination_info.author);
+    let is_owner = reaction.user_id == Some(UserId(139360031102599168));
+    if !(is_author || is_owner) || pagination_info.ended {
         return;
     }
 
