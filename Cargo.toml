@@ -36,10 +36,7 @@ sys-info = "0.7"
 sysinfo = "0.15"
 rand = "0.7"
 regex = "1.4"
-
-[dependencies.reqwest]
-version = "0.10"
-features = ["blocking"]
+reqwest = "0.10"
 
 [dependencies.serde]
 version = "1.0"
