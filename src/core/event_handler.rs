@@ -1,5 +1,5 @@
 use async_trait::async_trait;
-use serenity::model::prelude::{GuildId, Member, Message, Reaction, Ready, ResumedEvent};
+use serenity::model::prelude::{Activity, GuildId, Member, Message, Reaction, Ready, ResumedEvent};
 use serenity::prelude::{Context, EventHandler};
 
 use crate::monitors;
@@ -20,7 +20,15 @@ impl EventHandler for Zero2EventHandler {
         monitors::reaction_add_monitor(&context, &reaction).await;
     }
 
-    async fn ready(&self, _: Context, ready: Ready) {
+    async fn ready(&self, context: Context, ready: Ready) {
+        context.set_activity(Activity::listening("!!help")).await;
+
+        for guild_id in context.cache.guilds().await {
+            if let Some(guild) = guild_id.to_guild_cached(&context).await {
+                info!("[GUILD] Available in {}", guild.name);
+            }
+        }
+
         println!("Connected as {}", ready.user.name);
     }
 
