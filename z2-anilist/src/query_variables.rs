@@ -18,8 +18,8 @@ pub struct MediaVariables {
     #[serde(skip_serializing_if = "Option::is_none")]
     r#type: Option<MediaType>,
 
-    #[serde(skip_serializing_if = "Option::is_none")]
-    is_adult: Option<bool>,
+    #[serde(default)]
+    is_adult: bool,
 }
 
 impl Variables for MediaVariables {}
@@ -41,7 +41,7 @@ impl MediaVariables {
     }
 
     pub fn is_adult(&mut self, is_adult: bool) -> &mut Self {
-        self.is_adult = Some(is_adult);
+        self.is_adult = is_adult;
         self
     }
 }
