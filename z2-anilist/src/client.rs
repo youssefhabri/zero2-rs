@@ -78,15 +78,13 @@ fn load_graphql(file: &GQLFile<'_>) -> AniListResult<String> {
         .map_err(|_| Error::GraphQLLoadError)
 }
 
-fn query_from_parts(query_parts: Vec<GQLFile<'_>>) -> AniListResult<String> {
-    let query = query_parts
+fn query_from_parts(query_parts: Vec<GQLFile<'_>>) -> String {
+    query_parts
         .iter()
         .map(load_graphql)
         .filter_map(Result::ok)
-        .collect::<Vec<_>>()
-        .join("\n");
-
-    Ok(query)
+        .collect::<Vec<String>>()
+        .join("\n")
 }
 
 async fn make_request<V, T>(query_parts: Vec<GQLFile<'_>>, variables: V) -> AniListResult<T>
@@ -94,7 +92,7 @@ where
     V: Variables,
     T: DeserializeOwned,
 {
-    let query = query_from_parts(query_parts)?;
+    let query = query_from_parts(query_parts);
     let query_body = QueryBody {
         query,
         variables: Box::new(variables),
@@ -183,9 +181,7 @@ pub async fn search_user(keyword: impl ToString) -> AniListResult<Vec<User>> {
     let variables = StandardVariables::default().search(keyword).to_owned();
     let response: PagedUserResponse = make_request(query_parts, variables).await?;
 
-    if let Some(errors) = response.errors {
-        return Err(Error::AniListErrors(errors));
-    }
+    check_anilist_errors!(response.errors);
 
     Ok(response.users())
 }

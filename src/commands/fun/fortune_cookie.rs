@@ -19,7 +19,7 @@ fn load_from_url(url: &str) -> Option<Vec<String>> {
     Some(cookies)
 }
 
-fn random_from_vec<'a, T: Clone>(list: &'a Vec<T>) -> &'a T {
+fn random_from_vec<T: Clone>(list: &[T]) -> &T {
     let random_number = crate::utils::random_number(0, list.len() - 1);
     &list[random_number]
 }
@@ -28,7 +28,7 @@ fn random_from_vec<'a, T: Clone>(list: &'a Vec<T>) -> &'a T {
 async fn cookie(context: &Context, message: &Message, _args: Args) -> CommandResult {
     let cookies = tokio::task::spawn_blocking(|| COOKIES.as_ref())
         .await?
-        .ok_or(CommandError::from("COOKIES is None"))?;
+        .ok_or_else(|| CommandError::from("COOKIES is None"))?;
 
     let title = format!("{}'s fortune cookie!", message.author.name);
     let description = random_from_vec(&cookies).trim();
@@ -47,7 +47,7 @@ async fn cookie(context: &Context, message: &Message, _args: Args) -> CommandRes
 async fn fortune(context: &Context, message: &Message, _args: Args) -> CommandResult {
     let fortunes = tokio::task::spawn_blocking(|| FORTUNES.as_ref())
         .await?
-        .ok_or(CommandError::from("FORTUNES is None"))?;
+        .ok_or_else(|| CommandError::from("FORTUNES is None"))?;
 
     let title = format!("{}'s fortune!", message.author.name);
     let description = random_from_vec(&fortunes).trim();

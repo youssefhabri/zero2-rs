@@ -26,7 +26,7 @@ pub async fn id_mention(context: &Context, new_message: &Message) {
     let message_ids: Vec<MessageId> = MESSAGE_ID_RE
         .find_iter(new_message.content.as_str())
         .filter_map(|cap| cap.as_str().parse::<u64>().ok())
-        .map(|id| MessageId(id))
+        .map(MessageId)
         .collect();
 
     for msg_id in message_ids {

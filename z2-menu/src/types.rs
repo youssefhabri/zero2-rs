@@ -15,7 +15,7 @@ impl TypeMapKey for PaginationContainer {
 
 #[derive(Debug, Error)]
 pub enum PaginationError {
-    #[error("Serenty command error: {0}")]
+    #[error("Serenity command error: {0}")]
     SerenityCommand(#[from] CommandError),
 
     #[error("AniList client error: {0}")]
@@ -27,7 +27,7 @@ pub type PaginationResult = Result<(), PaginationError>;
 #[async_trait]
 pub trait Pagination: Send + Sync {
     async fn handle(&mut self, _: &Context, _: &Reaction) -> PaginationResult;
-    fn len(&self) -> usize;
+    fn count(&self) -> usize;
     fn cursor(&self) -> usize;
     fn set_cursor(&mut self, _: usize);
 }

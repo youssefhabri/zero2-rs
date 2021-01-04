@@ -56,7 +56,7 @@ pub async fn handle_reaction(context: &Context, reaction: &Reaction) {
 
     match reaction.emoji {
         ReactionType::Unicode(ref x) if x == reactions::NEXT => {
-            let cursor = (pagination.cursor() + 1).min(pagination.len() - 1);
+            let cursor = (pagination.cursor() + 1).min(pagination.count() - 1);
             pagination.set_cursor(cursor);
         }
 
@@ -70,7 +70,7 @@ pub async fn handle_reaction(context: &Context, reaction: &Reaction) {
         }
 
         ReactionType::Unicode(ref x) if x == reactions::LAST => {
-            let cursor = pagination.len() - 1;
+            let cursor = pagination.count() - 1;
             pagination.set_cursor(cursor);
         }
 

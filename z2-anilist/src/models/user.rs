@@ -97,7 +97,7 @@ pub struct UserStatisticsTypes {
 }
 
 impl UserStatisticsTypes {
-    fn media_count_by_status(statuses: &Vec<UserStatusStatistic>, status: MediaListStatus) -> u32 {
+    fn media_count_by_status(statuses: &[UserStatusStatistic], status: MediaListStatus) -> u32 {
         statuses
             .iter()
             .find(|st| st.status == status)

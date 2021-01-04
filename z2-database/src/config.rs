@@ -1,8 +1,22 @@
 use chrono::Utc;
 use diesel::prelude::*;
+use diesel::result::Error as DieselResultError;
+use thiserror::Error;
 
 use crate::models::{Config, NewConfig};
 use crate::{schema, Database, DatabaseError, DatabaseResult};
+
+#[derive(Debug, Error)]
+pub enum ConfigError {
+    #[error("Config error: {0}")]
+    SetConfig(DieselResultError),
+
+    #[error("Error getting config: {0}")]
+    GetConfig(DieselResultError),
+
+    #[error("Error getting all configs: {0}")]
+    AllConfig(DieselResultError),
+}
 
 impl Database {
     pub fn all_configs(&self, guild_id: Option<u64>) -> DatabaseResult<Vec<Config>> {
@@ -15,7 +29,9 @@ impl Database {
             None => dsl::configs.load::<Config>(&self.conn()),
         };
 
-        result.map_err(DatabaseError::AllConfig)
+        result
+            .map_err(ConfigError::AllConfig)
+            .map_err(DatabaseError::Config)
     }
 
     pub fn get_config(&self, name: impl ToString, guild_id: Option<u64>) -> DatabaseResult<Config> {
@@ -26,7 +42,8 @@ impl Database {
             .filter(dsl::name.eq(name.to_string()))
             .filter(dsl::guild_id.eq(guild_id))
             .first(&self.conn())
-            .map_err(DatabaseError::GetConfig)
+            .map_err(ConfigError::GetConfig)
+            .map_err(DatabaseError::Config)
     }
 
     pub fn set_config(
@@ -53,6 +70,7 @@ impl Database {
                 dsl::updated_at.eq(Utc::now()),
             ))
             .get_result(&self.conn())
-            .map_err(DatabaseError::SetConfig)
+            .map_err(ConfigError::SetConfig)
+            .map_err(DatabaseError::Config)
     }
 }

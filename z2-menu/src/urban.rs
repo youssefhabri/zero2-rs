@@ -15,7 +15,7 @@ pub struct UrbanDictionaryPagination {
 }
 
 impl UrbanDictionaryPagination {
-    pub async fn new(
+    pub async fn init(
         context: &Context,
         message: &Message,
         definitions: Vec<Definition>,
@@ -37,7 +37,7 @@ impl UrbanDictionaryPagination {
 
     fn footer(&self) -> Option<String> {
         if self.definitions.len() > 1 {
-            return Some(format!("Page: {}/{} | ", self.cursor() + 1, self.len()));
+            return Some(format!("Page: {}/{} | ", self.cursor() + 1, self.count()));
         }
 
         None
@@ -71,7 +71,7 @@ impl Pagination for UrbanDictionaryPagination {
         Ok(())
     }
 
-    fn len(&self) -> usize {
+    fn count(&self) -> usize {
         self.definitions.len()
     }
 

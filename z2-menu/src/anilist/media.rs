@@ -53,7 +53,7 @@ impl AniListPagination {
         let footer = format!(
             "Page: {}/{} | Status: {} | Powered by AniList",
             self.cursor() + 1,
-            self.len(),
+            self.count(),
             media.status()
         );
 

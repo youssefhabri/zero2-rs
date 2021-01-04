@@ -36,7 +36,7 @@ pub struct GiphyPagination {
 }
 
 impl GiphyPagination {
-    pub async fn new(context: &Context, message: &Message, gifs: Vec<Giphy>) -> CommandResult {
+    pub async fn init(context: &Context, message: &Message, gifs: Vec<Giphy>) -> CommandResult {
         let first = gifs[0].clone();
         let num = gifs.len();
         let pagination = GiphyPagination {
@@ -54,7 +54,7 @@ impl GiphyPagination {
 
     fn footer(&self) -> Option<String> {
         if self.gifs.len() > 1 {
-            return Some(format!("Page: {}/{} | ", self.cursor() + 1, self.len()));
+            return Some(format!("Page: {}/{} | ", self.cursor() + 1, self.count()));
         }
 
         None
@@ -88,7 +88,7 @@ impl Pagination for GiphyPagination {
         Ok(())
     }
 
-    fn len(&self) -> usize {
+    fn count(&self) -> usize {
         self.gifs.len()
     }
 

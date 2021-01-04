@@ -18,7 +18,7 @@ impl Greetings {
         let mut greetings = Greetings::default();
         include_str!("../../assets/greetings.txt")
             .lines()
-            .for_each(|line| greetings.parse(&line.to_string()));
+            .for_each(|line| greetings.parse(&line));
 
         greetings
     }

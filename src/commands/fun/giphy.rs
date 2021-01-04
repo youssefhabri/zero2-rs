@@ -17,7 +17,7 @@ async fn giphy(context: &Context, message: &Message, args: Args) -> CommandResul
         )));
     }
 
-    GiphyPagination::new(&context, &message, gifs).await
+    GiphyPagination::init(&context, &message, gifs).await
 }
 
 pub async fn query(query: String) -> GiphyResponse {

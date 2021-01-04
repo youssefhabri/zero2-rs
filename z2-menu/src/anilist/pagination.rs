@@ -37,7 +37,7 @@ impl Pagination for AniListPagination {
         }
     }
 
-    fn len(&self) -> usize {
+    fn count(&self) -> usize {
         self.ids.len()
     }
 
@@ -88,7 +88,7 @@ impl AniListPagination {
 
         // Page: 1/6 | Powered by AniList
         if self.ids.len() > 1 {
-            return format!("Page: {}/{} | {}", self.cursor() + 1, self.len(), footer);
+            return format!("Page: {}/{} | {}", self.cursor() + 1, self.count(), footer);
         }
 
         footer

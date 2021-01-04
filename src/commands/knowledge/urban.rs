@@ -37,5 +37,5 @@ async fn urban(context: &Context, message: &Message, args: Args) -> CommandResul
         return Ok(());
     }
 
-    UrbanDictionaryPagination::new(&context, &message, definitions).await
+    UrbanDictionaryPagination::init(&context, &message, definitions).await
 }
