@@ -8,6 +8,8 @@ pub const LAST: &str = "⏭️";
 pub const STOP: &str = "❌";
 pub const HOME: &str = "🔢";
 
+pub const DELETE: &str = "⛔";
+
 pub const ONE: &str = "1⃣";
 pub const TWO: &str = "2⃣";
 pub const THREE: &str = "3⃣";
@@ -26,7 +28,7 @@ pub const STATS: &str = "🇸";
 pub const RECOMMENDATIONS: &str = "🇷";
 
 fn _single_page_reactions(mut reactions: Vec<&str>) -> Vec<ReactionType> {
-    reactions.push(STOP);
+    reactions.append(&mut vec![STOP, DELETE]);
 
     reactions
         .into_iter()
@@ -38,7 +40,7 @@ fn _single_page_reactions(mut reactions: Vec<&str>) -> Vec<ReactionType> {
 fn _few_pages_reactions(reactions: Vec<&str>) -> Vec<ReactionType> {
     let mut new_reactions = vec![PREV];
     new_reactions.append(&mut reactions.to_vec());
-    new_reactions.append(&mut vec![NEXT, STOP]);
+    new_reactions.append(&mut vec![NEXT, STOP, DELETE]);
 
     new_reactions
         .into_iter()
@@ -50,7 +52,7 @@ fn _few_pages_reactions(reactions: Vec<&str>) -> Vec<ReactionType> {
 fn _many_pages_reactions(reactions: Vec<&str>) -> Vec<ReactionType> {
     let mut new_reactions = vec![FIRST, PREV];
     new_reactions.append(&mut reactions.to_vec());
-    new_reactions.append(&mut vec![NEXT, LAST, STOP]);
+    new_reactions.append(&mut vec![NEXT, LAST, STOP, DELETE]);
 
     new_reactions
         .into_iter()

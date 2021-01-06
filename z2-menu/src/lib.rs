@@ -91,6 +91,12 @@ pub async fn handle_reaction(context: &Context, reaction: &Reaction) {
 
             return;
         }
+        ReactionType::Unicode(ref x) if x == reactions::DELETE => {
+            let _delete_message = context
+                .http
+                .delete_message(*reaction.channel_id.as_u64(), *reaction.message_id.as_u64())
+                .await;
+        }
 
         _ => {}
     }
