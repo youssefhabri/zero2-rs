@@ -81,7 +81,13 @@ impl AniListPagination {
         context: &Context,
         reaction: &Reaction,
     ) -> PaginationResult {
-        let media = anilist::client::fetch_media(self.ids[self.cursor]).await?;
+        let is_adult = match reaction.channel(&context).await {
+            Ok(channel) => channel.is_nsfw(),
+            Err(_) => false,
+        };
+
+        let media =
+            anilist::client::fetch_media_with_adult(self.ids[self.cursor], is_adult).await?;
         let embed = self.media_embed(&media);
         self.update_message(&context, &reaction, embed).await;
 

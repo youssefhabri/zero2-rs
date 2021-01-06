@@ -35,9 +35,14 @@ async fn media(
         )));
     }
 
+    let is_adult = match message.channel(&context).await {
+        Some(channel) => channel.is_nsfw(),
+        None => false,
+    };
+
     let view = args.find::<AniListMediaView>().unwrap_or_default();
     let keyword = keyword_from_args(&mut args);
-    let media = anilist::client::search_media(keyword, media_type).await?;
+    let media = anilist::client::search_media_with_adult(keyword, media_type, is_adult).await?;
 
     AniListPagination::new_media_pagination(&context, &message, &media, view).await?;
 
