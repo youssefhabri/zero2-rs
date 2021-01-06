@@ -1,5 +1,5 @@
-query MediaSearch($id: Int) {
-  item: Media(id: $id) {
+query MediaSearch($id: Int, $isAdult: Boolean) {
+  item: Media(id: $id, isAdult: $isAdult) {
     ...MediaFull
     recommendations {
       nodes {

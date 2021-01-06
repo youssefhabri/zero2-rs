@@ -1,6 +1,6 @@
-query MediaSearch($search: String, $type: MediaType) {
+query MediaSearch($search: String, $type: MediaType, $isAdult: Boolean) {
   Page {
-    items: media(search: $search, type: $type) {
+    items: media(search: $search, type: $type, isAdult: $isAdult) {
       ...MediaFull
       recommendations {
         nodes {
