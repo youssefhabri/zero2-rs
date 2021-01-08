@@ -140,8 +140,8 @@ pub struct MediaRank {
     context: String,
 }
 
-impl ToString for MediaRank {
-    fn to_string(&self) -> String {
+impl std::fmt::Display for MediaRank {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let emoji = match self.r#type {
             MediaRankType::Popular => ":heart:",
             MediaRankType::Rated => ":star:",
@@ -155,9 +155,9 @@ impl ToString for MediaRank {
             .unwrap_or_default();
         let year = self.year.map(|year| year.to_string()).unwrap_or_default();
 
-        format!("{} {}# {} {} {}", emoji, rank, context, season, year)
-            .trim()
-            .to_string()
+        let string = format!("{} {}# {} {} {}", emoji, rank, context, season, year);
+
+        write!(f, "{}", string.trim())
     }
 }
 
@@ -167,15 +167,16 @@ pub struct StatusDistribution {
     status: Option<MediaListStatus>,
 }
 
-impl ToString for StatusDistribution {
-    fn to_string(&self) -> String {
-        if let Some(status) = &self.status {
-            let score = self.amount.map_or_else(na_str, |score| score.to_string());
+impl std::fmt::Display for StatusDistribution {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match &self.status {
+            Some(status) => {
+                let score = self.amount.map_or_else(na_str, |score| score.to_string());
 
-            return format!("**{}**: {}", status.to_string(), score);
+                write!(f, "**{}**: {}", status, score)
+            }
+            None => write!(f, "N/A"),
         }
-
-        na_str()
     }
 }
 

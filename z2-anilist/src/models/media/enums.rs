@@ -7,13 +7,13 @@ pub enum MediaType {
     Manga,
 }
 
-impl ToString for MediaType {
-    fn to_string(&self) -> String {
-        match self {
+impl std::fmt::Display for MediaType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let string = match self {
             MediaType::Anime => "ANIME",
             MediaType::Manga => "MANGA",
-        }
-        .to_string()
+        };
+        write!(f, "{}", string)
     }
 }
 
@@ -57,15 +57,15 @@ impl MediaStatus {
     }
 }
 
-impl ToString for MediaStatus {
-    fn to_string(&self) -> String {
-        match self {
+impl std::fmt::Display for MediaStatus {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let string = match self {
             MediaStatus::Finished => "Finished",
             MediaStatus::Releasing => "Releasing",
             MediaStatus::NotYetReleased => "Not Yet Released",
             MediaStatus::Cancelled => "Cancelled",
-        }
-        .to_string()
+        };
+        write!(f, "{}", string)
     }
 }
 
@@ -80,17 +80,17 @@ pub enum MediaListStatus {
     Repeating,
 }
 
-impl ToString for MediaListStatus {
-    fn to_string(&self) -> String {
-        match self {
+impl std::fmt::Display for MediaListStatus {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let string = match self {
             MediaListStatus::Current => "Current",
             MediaListStatus::Planning => "Planning",
             MediaListStatus::Completed => "Completed",
             MediaListStatus::Dropped => "Dropped",
             MediaListStatus::Paused => "Paused",
             MediaListStatus::Repeating => "Repeating",
-        }
-        .to_string()
+        };
+        write!(f, "{}", string)
     }
 }
 
@@ -103,15 +103,15 @@ pub enum MediaSeason {
     Fall,
 }
 
-impl ToString for MediaSeason {
-    fn to_string(&self) -> String {
-        match self {
+impl std::fmt::Display for MediaSeason {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let string = match self {
             MediaSeason::Winter => "Winter",
             MediaSeason::Spring => "Spring",
             MediaSeason::Summer => "Summer",
             MediaSeason::Fall => "Fall",
-        }
-        .to_string()
+        };
+        write!(f, "{}", string)
     }
 }
 

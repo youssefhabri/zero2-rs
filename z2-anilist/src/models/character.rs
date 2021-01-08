@@ -27,14 +27,14 @@ pub enum CharacterRole {
     Background,
 }
 
-impl ToString for CharacterRole {
-    fn to_string(&self) -> String {
-        match self {
+impl std::fmt::Display for CharacterRole {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let string = match self {
             CharacterRole::Main => "Main",
             CharacterRole::Supporting => "Supporting",
             CharacterRole::Background => "Background",
-        }
-        .to_string()
+        };
+        write!(f, "{}", string)
     }
 }
 

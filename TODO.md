@@ -12,6 +12,8 @@
 
   - [ ] Setup the commands permissions
   - [ ] Fix the markdown parsing
+  - [x] Change all `ToString` impls to `Display`
+  - [ ] Add descriptions and usage to all commands
 
 - Bot features:
 
