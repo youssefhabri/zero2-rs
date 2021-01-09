@@ -30,21 +30,27 @@ futures = "0.3"
 kankyo = "0.3"
 log = "0.4"
 lazy_static = "1.4"
-serenity = "0.9"
 serde_json = "1.0"
 sys-info = "0.7"
 sysinfo = "0.15"
 rand = "0.7"
 regex = "1.4"
-reqwest = "0.10"
+
+[dependencies.reqwest]
+version = "0.11"
+features = ["blocking", "json"]
+
+[dependencies.serenity]
+version = "0.10"
+features = ["unstable_discord_api"]
 
 [dependencies.serde]
 version = "1.0"
 features = ["derive"]
 
 [dependencies.tokio]
-version = "0.2"
-features = ["macros", "signal"]
+version = "1.0"
+features = ["macros", "signal", "rt-multi-thread"]
 
 [dependencies.urbandictionary]
 git = "https://github.com/youssefhabri/urbandictionary.rs"
