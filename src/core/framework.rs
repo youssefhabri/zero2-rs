@@ -13,6 +13,7 @@ use crate::commands::config::CONFIGURATION_GROUP;
 use crate::commands::fun::FUN_GROUP;
 use crate::commands::knowledge::KNOWLEDGE_GROUP;
 use crate::commands::meta::META_GROUP;
+use crate::commands::system::SYSTEM_GROUP;
 use crate::commands::ROOT_GROUP;
 
 pub struct Zero2Framework;
@@ -39,6 +40,7 @@ impl Zero2Framework {
             .group(&FUN_GROUP)
             .group(&KNOWLEDGE_GROUP)
             .group(&META_GROUP)
+            .group(&SYSTEM_GROUP)
     }
 }
 

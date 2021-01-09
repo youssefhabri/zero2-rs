@@ -13,3 +13,15 @@ async fn owner_check(_: &Context, msg: &Message) -> CheckResult {
 
     CheckResult::Failure(Reason::User("User is not Mittens".to_string()))
 }
+
+#[check]
+#[name = "Admin"]
+async fn admin_check(context: &Context, message: &Message) -> CheckResult {
+    if let Ok(member) = message.member(&context).await {
+        if let Ok(permissions) = member.permissions(&context).await {
+            return permissions.administrator().into();
+        }
+    }
+
+    false.into()
+}

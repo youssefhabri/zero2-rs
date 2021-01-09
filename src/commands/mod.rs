@@ -8,6 +8,7 @@ pub mod config;
 pub mod fun;
 pub mod knowledge;
 pub mod meta;
+pub mod system;
 
 #[command]
 async fn test(_context: &Context, _message: &Message, _args: Args) -> CommandResult {
