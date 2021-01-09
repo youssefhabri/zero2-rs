@@ -20,6 +20,10 @@ impl AniListPagination {
         media: &[Media],
         view: AniListMediaView,
     ) -> CommandResult {
+        if media.is_empty() {
+            return Ok(());
+        }
+
         let ids = media.iter().map(|media| media.id).collect();
         let kind = AniListPaginationKind::Media(view);
         let pagination = AniListPagination::new(ids, kind);

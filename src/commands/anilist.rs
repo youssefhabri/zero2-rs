@@ -1,9 +1,7 @@
-use chrono::Weekday;
 use serenity::framework::standard::macros::{command, group};
 use serenity::framework::standard::{Args, CommandError, CommandResult};
 use serenity::model::prelude::Message;
 use serenity::prelude::Context;
-use std::str::FromStr;
 
 use anilist::models::MediaType;
 
@@ -42,7 +40,15 @@ async fn media(
 
     let view = args.find::<AniListMediaView>().unwrap_or_default();
     let keyword = keyword_from_args(&mut args);
-    let media = anilist::client::search_media_with_adult(keyword, media_type, is_adult).await?;
+    let media =
+        anilist::client::search_media_with_adult(keyword.clone(), media_type.clone(), is_adult)
+            .await?;
+
+    if media.is_empty() {
+        let content = format!("No {} was found for `{}`", media_type, keyword);
+        message.channel_id.say(&context, content).await?;
+        return Ok(());
+    }
 
     AniListPagination::new_media_pagination(&context, &message, &media, view).await?;
 
@@ -126,12 +132,7 @@ async fn studio(context: &Context, message: &Message, mut args: Args) -> Command
 #[command]
 #[aliases(air)]
 async fn airing(context: &Context, message: &Message, args: Args) -> CommandResult {
-    let weekday = if !args.is_empty() {
-        let args = args.message();
-        Weekday::from_str(args).ok()
-    } else {
-        None
-    };
+    let weekday = args.parse().ok();
 
     AniListPagination::new_airing_schedule_pagination(&context, &message, weekday).await?;
 
