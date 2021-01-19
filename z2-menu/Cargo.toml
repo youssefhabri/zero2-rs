@@ -17,6 +17,8 @@ thiserror = "1.0"
 [dependencies.serenity]
 version = "0.10"
 features = ["unstable_discord_api"]
+git = "https://github.com/serenity-rs/serenity"
+branch = "current"
 
 [dependencies.serde]
 version = "1.0"

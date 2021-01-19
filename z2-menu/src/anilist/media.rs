@@ -1,22 +1,24 @@
 use anilist::models::Media;
 use serenity::builder::CreateEmbed;
 use serenity::framework::standard::CommandResult;
-use serenity::model::prelude::{Message, Reaction, ReactionType};
+use serenity::model::prelude::{ChannelId, Reaction, ReactionType, UserId};
 use serenity::prelude::Context;
 
 use super::AniListPagination;
-use crate::anilist::embeds::{
-    media_overview_embed, media_recommendations_embed, media_stats_embed,
-};
 use crate::anilist::types::AniListMediaView;
 use crate::anilist::AniListPaginationKind;
-use crate::types::{Pagination, PaginationResult};
+use crate::types::PaginationResult;
+use crate::{
+    anilist::embeds::{media_overview_embed, media_recommendations_embed, media_stats_embed},
+    types::Pagination,
+};
 use crate::{reactions, utils};
 
 impl AniListPagination {
     pub async fn new_media_pagination(
         context: &Context,
-        message: &Message,
+        channel_id: &ChannelId,
+        author_id: &UserId,
         media: &[Media],
         view: AniListMediaView,
     ) -> CommandResult {
@@ -30,9 +32,9 @@ impl AniListPagination {
 
         let embed = pagination.media_embed(&media[0]);
         let reactions = reactions::media(media.len());
-        let sent = utils::send_embed_message(&context, &message, &embed, reactions).await?;
+        let sent = utils::send_embed_message(&context, channel_id, &embed, reactions).await?;
 
-        utils::add_pagination_to_store(&context, pagination, sent.id, message.author.id).await;
+        utils::add_pagination_to_store(&context, pagination, sent.id, *author_id).await;
 
         Ok(())
     }

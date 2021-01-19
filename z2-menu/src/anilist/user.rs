@@ -1,7 +1,7 @@
 use anilist::models::User;
 use serenity::builder::CreateEmbed;
 use serenity::framework::standard::CommandResult;
-use serenity::model::prelude::{Message, Reaction, ReactionType};
+use serenity::model::prelude::{ChannelId, Reaction, ReactionType, UserId};
 use serenity::prelude::Context;
 
 use crate::anilist::embeds::{user_favourites_embed, user_overview_embed, user_stats_embed};
@@ -13,7 +13,8 @@ use crate::{reactions, utils};
 impl AniListPagination {
     pub async fn new_user_pagination(
         context: &Context,
-        message: &Message,
+        channel_id: &ChannelId,
+        author_id: &UserId,
         users: &[User],
         view: AniListUserView,
     ) -> CommandResult {
@@ -23,9 +24,9 @@ impl AniListPagination {
 
         let embed = pagination.user_embed(&users[0]);
         let reactions = reactions::user(users.len());
-        let sent = utils::send_embed_message(&context, &message, &embed, reactions).await?;
+        let sent = utils::send_embed_message(&context, &channel_id, &embed, reactions).await?;
 
-        utils::add_pagination_to_store(&context, pagination, sent.id, message.author.id).await;
+        utils::add_pagination_to_store(&context, pagination, sent.id, *author_id).await;
 
         Ok(())
     }

@@ -1,5 +1,7 @@
 use async_trait::async_trait;
-use serenity::model::prelude::{Activity, GuildId, Member, Message, Reaction, Ready, ResumedEvent};
+use serenity::model::prelude::{
+    Activity, GuildId, Interaction, Member, Message, Reaction, Ready, ResumedEvent,
+};
 use serenity::prelude::{Context, EventHandler};
 
 use crate::monitors;
@@ -34,5 +36,9 @@ impl EventHandler for Zero2EventHandler {
 
     async fn resume(&self, _: Context, _: ResumedEvent) {
         info!("Resumed");
+    }
+
+    async fn interaction_create(&self, context: Context, interaction: Interaction) {
+        interactions::handle_interaction_create(&context, interaction).await;
     }
 }

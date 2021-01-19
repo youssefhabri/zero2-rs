@@ -36,7 +36,8 @@ impl AniListPagination {
         let embed = pagination.airing_schedule_embed(airing_schedule);
         let reactions = reactions::airing_schedule_from_weekday(weekday, pagination.ids.len());
 
-        let sent = utils::send_embed_message(&context, &message, &embed, reactions).await?;
+        let sent =
+            utils::send_embed_message(&context, &message.channel_id, &embed, reactions).await?;
 
         utils::add_pagination_to_store(&context, pagination, sent.id, message.author.id).await;
 

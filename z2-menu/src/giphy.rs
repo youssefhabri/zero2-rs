@@ -46,7 +46,8 @@ impl GiphyPagination {
         };
         let embed = giphy_embed(&first, pagination.footer());
         let reactions = reactions::default(num);
-        let sent = utils::send_embed_message(&context, &message, &embed, reactions).await?;
+        let sent =
+            utils::send_embed_message(&context, &message.channel_id, &embed, reactions).await?;
         utils::add_pagination_to_store(&context, pagination, sent.id, message.author.id).await;
 
         Ok(())

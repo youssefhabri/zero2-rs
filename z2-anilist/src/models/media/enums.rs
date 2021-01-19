@@ -17,6 +17,15 @@ impl std::fmt::Display for MediaType {
     }
 }
 
+impl From<&str> for MediaType {
+    fn from(typ: &str) -> Self {
+        match typ.to_lowercase().as_ref() {
+            "manga" => MediaType::Manga,
+            _ => MediaType::Anime,
+        }
+    }
+}
+
 #[derive(Clone, Debug, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum MediaFormat {

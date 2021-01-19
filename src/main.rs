@@ -18,9 +18,13 @@ use crate::client::Zero2Client;
 #[tokio::main]
 async fn main() {
     kankyo::load(false).expect("Failed to load .env file");
-    env_logger::init();
+    pretty_env_logger::init();
 
     let mut client = Zero2Client::new().await;
+
+    if let Err(why) = client.register_interactions().await {
+        error!("Error registering interactions: {:?}", why);
+    }
 
     if let Err(why) = client.start().await {
         error!("Client error: {:?}", why);

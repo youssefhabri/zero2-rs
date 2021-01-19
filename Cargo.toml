@@ -15,17 +15,19 @@ lto = true
 members = [
     "z2-anilist",
     "z2-database",
+    "z2-interactions",
     "z2-menu"
 ]
 
 [dependencies]
 anilist = { path = "./z2-anilist" }
 database = { path = "./z2-database" }
+interactions = { path = "./z2-interactions" }
 menu = { path = "./z2-menu" }
 
 async-trait = "0.1"
 chrono = "0.4"
-env_logger = "0.7"
+pretty_env_logger = "0.4"
 futures = "0.3"
 kankyo = "0.3"
 log = "0.4"
@@ -43,6 +45,8 @@ features = ["blocking", "json"]
 [dependencies.serenity]
 version = "0.10"
 features = ["unstable_discord_api"]
+git = "https://github.com/serenity-rs/serenity"
+branch = "current"
 
 [dependencies.serde]
 version = "1.0"

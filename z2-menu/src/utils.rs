@@ -1,8 +1,7 @@
 use chrono::{Date, Datelike, Duration, Utc, Weekday};
 use serenity::builder::CreateEmbed;
 use serenity::framework::standard::CommandResult;
-use serenity::model::channel::{Message, ReactionType};
-use serenity::model::id::{MessageId, UserId};
+use serenity::model::prelude::{ChannelId, Message, MessageId, ReactionType, UserId};
 use serenity::prelude::Context;
 use std::ops::Add;
 
@@ -11,12 +10,11 @@ use crate::types::{Pagination, PaginationContainer, PaginationInfo};
 
 pub async fn send_embed_message(
     context: &Context,
-    message: &Message,
+    channel_id: &ChannelId,
     embed: &CreateEmbed,
     reactions: Vec<ReactionType>,
 ) -> CommandResult<Message> {
-    let sent = message
-        .channel_id
+    let sent = channel_id
         .send_message(&context, |m| {
             m.embed(|e| {
                 e.clone_from(embed);

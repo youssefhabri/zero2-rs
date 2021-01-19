@@ -50,7 +50,14 @@ async fn media(
         return Ok(());
     }
 
-    AniListPagination::new_media_pagination(&context, &message, &media, view).await?;
+    AniListPagination::new_media_pagination(
+        &context,
+        &message.channel_id,
+        &message.author.id,
+        &media,
+        view,
+    )
+    .await?;
 
     Ok(())
 }
@@ -78,7 +85,14 @@ async fn user(context: &Context, message: &Message, mut args: Args) -> CommandRe
     let users = anilist::client::search_user(keyword).await?;
     let view = args.find::<AniListUserView>().unwrap_or_default();
 
-    AniListPagination::new_user_pagination(&context, &message, &users, view).await?;
+    AniListPagination::new_user_pagination(
+        &context,
+        &message.channel_id,
+        &message.author.id,
+        &users,
+        view,
+    )
+    .await?;
 
     Ok(())
 }
