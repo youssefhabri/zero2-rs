@@ -6,6 +6,10 @@ use serenity::{
 };
 use std::sync::Arc;
 
+lazy_static::lazy_static! {
+    static ref GUILD_ID: u64 = kankyo::key("INTERACTIONS_GUILD_ID").unwrap().parse().unwrap();
+}
+
 pub async fn regitser_command(
     http: &Arc<Http>,
     app_id: u64,
@@ -34,7 +38,7 @@ pub async fn regitser_command(
     let map = serenity::utils::hashmap_to_json_map(anime_command.0);
     let map = serde_json::Value::Object(map);
 
-    http.create_guild_application_command(app_id, 421796393208905739, &map)
+    http.create_guild_application_command(app_id, GUILD_ID.to_owned(), &map)
         .await?;
 
     Ok(())

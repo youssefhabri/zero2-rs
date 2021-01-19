@@ -1,4 +1,4 @@
-#![feature(or_patterns)]
+#![feature(or_patterns, const_option)]
 
 mod anilist;
 mod utils;

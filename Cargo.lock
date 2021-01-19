@@ -1085,6 +1085,8 @@ name = "interactions"
 version = "0.1.0"
 dependencies = [
  "anilist",
+ "kankyo",
+ "lazy_static",
  "menu",
  "serde_json",
  "serenity",
