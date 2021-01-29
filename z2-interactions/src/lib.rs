@@ -1,21 +1,28 @@
-#![feature(or_patterns, const_option)]
+#![feature(or_patterns)]
 
 mod anilist;
+mod meta;
 mod utils;
 
+use serenity::model::interactions::Interaction;
 use serenity::{
     builder::CreateInteractionResponse,
-    model::interactions::InteractionResponseType,
+    model::prelude::{GuildId, InteractionResponseType},
     prelude::{Context, SerenityError},
 };
-use serenity::{http::Http, model::interactions::Interaction};
-use std::sync::Arc;
 
-pub async fn register_interactions(http: Arc<Http>) -> Result<(), SerenityError> {
-    let application_info = http.get_current_application_info().await?;
+pub async fn register_interactions(
+    context: &Context,
+    guild_id: GuildId,
+) -> Result<(), SerenityError> {
+    let application_info = context.http.get_current_application_info().await?;
     let application_id = application_info.id.as_u64();
 
-    anilist::register_anilist_interactions(http, *application_id)
+    anilist::register_interactions(&context, guild_id, *application_id)
+        .await
+        .unwrap();
+
+    meta::register_interactions(&context, guild_id, *application_id)
         .await
         .unwrap();
 
@@ -28,11 +35,15 @@ pub async fn handle_interaction_create(context: &Context, interaction: Interacti
 
     if let Some(data) = interaction.data.as_ref() {
         match data.name.as_str() {
-            name @ ("anime" | "manga" | "user") => {
-                let _resp =
-                    anilist::handle_anilist_interactions(&context, &interaction, name).await;
+            name if anilist::NAMES.contains(&name) => {
+                let _resp = anilist::handle_interactions(&context, &interaction, name).await;
             }
-            _ => {}
+            name if meta::NAMES.contains(&name) => {
+                let _resp = meta::handle_interactions(&context, &interaction, name).await;
+            }
+            _ => {
+                println!("Unhanlded interaction: ID: {}", interaction_id);
+            }
         }
 
         let resp = CreateInteractionResponse::default()

@@ -1,12 +1,12 @@
 use menu::anilist::{AniListPagination, AniListUserView};
 use serenity::{
-    http::Http,
-    model::interactions::Interaction,
+    model::prelude::{GuildId, Interaction},
     prelude::{Context, SerenityError},
 };
-use std::sync::Arc;
 
-use crate::utils::regitser_command;
+use crate::utils::{regitser_command, CommandOption};
+
+pub const NAMES: [&str; 3] = ["anime", "manga", "user"];
 
 macro_rules! get_option {
     ($interaction:expr, $name:expr) => {
@@ -26,26 +26,33 @@ macro_rules! get_option {
     };
 }
 
-pub async fn register_anilist_interactions(
-    http: Arc<Http>,
+pub async fn register_interactions(
+    context: &Context,
+    guild_id: GuildId,
     app_id: u64,
 ) -> Result<(), SerenityError> {
-    let opts = vec![("title", "Anime title to search for in AniList", true)];
+    let opts = vec![CommandOption::string(
+        "title",
+        "Anime title to search for in AniList",
+    )];
     let description = "Search for an anime in AniList";
-    regitser_command(&http, app_id, "anime", description, opts).await?;
+    regitser_command(&context, guild_id, app_id, "anime", description, opts).await?;
 
-    let opts = vec![("title", "Mange title to search for in AniList", true)];
+    let opts = vec![CommandOption::string(
+        "title",
+        "Mange title to search for in AniList",
+    )];
     let description = "Search for a manga in AniList";
-    regitser_command(&http, app_id, "manga", description, opts).await?;
+    regitser_command(&context, guild_id, app_id, "manga", description, opts).await?;
 
-    let opts = vec![("name", "The user's username", true)];
+    let opts = vec![CommandOption::string("name", "The user's username")];
     let description = "Search for a user in AniList";
-    regitser_command(&http, app_id, "user", description, opts).await?;
+    regitser_command(&context, guild_id, app_id, "user", description, opts).await?;
 
     Ok(())
 }
 
-pub async fn handle_anilist_interactions(
+pub async fn handle_interactions(
     context: &Context,
     interaction: &Interaction,
     name: &str,
