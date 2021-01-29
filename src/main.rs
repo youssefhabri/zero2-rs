@@ -18,15 +18,33 @@ use crate::client::Zero2Client;
 #[tokio::main]
 async fn main() {
     kankyo::load(false).expect("Failed to load .env file");
-    pretty_env_logger::init();
+
+    if let Err(why) = setup_logger() {
+        warn!("Failed to initialize logger: {}", why);
+    }
 
     let mut client = Zero2Client::new().await;
-
-    if let Err(why) = client.register_interactions().await {
-        error!("Error registering interactions: {:?}", why);
-    }
 
     if let Err(why) = client.start().await {
         error!("Client error: {:?}", why);
     }
+}
+
+fn setup_logger() -> Result<(), fern::InitError> {
+    fern::Dispatch::new()
+        .format(|out, message, record| {
+            out.finish(format_args!(
+                "{}[{}][{}] {}",
+                chrono::Local::now().format("[%Y-%m-%d][%H:%M:%S]"),
+                record.target(),
+                record.level(),
+                message
+            ))
+        })
+        .level(log::LevelFilter::Error)
+        .chain(std::io::stdout())
+        .chain(fern::log_file("error_logs.log")?)
+        .apply()?;
+
+    Ok(())
 }

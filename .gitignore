@@ -7,6 +7,7 @@ cloc.sh
 .idea
 
 .env
+*.log
 
 # TODO This a temporary. Remove it!
 /old-src

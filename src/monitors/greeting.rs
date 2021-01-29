@@ -42,7 +42,7 @@ pub async fn greeting_monitor(context: &Context, guild_id: GuildId, new_member: 
     let guild = match guild_id.to_guild_cached(context).await {
         Some(guild) => guild,
         None => {
-            error!("Error getting the guild id");
+            error!("Error getting the guild from the cache");
             return;
         }
     };
@@ -62,5 +62,7 @@ pub async fn greeting_monitor(context: &Context, guild_id: GuildId, new_member: 
         .replace("{owner}", &owner)
         .replace("{guild}", &guild.name);
 
-    let _ = channel_id.say(context, greeting).await;
+    if let Err(why) = channel_id.say(context, greeting).await {
+        error!("Error sending the greeting message: {}", why);
+    }
 }
