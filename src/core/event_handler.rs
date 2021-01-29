@@ -1,6 +1,6 @@
 use async_trait::async_trait;
 use serenity::model::prelude::{
-    Activity, GuildId, Interaction, Member, Message, Reaction, Ready, ResumedEvent,
+    Activity, GuildId, GuildStatus, Interaction, Member, Message, Reaction, Ready, ResumedEvent,
 };
 use serenity::prelude::{Context, EventHandler};
 
@@ -25,13 +25,24 @@ impl EventHandler for Zero2EventHandler {
     async fn ready(&self, context: Context, ready: Ready) {
         context.set_activity(Activity::listening("!!help")).await;
 
-        for guild_id in context.cache.guilds().await {
+        println!("Connected as {}", ready.user.name);
+
+        for guild_status in ready.guilds {
+            let guild_id = match guild_status {
+                GuildStatus::OnlinePartialGuild(partial_guild) => partial_guild.id,
+                GuildStatus::OnlineGuild(guild) => guild.id,
+                GuildStatus::Offline(offline_guild) => offline_guild.id,
+                _ => continue,
+            };
+
             if let Some(guild) = guild_id.to_guild_cached(&context).await {
-                info!("[GUILD] Available in {}", guild.name);
+                println!("[GUILD] Available in {}", guild.name);
+            }
+
+            if let Err(why) = interactions::register_interactions(&context, guild_id).await {
+                error!("Error registering interactions: {}", why);
             }
         }
-
-        println!("Connected as {}", ready.user.name);
     }
 
     async fn resume(&self, _: Context, _: ResumedEvent) {
