@@ -1,5 +1,5 @@
 use menu::types::PaginationContainer;
-use serenity::client::Client as SerenityClient;
+use serenity::client::{bridge::gateway::GatewayIntents, Client as SerenityClient};
 use serenity::http::Http;
 use serenity::prelude::{RwLock, SerenityError};
 use std::collections::{HashMap, HashSet};
@@ -27,8 +27,11 @@ impl Zero2Client {
 
         let framework = Zero2Framework::with_info(owners, Some(app_info.id));
 
+        let intents = GatewayIntents::all();
+
         let client = SerenityClient::builder(&token)
             .event_handler(Zero2EventHandler)
+            .intents(intents)
             .framework(framework)
             .await
             .expect("Err creating client");
