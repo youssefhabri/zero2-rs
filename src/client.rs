@@ -54,11 +54,4 @@ impl Zero2Client {
     pub async fn start(&mut self) -> Result<(), SerenityError> {
         self.client.start_autosharded().await
     }
-
-    pub async fn register_interactions(&mut self) -> Result<(), SerenityError> {
-        let http = self.client.cache_and_http.http.clone();
-        interactions::register_interactions(http).await?;
-
-        Ok(())
-    }
 }
