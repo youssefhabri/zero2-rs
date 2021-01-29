@@ -35,8 +35,9 @@ impl EventHandler for Zero2EventHandler {
                 _ => continue,
             };
 
-            if let Some(guild) = guild_id.to_guild_cached(&context).await {
-                println!("[GUILD] Available in {}", guild.name);
+            match guild_id.to_guild_cached(&context).await {
+                Some(guild) => println!("[GUILD] Available in {}", guild.name),
+                None => error!("Guild not found in cache"),
             }
 
             if let Err(why) = interactions::register_interactions(&context, guild_id).await {
