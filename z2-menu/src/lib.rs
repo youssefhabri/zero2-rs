@@ -92,14 +92,22 @@ pub async fn handle_reaction(context: &Context, reaction: &Reaction) {
             return;
         }
         ReactionType::Unicode(ref x) if x == reactions::DELETE => {
-            let delete_message = context
-                .http
-                .delete_message(*reaction.channel_id.as_u64(), *reaction.message_id.as_u64())
+            let message_id = reaction.message_id;
+            let content = format!(
+                ":no_entry: The {} embed has been deleted!",
+                pagination.name()
+            );
+            let edit_message = reaction
+                .channel_id
+                .edit_message(&context, message_id, |m| {
+                    m.content(content).suppress_embeds(true)
+                })
                 .await;
 
-            if delete_message.is_ok() {
+            if let Ok(msg) = edit_message {
                 // pagination_info.ended = true;
-                let _ = container.remove(&reaction.message_id);
+                let _ = msg.delete_reactions(&context).await;
+                let _ = container.remove(&msg.id);
             }
 
             return;

@@ -72,6 +72,10 @@ impl Pagination for UrbanDictionaryPagination {
         Ok(())
     }
 
+    fn name(&self) -> String {
+        "Urban Dictionary".to_string()
+    }
+
     fn count(&self) -> usize {
         self.definitions.len()
     }

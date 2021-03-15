@@ -1,4 +1,5 @@
 use chrono::Weekday;
+use std::fmt::{Display, Formatter, Result as FmtResult};
 use std::str::FromStr;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -155,5 +156,20 @@ impl AniListPaginationKind {
             AniListPaginationKind::AiringSchedule(view) => Some(view.clone()),
             _ => None,
         }
+    }
+}
+
+impl Display for AniListPaginationKind {
+    fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
+        let s = match self {
+            AniListPaginationKind::AiringSchedule(_) => "Airing Schedule",
+            AniListPaginationKind::Character(_) => "Character",
+            AniListPaginationKind::Media(_) => "Media",
+            AniListPaginationKind::User(_) => "User",
+            AniListPaginationKind::Staff(_) => "Staff",
+            AniListPaginationKind::Studio => "Studio",
+        };
+
+        write!(f, "{}", s)
     }
 }

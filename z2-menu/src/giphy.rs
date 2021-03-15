@@ -89,6 +89,10 @@ impl Pagination for GiphyPagination {
         Ok(())
     }
 
+    fn name(&self) -> String {
+        "Giphy".to_string()
+    }
+
     fn count(&self) -> usize {
         self.gifs.len()
     }

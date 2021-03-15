@@ -8,6 +8,7 @@ use std::ops::Add;
 use crate::reactions;
 use crate::types::{Pagination, PaginationContainer, PaginationInfo};
 
+#[inline]
 pub async fn send_embed_message(
     context: &Context,
     channel_id: &ChannelId,

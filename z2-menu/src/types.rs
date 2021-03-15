@@ -26,10 +26,11 @@ pub type PaginationResult = Result<(), PaginationError>;
 
 #[async_trait]
 pub trait Pagination: Send + Sync {
-    async fn handle(&mut self, _: &Context, _: &Reaction) -> PaginationResult;
+    fn name(&self) -> String;
     fn count(&self) -> usize;
     fn cursor(&self) -> usize;
     fn set_cursor(&mut self, _: usize);
+    async fn handle(&mut self, _: &Context, _: &Reaction) -> PaginationResult;
 }
 
 // TODO Think of a better name

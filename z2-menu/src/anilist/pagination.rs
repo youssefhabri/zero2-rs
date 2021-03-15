@@ -37,6 +37,10 @@ impl Pagination for AniListPagination {
         }
     }
 
+    fn name(&self) -> String {
+        format!("AniList {}", self.kind)
+    }
+
     fn count(&self) -> usize {
         self.ids.len()
     }
