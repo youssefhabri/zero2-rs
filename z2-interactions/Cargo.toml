@@ -16,7 +16,5 @@ serde_json = "1.0"
 
 [dependencies.serenity]
 version = "0.10"
-git = "https://github.com/serenity-rs/serenity"
-branch = "current"
 features = ["client", "model", "http", "rustls_backend", "unstable_discord_api"]
 default-features = false
