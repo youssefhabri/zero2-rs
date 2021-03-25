@@ -27,7 +27,6 @@ menu = { path = "./z2-menu" }
 
 async-trait = "0.1"
 chrono = "0.4"
-pretty_env_logger = "0.4"
 fern = "0.6"
 futures = "0.3"
 kankyo = "0.3"
@@ -38,6 +37,8 @@ sys-info = "0.7"
 sysinfo = "0.15"
 rand = "0.7"
 regex = "1.4"
+pretty_env_logger = "0.4"
+uwuify = { git = "https://github.com/Daniel-Liu-c0deb0t/uwu", branch = "uwu" }
 
 [dependencies.reqwest]
 version = "0.11"
@@ -46,8 +47,6 @@ features = ["blocking", "json"]
 [dependencies.serenity]
 version = "0.10"
 features = ["unstable_discord_api"]
-git = "https://github.com/serenity-rs/serenity"
-branch = "current"
 
 [dependencies.serde]
 version = "1.0"

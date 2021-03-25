@@ -2,7 +2,12 @@ use serenity::framework::standard::{macros::command, Args, CommandError, Command
 use serenity::model::channel::Message;
 use serenity::prelude::*;
 
-use crate::utils::random_number;
+use uwuifier::uwu_ify_sse;
+
+#[inline(always)]
+fn round_up(a: usize, b: usize) -> usize {
+    (a + b - 1) / b * b
+}
 
 #[command]
 #[usage = "[input text]"]
@@ -13,16 +18,15 @@ async fn owoify(context: &Context, message: &Message, args: Args) -> CommandResu
         return Err(CommandError::from("You need to input text to convert."));
     }
 
-    let faces = [" OwO ", " UwU ", " >w< ", " ^w^ "];
+    let mut input = args.message().as_bytes().to_owned();
+    let len = input.len();
+    input.resize(round_up(len, 16), 0);
 
-    let input = args.message().to_string();
-    let output = input
-        .replace("ove", "uv")
-        .replace("n", "ny")
-        .replace("N", "NY")
-        .replace(&['r', 'l'][..], "w")
-        .replace(&['R', 'L'][..], "W")
-        .replace('!', faces[random_number(0, 3)]);
+    let mut temp_bytes1 = vec![0u8; input.len() * 16];
+    let mut temp_bytes2 = vec![0u8; input.len() * 16];
+
+    let output = uwu_ify_sse(&input, len, &mut temp_bytes1, &mut temp_bytes2);
+    let output = std::str::from_utf8(output)?;
 
     let _ = message.delete(&context).await;
     let _ = message
