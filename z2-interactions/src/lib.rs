@@ -1,5 +1,3 @@
-#![feature(or_patterns)]
-
 mod anilist;
 mod meta;
 mod utils;
