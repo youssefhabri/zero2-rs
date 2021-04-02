@@ -2551,8 +2551,9 @@ checksum = "f4bf03e0ca70d626ecc4ba6b0763b934b6f2976e8c744088bb3c1d646fbb1ad0"
 
 [[package]]
 name = "uwuify"
-version = "0.1.0"
-source = "git+https://github.com/Daniel-Liu-c0deb0t/uwu?branch=uwu#d1b1c437ed1f916686d0d2b77e507e27060e933d"
+version = "0.2.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3db6840b7adcfd2e866c79157cc890ecdbbc1f739607134039ae64eaa6c07e24"
 dependencies = [
  "clap",
  "owo-colors",

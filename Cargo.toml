@@ -38,7 +38,7 @@ sysinfo = "0.15"
 rand = "0.7"
 regex = "1.4"
 pretty_env_logger = "0.4"
-uwuify = { git = "https://github.com/Daniel-Liu-c0deb0t/uwu", branch = "uwu" }
+uwuify = "0.2"
 
 [dependencies.reqwest]
 version = "0.11"
