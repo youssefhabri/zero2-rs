@@ -1,5 +1,5 @@
 [package]
-name = "z2-staging"
+name = "zero-two"
 version = "0.6.1"
 authors = ["Youssef Habri <youssef.habri@gmail.com>"]
 edition = "2018"

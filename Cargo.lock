@@ -2759,7 +2759,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "z2-staging"
+name = "zero-two"
 version = "0.6.1"
 dependencies = [
  "anilist",
