@@ -12,16 +12,11 @@ opt-level = 'z'
 lto = true
 
 [workspace]
-members = [
-    "z2-anilist",
-    "z2-database",
-    "z2-interactions",
-    "z2-menu"
-]
+members = ["z2-anilist", "z2-database", "z2-interactions", "z2-menu"]
 
 [dependencies]
 anilist = { path = "./z2-anilist" }
-database = { path = "./z2-database" }
+database = { path = "./z2-database", optional = true }
 interactions = { path = "./z2-interactions" }
 menu = { path = "./z2-menu" }
 
@@ -59,3 +54,7 @@ features = ["macros", "signal", "rt-multi-thread"]
 [dependencies.urbandictionary]
 git = "https://github.com/youssefhabri/urbandictionary.rs"
 branch = "async"
+
+[features]
+default = []
+db = ["database"]

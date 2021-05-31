@@ -9,18 +9,20 @@ use std::collections::HashSet;
 
 use super::consts::{PREFIX, PREFIXES};
 use crate::commands::anilist::ANILIST_GROUP;
-use crate::commands::config::CONFIGURATION_GROUP;
 use crate::commands::fun::FUN_GROUP;
 use crate::commands::knowledge::KNOWLEDGE_GROUP;
 use crate::commands::meta::META_GROUP;
 use crate::commands::system::SYSTEM_GROUP;
 use crate::commands::ROOT_GROUP;
 
+#[cfg(feature = "db")]
+use crate::commands::config::CONFIGURATION_GROUP;
+
 pub struct Zero2Framework;
 
 impl Zero2Framework {
     pub fn with_info(owners: HashSet<UserId>, bot_id: Option<UserId>) -> StandardFramework {
-        StandardFramework::new()
+        let framework = StandardFramework::new()
             .configure(|c| {
                 c.with_whitespace(true)
                     .allow_dm(true)
@@ -36,11 +38,15 @@ impl Zero2Framework {
             .help(&MY_HELP)
             .group(&ROOT_GROUP)
             .group(&ANILIST_GROUP)
-            .group(&CONFIGURATION_GROUP)
             .group(&FUN_GROUP)
             .group(&KNOWLEDGE_GROUP)
             .group(&META_GROUP)
-            .group(&SYSTEM_GROUP)
+            .group(&SYSTEM_GROUP);
+
+        #[cfg(feature = "db")]
+        framework.group(&CONFIGURATION_GROUP);
+
+        framework
     }
 }
 
