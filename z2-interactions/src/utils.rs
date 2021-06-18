@@ -1,5 +1,5 @@
 use serenity::{
-    builder::CreateInteractionOption,
+    builder::CreateApplicationCommandOption,
     model::prelude::{ApplicationCommandOptionType, GuildId},
     prelude::{Context, SerenityError},
 };
@@ -66,54 +66,50 @@ impl<'a> CommandOption<'a> {
 pub async fn regitser_command<'a>(
     context: &Context,
     guild_id: GuildId,
-    app_id: u64,
     name: &str,
     description: &str,
     opts: Vec<CommandOption<'a>>,
 ) -> Result<(), SerenityError> {
-    let options = opts
-        .into_iter()
-        .map(|opt| {
-            let mut new_opt = CreateInteractionOption::default()
-                .name(opt.name)
-                .description(opt.description)
-                .required(opt.required)
-                .kind(opt.kind)
-                .to_owned();
-
-            match opt.kind {
-                ApplicationCommandOptionType::String => {
-                    opt.choices.map(|choices| {
-                        choices.iter().for_each(|choice| {
-                            if let Some(value) = choice.value.as_str() {
-                                new_opt.add_string_choice(choice.name, value);
-                            }
-                        });
-                    });
-                }
-                ApplicationCommandOptionType::Integer => {
-                    opt.choices.map(|choices| {
-                        choices.iter().for_each(|choice| {
-                            if let Some(value) = choice.value.as_i64() {
-                                new_opt.add_int_choice(choice.name, value as i32);
-                            }
-                        });
-                    });
-                }
-                _ => {}
-            }
-
-            new_opt
-        })
-        .collect();
+    let options = opts.into_iter().map(map_command_option).collect();
 
     guild_id
-        .create_application_command(&context, app_id, |ci| {
-            ci.name(name)
-                .description(description)
-                .set_interaction_options(options)
+        .create_application_command(&context, |cmd| {
+            cmd.name(name).description(description).set_options(options)
         })
         .await?;
 
     Ok(())
+}
+
+fn map_command_option(option: CommandOption) -> CreateApplicationCommandOption {
+    let mut new_opt = CreateApplicationCommandOption::default()
+        .name(option.name)
+        .description(option.description)
+        .required(option.required)
+        .kind(option.kind)
+        .to_owned();
+
+    match option.kind {
+        ApplicationCommandOptionType::String => {
+            option.choices.map(|choices| {
+                choices.iter().for_each(|choice| {
+                    if let Some(value) = choice.value.as_str() {
+                        new_opt.add_string_choice(choice.name, value);
+                    }
+                });
+            });
+        }
+        ApplicationCommandOptionType::Integer => {
+            option.choices.map(|choices| {
+                choices.iter().for_each(|choice| {
+                    if let Some(value) = choice.value.as_i64() {
+                        new_opt.add_int_choice(choice.name, value as i32);
+                    }
+                });
+            });
+        }
+        _ => {}
+    }
+
+    new_opt
 }
