@@ -2,7 +2,7 @@
 FROM rust:latest AS builder
 
 RUN apt-get update
-RUN apt-get install -y build-essential libssl-dev libpq-dev
+RUN apt-get install -y build-essential libssl-dev libpq-dev ca-certificates
 WORKDIR /usr/src
 RUN USER=root cargo new zero-two
 WORKDIR /usr/src/zero-two
@@ -23,7 +23,7 @@ RUN --mount=type=cache,target=target cp target/release/zero-two /tmp/zero-two/
 
 
 FROM bitnami/minideb:latest
-RUN install_packages openssl libpq5
+RUN install_packages openssl libpq5 ca-certificates
 
 COPY --from=builder /tmp/zero-two/zero-two .
 COPY --from=builder /usr/src/zero-two/assets ./assets
