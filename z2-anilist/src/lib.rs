@@ -1,4 +1,4 @@
-#![feature(bool_to_option)]
+// #![feature(bool_to_option)]
 
 pub mod client;
 #[macro_use]

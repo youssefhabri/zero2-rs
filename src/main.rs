@@ -1,4 +1,4 @@
-#![feature(async_closure)]
+// #![feature(async_closure)]
 
 #[macro_use]
 extern crate lazy_static;
@@ -17,7 +17,9 @@ use crate::client::Zero2Client;
 
 #[tokio::main]
 async fn main() {
-    kankyo::load(false).expect("Failed to load .env file");
+    if let Err(_) = kankyo::load(false) {
+        warn!("Failed to load .env file. Falling back to env variables.")
+    }
 
     if let Err(why) = setup_logger() {
         warn!("Failed to initialize logger: {}", why);
