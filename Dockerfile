@@ -27,7 +27,6 @@ RUN install_packages openssl libpq5
 
 COPY --from=builder /tmp/zero-two/zero-two .
 COPY --from=builder /usr/src/zero-two/assets ./assets
-COPY --from=builder /usr/src/zero-two/.env ./.env
 
 RUN rm -rf /var/lib/{apt,dpkg,cache,log}/
 
