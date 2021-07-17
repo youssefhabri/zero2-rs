@@ -33,6 +33,7 @@ impl Zero2Client {
             .event_handler(Zero2EventHandler)
             .intents(intents)
             .framework(framework)
+            .application_id(*app_info.id.as_u64())
             .await
             .expect("Err creating client");
 
