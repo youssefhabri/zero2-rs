@@ -4,7 +4,7 @@ use serenity::prelude::Context;
 use serenity::utils::Colour;
 
 use std::time::{SystemTime, UNIX_EPOCH};
-use sysinfo::{ProcessExt, System, SystemExt};
+use sysinfo::{ProcessExt, RefreshKind, System, SystemExt};
 
 use crate::core::consts::{BOT_ID, OWNER_ID};
 use crate::utils::seconds_to_hrtime;
@@ -25,7 +25,7 @@ async fn bot_info(context: &Context, message: &Message) -> CommandResult {
         )
     };
 
-    let mut sys = System::new();
+    let mut sys = System::new_all();
     sys.refresh_all();
 
     let mut fields = Vec::new();
@@ -46,7 +46,7 @@ async fn bot_info(context: &Context, message: &Message) -> CommandResult {
             let process_info = format!(
                 "Memory Usage: {} MB\nCPU Usage {}%\nUptime: {}",
                 process.memory() / 1000, // convert to MB
-                process.cpu_usage(),
+                (process.cpu_usage() * 100.0).round() / 100.0,
                 seconds_to_hrtime(uptime as usize)
             );
             fields.push(("Process Info", process_info, true));
