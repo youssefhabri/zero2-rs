@@ -4,7 +4,7 @@ use serenity::prelude::Context;
 use serenity::utils::Colour;
 
 use std::time::{SystemTime, UNIX_EPOCH};
-use sysinfo::{get_current_pid, ProcessExt, System, SystemExt};
+use sysinfo::{ProcessExt, System, SystemExt};
 
 use crate::core::consts::{BOT_ID, OWNER_ID};
 use crate::utils::seconds_to_hrtime;
@@ -30,31 +30,23 @@ async fn bot_info(context: &Context, message: &Message) -> CommandResult {
 
     let mut fields = Vec::new();
 
-    if let Ok(current_pid) = get_current_pid() {
-        if let Some(process) = sys.get_process(current_pid) {
+    if let Ok(current_pid) = sysinfo::get_current_pid() {
+        if let Some(process) = sys.process(current_pid) {
             let uptime = SystemTime::now()
                 .duration_since(UNIX_EPOCH)
                 .map(|current_time| current_time.as_secs() - process.start_time())
                 .unwrap_or(0);
 
-            let os_type = if sys_info::os_type().unwrap() == "Linux" {
-                String::from("2.4")
-            } else {
-                sys_info::os_release().unwrap_or_else(|_| String::from("(release unknown)"))
-            };
-
             let system_info = format!(
-                "Type: {} {}\nUptime: {}",
-                sys_info::os_type().unwrap_or_else(|_| String::from("OS unknown")),
-                os_type,
-                seconds_to_hrtime(sys.get_uptime() as usize)
+                "Type: KoolOS 4.11 \nUptime: {}",
+                seconds_to_hrtime(sys.uptime() as usize)
             );
             fields.push(("System Info", system_info, true));
 
             let process_info = format!(
                 "Memory Usage: {} MB\nCPU Usage {}%\nUptime: {}",
                 process.memory() / 1000, // convert to MB
-                (process.cpu_usage() * 100.0).round() / 100.0, // round to 2 decimals
+                process.cpu_usage(),
                 seconds_to_hrtime(uptime as usize)
             );
             fields.push(("Process Info", process_info, true));
