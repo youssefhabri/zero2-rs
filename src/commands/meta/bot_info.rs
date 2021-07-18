@@ -4,7 +4,7 @@ use serenity::prelude::Context;
 use serenity::utils::Colour;
 
 use std::time::{SystemTime, UNIX_EPOCH};
-use sysinfo::{ProcessExt, RefreshKind, System, SystemExt};
+use sysinfo::{ProcessExt, System, SystemExt};
 
 use crate::core::consts::{BOT_ID, OWNER_ID};
 use crate::utils::seconds_to_hrtime;
@@ -38,15 +38,16 @@ async fn bot_info(context: &Context, message: &Message) -> CommandResult {
                 .unwrap_or(0);
 
             let system_info = format!(
-                "Type: KoolOS 4.11 \nUptime: {}",
+                "Type: KoolOS {} \nUptime: {}",
+                sys.kernel_version().unwrap_or_else(|| "4.20".to_string()),
                 seconds_to_hrtime(sys.uptime() as usize)
             );
             fields.push(("System Info", system_info, true));
 
             let process_info = format!(
-                "Memory Usage: {} MB\nCPU Usage {}%\nUptime: {}",
+                "Memory Usage: {} MB\nCPU Usage {:.2}%\nUptime: {}",
                 process.memory() / 1000, // convert to MB
-                (process.cpu_usage() * 100.0).round() / 100.0,
+                process.cpu_usage(),
                 seconds_to_hrtime(uptime as usize)
             );
             fields.push(("Process Info", process_info, true));
