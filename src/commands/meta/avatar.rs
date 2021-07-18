@@ -31,22 +31,12 @@ async fn avatar(context: &Context, message: &Message, mut args: Args) -> Command
             Err(_) => continue,
         };
 
-        let avatar_url = match user.avatar_url() {
-            Some(avatar_url) => avatar_url,
-            None => {
-                let _ = message
-                    .channel_id
-                    .say(&context, format!("{} doesn't have an avatar.", &user.tag()))
-                    .await;
-
-                continue;
-            }
-        };
+        let avatar_url = user.face();
 
         let user_nick = user
             .nick_in(&context, message.guild_id.unwrap())
             .await
-            .unwrap_or_else(|| user.name.clone());
+            .unwrap_or_else(|| format!("{}#{}", user.name, user.discriminator));
 
         let _sent = message
             .channel_id
