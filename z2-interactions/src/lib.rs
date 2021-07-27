@@ -4,7 +4,7 @@ mod utils;
 
 use serenity::model::interactions::Interaction;
 use serenity::{
-    model::prelude::{GuildId, InteractionData, InteractionResponseType},
+    model::prelude::{GuildId, InteractionResponseType},
     prelude::{Context, SerenityError},
 };
 
@@ -35,10 +35,11 @@ pub async fn register_interactions(
 }
 
 pub async fn handle_interaction_create(context: &Context, interaction: Interaction) {
-    let interaction_data = match interaction.data.as_ref() {
-        Some(InteractionData::ApplicationCommand(data)) => data,
+    let application_command = match utils::get_application_command(&interaction) {
+        Ok(application_command) => application_command,
         _ => return,
     };
+    let interaction_data = &application_command.data;
 
     match interaction_data.name.as_ref() {
         name if anilist::NAMES.contains(&name) => {
@@ -48,11 +49,11 @@ pub async fn handle_interaction_create(context: &Context, interaction: Interacti
             let _resp = meta::handle_interactions(&context, &interaction, name).await;
         }
         _ => {
-            println!("Unhanlded interaction: {}", interaction.id);
+            println!("Unhanlded interaction: {}", application_command.id);
         }
     }
 
-    let _response = interaction
+    let _response = application_command
         .create_interaction_response(&context, |resp| resp.kind(InteractionResponseType::Pong))
         .await;
 }

@@ -1,6 +1,9 @@
 use serenity::{
     builder::CreateApplicationCommandOption,
-    model::prelude::{ApplicationCommandOptionType, GuildId},
+    model::prelude::application_command::{
+        ApplicationCommandInteraction, ApplicationCommandOptionType,
+    },
+    model::prelude::{GuildId, Interaction},
     prelude::{Context, SerenityError},
 };
 
@@ -112,4 +115,17 @@ fn map_command_option(option: CommandOption) -> CreateApplicationCommandOption {
     }
 
     new_opt
+}
+
+pub fn get_application_command(
+    interaction: &Interaction,
+) -> Result<ApplicationCommandInteraction, SerenityError> {
+    match interaction.clone().application_command() {
+        Some(application_command) => Ok(application_command),
+        None => {
+            return Err(SerenityError::Other(
+                "application_command() is None. TODO: user custom error type",
+            ))
+        }
+    }
 }

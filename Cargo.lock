@@ -329,8 +329,7 @@ dependencies = [
 [[package]]
 name = "command_attr"
 version = "0.3.7"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8a6c3666f685cb1efc0628b8c984dbad9c372d080450736c7732089c385ed81d"
+source = "git+https://github.com/serenity-rs/serenity?branch=current#413e3eff769c773e9f000d91a1ad9d502232ba40"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -2009,8 +2008,7 @@ dependencies = [
 [[package]]
 name = "serenity"
 version = "0.10.8"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b68c1f5dbe25b32516f3f104726a9e8e3a96cf5960a106213241738ffe108f81"
+source = "git+https://github.com/serenity-rs/serenity?branch=current#413e3eff769c773e9f000d91a1ad9d502232ba40"
 dependencies = [
  "async-trait",
  "async-tungstenite",
@@ -2168,16 +2166,6 @@ dependencies = [
  "proc-macro2",
  "quote",
  "unicode-xid",
-]
-
-[[package]]
-name = "sys-info"
-version = "0.7.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e5cfbd84f86389198ade41b439f72a5b1b3a8ba728e61cd589e1720d0df44c39"
-dependencies = [
- "cc",
- "libc",
 ]
 
 [[package]]
@@ -2758,7 +2746,7 @@ dependencies = [
 
 [[package]]
 name = "zero-two"
-version = "0.6.1"
+version = "0.6.2"
 dependencies = [
  "anilist",
  "async-trait",
@@ -2778,7 +2766,6 @@ dependencies = [
  "serde",
  "serde_json",
  "serenity",
- "sys-info",
  "sysinfo",
  "tokio 1.7.0",
  "urbandictionary",

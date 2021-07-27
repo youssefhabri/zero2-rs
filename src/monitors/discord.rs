@@ -71,9 +71,14 @@ async fn find_message_in_guild_channels(
     guild_id: GuildId,
     message_id: MessageId,
 ) -> Option<Message> {
+    let guild = guild_id.to_guild_cached(&context).await?;
     let channels: HashMap<ChannelId, _> = guild_id.channels(&context).await.ok()?;
+    let mut channel_ids: Vec<ChannelId> = channels.into_iter().map(|(id, _)| id).collect();
 
-    for (channel_id, _) in channels {
+    let mut thread_ids: Vec<ChannelId> = guild.threads.iter().map(|ch| ch.id).collect();
+    channel_ids.append(&mut thread_ids);
+
+    for channel_id in channel_ids {
         if let Ok(message) = channel_id.message(&context, message_id).await {
             return Some(message);
         }
@@ -88,7 +93,9 @@ async fn process_message(
     target_channel_id: ChannelId,
     message: &Message,
 ) {
-    let is_source_channel_nsfw = message.channel(context).await.unwrap().is_nsfw();
+    let is_source_channel_nsfw = dbg!(message.channel_id.to_channel(context).await)
+        .unwrap()
+        .is_nsfw();
     let is_target_channel_nsfw = target_channel_id
         .to_channel(context)
         .await

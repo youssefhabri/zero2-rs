@@ -1,7 +1,7 @@
-use serenity::model::prelude::{GuildId, Interaction, InteractionData, UserId};
+use serenity::model::prelude::{GuildId, Interaction, UserId};
 use serenity::prelude::{Context, SerenityError};
 
-use crate::utils::{regitser_command, CommandOption};
+use crate::utils::{get_application_command, regitser_command, CommandOption};
 
 pub const NAMES: [&str; 1] = ["avatar"];
 
@@ -21,14 +21,14 @@ pub async fn handle_interactions(
     interaction: &Interaction,
     name: &str,
 ) -> Result<(), SerenityError> {
+    let application_command = get_application_command(&interaction)?;
+    let channel_id = application_command.channel_id;
+    let guild_id = application_command.guild_id.unwrap_or(GuildId(0));
+
     match name {
         "avatar" => {
-            let data = match interaction.data.as_ref() {
-                Some(InteractionData::ApplicationCommand(data)) => data,
-                _ => return Ok(()), // TODO display error to user
-            };
-
-            let user_id = data
+            let user_id = application_command
+                .data
                 .options
                 .iter()
                 .find(|opt| opt.name == "user")
@@ -46,11 +46,6 @@ pub async fn handle_interactions(
                 None => return Ok(()), // TODO Should be `Err()` not `Ok()`
             };
 
-            let channel_id = match interaction.channel_id {
-                Some(id) => id,
-                None => return Ok(()), // TODO Should be `Err()` not `Ok()`
-            };
-
             let avatar_url = match user.avatar_url() {
                 Some(avatar_url) => avatar_url,
                 None => {
@@ -63,7 +58,7 @@ pub async fn handle_interactions(
             };
 
             let user_nick = user
-                .nick_in(&context, interaction.guild_id.unwrap_or(GuildId(0)))
+                .nick_in(&context, guild_id)
                 .await
                 .unwrap_or_else(|| user.name.clone());
 

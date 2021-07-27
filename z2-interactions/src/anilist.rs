@@ -1,30 +1,27 @@
 use menu::anilist::{AniListPagination, AniListUserView};
 use serenity::{
-    model::prelude::{GuildId, Interaction, InteractionData},
+    model::interactions::application_command::ApplicationCommandInteraction,
+    model::prelude::{GuildId, Interaction},
     prelude::{Context, SerenityError},
 };
 
-use crate::utils::{regitser_command, CommandOption};
+use crate::utils::{get_application_command, regitser_command, CommandOption};
 
 pub const NAMES: [&str; 3] = ["anime", "manga", "user"];
 
-macro_rules! get_option {
-    ($interaction:expr, $name:expr) => {
-        match $interaction.data.as_ref() {
-            Some(data) => match data {
-                InteractionData::ApplicationCommand(cmd) => cmd
-                    .options
-                    .iter()
-                    .find(|opt| opt.name == $name)
-                    .map(|opt| opt.value.clone())
-                    .flatten()
-                    .map(|val| val.to_string()),
-                _ => None,
-            },
-            None => None,
-        }
-        .ok_or(SerenityError::Other("Error getting Interaction Data"))?;
-    };
+fn _get_command_option(
+    interaction: &ApplicationCommandInteraction,
+    name: &str,
+) -> Result<String, SerenityError> {
+    interaction
+        .data
+        .options
+        .iter()
+        .find(|opt| opt.name == name)
+        .map(|opt| opt.value.clone())
+        .flatten()
+        .map(|val| val.to_string())
+        .ok_or(SerenityError::Other("Error getting Interaction Data"))
 }
 
 pub async fn register_interactions(
@@ -73,16 +70,10 @@ async fn handle_media_interaction(
     interaction: &Interaction,
     name: &str,
 ) -> Result<(), SerenityError> {
-    let title = get_option!(interaction, "title");
-
-    let channel_id = match interaction.channel_id {
-        Some(channel_id) => channel_id,
-        None => {
-            return Err(SerenityError::Other(
-                "ChannelId is None. TODO: user custom error type",
-            ))
-        }
-    };
+    let application_command = get_application_command(&interaction)?;
+    let author_id = application_command.user.id;
+    let channel_id = application_command.channel_id;
+    let title = _get_command_option(&application_command, "title")?;
 
     let media_type = anilist::models::MediaType::from(name);
     let media = anilist::client::search_media_with_adult(&title, media_type.clone(), false)
@@ -96,15 +87,6 @@ async fn handle_media_interaction(
             "AniList Error. TODO: user custom error type",
         ));
     }
-
-    let author_id = match interaction.user.as_ref() {
-        Some(user) => user.id,
-        None => {
-            return Err(SerenityError::Other(
-                "interaction.user is None. TODO: user custom error type",
-            ))
-        }
-    };
 
     menu::anilist::AniListPagination::new_media_pagination(
         context,
@@ -123,7 +105,11 @@ async fn handle_user_interaction(
     context: &Context,
     interaction: &Interaction,
 ) -> Result<(), SerenityError> {
-    let username = get_option!(interaction, "name");
+    let application_command = get_application_command(&interaction)?;
+    let author_id = application_command.user.id;
+    let channel_id = application_command.channel_id;
+    let username = _get_command_option(&application_command, "name")?;
+
     let users = anilist::client::search_user(username)
         .await
         .map_err(|_err| SerenityError::Other("TODO"))?;
@@ -131,24 +117,6 @@ async fn handle_user_interaction(
     if users.is_empty() {
         return Err(SerenityError::Other("TODO"));
     }
-
-    let channel_id = match interaction.channel_id {
-        Some(channel_id) => channel_id,
-        None => {
-            return Err(SerenityError::Other(
-                "ChannelId is None. TODO: user custom error type",
-            ))
-        }
-    };
-
-    let author_id = match interaction.user.as_ref() {
-        Some(user) => user.id,
-        None => {
-            return Err(SerenityError::Other(
-                "interaction.user is None. TODO: user custom error type",
-            ))
-        }
-    };
 
     AniListPagination::new_user_pagination(
         &context,
