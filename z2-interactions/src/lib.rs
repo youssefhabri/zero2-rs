@@ -54,6 +54,8 @@ pub async fn handle_interaction_create(context: &Context, interaction: Interacti
     }
 
     let _response = application_command
-        .create_interaction_response(&context, |resp| resp.kind(InteractionResponseType::Pong))
+        .create_interaction_response(&context, |resp| {
+            resp.kind(InteractionResponseType::ChannelMessageWithSource)
+        })
         .await;
 }
