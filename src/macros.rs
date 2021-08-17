@@ -7,7 +7,7 @@ macro_rules! ok_or_return {
                 error!("{}", why);
                 return;
             }
-        };
+        }
     };
 }
 
