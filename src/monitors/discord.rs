@@ -10,10 +10,16 @@ use crate::core::consts::MAIN_COLOUR;
 lazy_static! {
     pub static ref MESSAGE_ID_RE: Regex = Regex::new(r"[0-9]{17,18}").unwrap();
     pub static ref MESSAGE_LINK_RE: Regex =
-        Regex::new(r"https://.*discordapp\.com/channels/([0-9]*)/([0-9]*)/([0-9]*)/?").unwrap();
+        Regex::new(r"https://.*discord(?:app)?\.com/channels/([0-9]*)/([0-9]*)/([0-9]*)/?")
+            .unwrap();
 }
 
 pub async fn id_mention(context: &Context, new_message: &Message) {
+    // Fix for Threads having the same id as the original message
+    if new_message.content.starts_with("<#") {
+        return;
+    }
+
     if MESSAGE_LINK_RE.is_match(new_message.content.as_str()) {
         return handle_discord_url(&context, &new_message).await;
     }
@@ -93,7 +99,10 @@ async fn process_message(
     target_channel_id: ChannelId,
     message: &Message,
 ) {
-    let is_source_channel_nsfw = dbg!(message.channel_id.to_channel(context).await)
+    let is_source_channel_nsfw = message
+        .channel_id
+        .to_channel(context)
+        .await
         .unwrap()
         .is_nsfw();
     let is_target_channel_nsfw = target_channel_id
