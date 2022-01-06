@@ -1,5 +1,8 @@
 # syntax=docker/dockerfile:1.0-experimental
-FROM rust:latest AS builder
+
+ARG DEBIAN_RELEASE=bullseye
+
+FROM rust:slim-${DEBIAN_RELEASE} AS builder
 
 RUN apt-get update
 RUN apt-get install -y build-essential libssl-dev libpq-dev ca-certificates
@@ -22,7 +25,7 @@ RUN mkdir /tmp/zero-two
 RUN --mount=type=cache,target=target cp target/release/zero-two /tmp/zero-two/
 
 
-FROM bitnami/minideb:latest
+FROM bitnami/minideb:${DEBIAN_RELEASE}
 RUN install_packages openssl libpq5 ca-certificates
 
 COPY --from=builder /tmp/zero-two/zero-two .
