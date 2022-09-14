@@ -77,7 +77,7 @@ async fn find_message_in_guild_channels(
     guild_id: GuildId,
     message_id: MessageId,
 ) -> Option<Message> {
-    let guild = guild_id.to_guild_cached(&context).await?;
+    let guild = guild_id.to_guild_cached(&context)?;
     let channels: HashMap<ChannelId, _> = guild_id.channels(&context).await.ok()?;
     let mut channel_ids: Vec<ChannelId> = channels.into_iter().map(|(id, _)| id).collect();
 

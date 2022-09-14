@@ -1,7 +1,6 @@
 use async_trait::async_trait;
-use serenity::model::prelude::{
-    Activity, GuildId, GuildStatus, Interaction, Member, Message, Reaction, Ready, ResumedEvent,
-};
+use serenity::model::application::interaction::Interaction;
+use serenity::model::prelude::{Activity, Member, Message, Reaction, Ready, ResumedEvent};
 use serenity::prelude::{Context, EventHandler};
 
 use crate::monitors;
@@ -10,8 +9,8 @@ pub struct Zero2EventHandler;
 
 #[async_trait]
 impl EventHandler for Zero2EventHandler {
-    async fn guild_member_addition(&self, context: Context, guild_id: GuildId, new_member: Member) {
-        monitors::new_member_monitor(&context, guild_id, &new_member).await;
+    async fn guild_member_addition(&self, context: Context, new_member: Member) {
+        monitors::new_member_monitor(&context, &new_member).await;
     }
 
     async fn message(&self, context: Context, new_message: Message) {
@@ -27,15 +26,10 @@ impl EventHandler for Zero2EventHandler {
 
         println!("Connected as {}", ready.user.name);
 
-        for guild_status in ready.guilds {
-            let guild_id = match guild_status {
-                GuildStatus::OnlinePartialGuild(partial_guild) => partial_guild.id,
-                GuildStatus::OnlineGuild(guild) => guild.id,
-                GuildStatus::Offline(offline_guild) => offline_guild.id,
-                _ => continue,
-            };
+        for guild in ready.guilds {
+            let guild_id = guild.id;
 
-            match guild_id.to_guild_cached(&context).await {
+            match guild_id.to_guild_cached(&context) {
                 Some(guild) => println!("[GUILD] Available in {}", guild.name),
                 None => error!("Guild not found in cache"),
             }

@@ -65,7 +65,7 @@ pub async fn query(selection: String) -> NLImage {
 
 pub async fn selection(context: &Context, message: &Message, keyword: String) -> String {
     let nsfw = message
-        .channel(&context.cache)
+        .channel(&context)
         .await
         .map(|ch| ch.is_nsfw())
         .unwrap_or(false);
@@ -74,6 +74,6 @@ pub async fn selection(context: &Context, message: &Message, keyword: String) ->
         return keyword;
     }
 
-    let random_num: usize = rand::thread_rng().gen_range(0, TYPE_LIST.len() - 1);
+    let random_num: usize = rand::thread_rng().gen_range(0..TYPE_LIST.len());
     TYPE_LIST[random_num].to_owned()
 }

@@ -2,9 +2,9 @@ mod anilist;
 mod meta;
 mod utils;
 
-use serenity::model::interactions::Interaction;
 use serenity::{
-    model::prelude::{GuildId, InteractionResponseType},
+    model::application::interaction::{Interaction, InteractionResponseType},
+    model::prelude::GuildId,
     prelude::{Context, SerenityError},
 };
 
@@ -12,7 +12,7 @@ pub async fn register_interactions(
     context: &Context,
     guild_id: GuildId,
 ) -> Result<(), SerenityError> {
-    let guild_name = match guild_id.to_guild_cached(&context).await {
+    let guild_name = match guild_id.to_guild_cached(&context) {
         Some(guild) => guild.name,
         None => guild_id.to_string(),
     };

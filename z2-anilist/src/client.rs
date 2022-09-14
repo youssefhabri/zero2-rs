@@ -73,7 +73,7 @@ fn load_graphql(file: &GQLFile<'_>) -> AniListResult<String> {
         GQLFile::Fragment(fragment) => format!("Fragments/{}.graphql", fragment),
     };
     let asset = GraphQL::get(&path).ok_or(Error::GraphQLLoadError)?;
-    std::str::from_utf8(&asset)
+    std::str::from_utf8(&asset.data)
         .map(str::to_string)
         .map_err(|_| Error::GraphQLLoadError)
 }

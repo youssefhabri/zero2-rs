@@ -47,7 +47,8 @@ pub async fn reaction_add_monitor(context: &Context, reaction: &Reaction) {
     menu::handle_reaction(&context, &reaction).await;
 }
 
-pub async fn new_member_monitor(context: &Context, guild_id: GuildId, new_member: &Member) {
+pub async fn new_member_monitor(context: &Context, new_member: &Member) {
+    let guild_id = new_member.guild_id;
     if can_run_monitor(&context, Some(guild_id), "greeting", true).await {
         greeting::greeting_monitor(&context, guild_id, new_member).await;
     }

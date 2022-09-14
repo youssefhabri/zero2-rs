@@ -30,7 +30,7 @@ impl Zero2Framework {
                     .ignore_bots(true)
                     .delimiters(vec![",", " "])
                     .owners(owners)
-                    .prefix(&PREFIX)
+                    .prefix(PREFIX.as_str())
                     .prefixes(PREFIXES.to_vec())
             })
             .before(before)

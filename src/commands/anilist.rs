@@ -34,8 +34,8 @@ async fn media(
     }
 
     let is_adult = match message.channel(&context).await {
-        Some(channel) => channel.is_nsfw(),
-        None => false,
+        Ok(channel) => channel.is_nsfw(),
+        Err(_) => false,
     };
 
     let view = args.find::<AniListMediaView>().unwrap_or_default();

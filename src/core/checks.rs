@@ -18,7 +18,7 @@ async fn owner_check(_: &Context, msg: &Message) -> Result<(), Reason> {
 #[name = "Admin"]
 async fn admin_check(context: &Context, message: &Message) -> Result<(), Reason> {
     if let Ok(member) = message.member(&context).await {
-        if let Ok(permissions) = member.permissions(&context).await {
+        if let Ok(permissions) = member.permissions(&context) {
             if permissions.administrator() {
                 return Ok(());
             }

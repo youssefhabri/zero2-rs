@@ -142,9 +142,9 @@ mod markdown {
         content
     }
 
-    use html5ever::rcdom::{Node, NodeData, RcDom};
     use html5ever::tendril::TendrilSink;
     use html5ever::{parse_document, ParseOpts};
+    use markup5ever_rcdom::{Node, NodeData, RcDom};
 
     // Code from the dissolve crate
     pub(crate) fn strip_html_tags(input: &str) -> Vec<String> {

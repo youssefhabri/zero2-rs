@@ -37,7 +37,6 @@ async fn who(context: &Context, message: &Message, args: Args) -> CommandResult 
 
     let colour = member
         .colour(&context)
-        .await
         .unwrap_or_else(|| Colour::new(MAIN_COLOUR));
 
     let nick = member

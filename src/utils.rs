@@ -3,7 +3,7 @@ use rand::prelude::{thread_rng, Distribution, Rng};
 
 /// Generate a random number between the min & max values
 pub fn random_number(min: usize, max: usize) -> usize {
-    rand::thread_rng().gen_range(min, max)
+    rand::thread_rng().gen_range(min..=max)
 }
 
 pub fn random_with_weights<T: Clone>(choices: &[T], weights: &[u32]) -> Result<T, String> {

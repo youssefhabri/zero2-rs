@@ -1,7 +1,7 @@
 use menu::types::PaginationContainer;
-use serenity::client::{bridge::gateway::GatewayIntents, Client as SerenityClient};
+use serenity::client::Client as SerenityClient;
 use serenity::http::Http;
-use serenity::prelude::{RwLock, SerenityError};
+use serenity::prelude::{GatewayIntents, RwLock, SerenityError};
 use std::collections::{HashMap, HashSet};
 use std::sync::Arc;
 
@@ -16,7 +16,7 @@ pub struct Zero2Client {
 impl Zero2Client {
     pub async fn new() -> Zero2Client {
         let token = kankyo::key("DISCORD_TOKEN").expect("Expected a token in the environment");
-        let http = Http::new_with_token(&token);
+        let http = Http::new(&token);
         let app_info = match http.get_current_application_info().await {
             Ok(info) => info,
             Err(why) => panic!("Could not access application info: {:?}", why),
@@ -25,13 +25,12 @@ impl Zero2Client {
         let mut owners = HashSet::new();
         owners.insert(app_info.owner.id);
 
-        let framework = Zero2Framework::with_info(owners, Some(app_info.id));
+        let framework = Zero2Framework::with_info(owners, None);
 
         let intents = GatewayIntents::all();
 
-        let client = SerenityClient::builder(&token)
+        let client = SerenityClient::builder(&token, intents)
             .event_handler(Zero2EventHandler)
-            .intents(intents)
             .framework(framework)
             .application_id(*app_info.id.as_u64())
             .await

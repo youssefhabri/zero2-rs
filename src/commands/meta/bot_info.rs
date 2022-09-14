@@ -19,9 +19,9 @@ const BOT_VERSION: &str = env!("CARGO_PKG_VERSION");
 async fn bot_info(context: &Context, message: &Message) -> CommandResult {
     let (guild_count, shard_count, thumbnail) = {
         (
-            context.cache.guilds().await.len(),
-            context.cache.shard_count().await,
-            context.cache.user(BOT_ID).await.unwrap().face(),
+            context.cache.guilds().len(),
+            context.cache.shard_count(),
+            context.cache.user(BOT_ID).unwrap().face(),
         )
     };
 

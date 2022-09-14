@@ -39,7 +39,7 @@ impl Greetings {
 }
 
 pub async fn greeting_monitor(context: &Context, guild_id: GuildId, new_member: &Member) {
-    let guild = match guild_id.to_guild_cached(context).await {
+    let guild = match guild_id.to_guild_cached(context) {
         Some(guild) => guild,
         None => {
             error!("Error getting the guild from the cache");
