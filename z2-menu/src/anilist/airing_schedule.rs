@@ -46,8 +46,8 @@ impl AniListPagination {
 
     async fn _update_airing_schedule_ids(&mut self, weekday: Weekday) {
         let date = utils::weekday_to_date(weekday);
-        let start_date = date.and_hms(0, 0, 0).timestamp() as u64;
-        let end_date = date.and_hms(23, 59, 59).timestamp() as u64;
+        let start_date = date.and_hms_opt(0, 0, 0).unwrap().timestamp() as u64;
+        let end_date = date.and_hms_opt(23, 59, 59).unwrap().timestamp() as u64;
 
         match anilist::client::fetch_airing_schedule_list(start_date, end_date).await {
             Ok(airing_schedule) => {

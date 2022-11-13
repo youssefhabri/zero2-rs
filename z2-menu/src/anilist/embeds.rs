@@ -205,7 +205,8 @@ pub fn activity_embed(activity: &Activity) -> CreateEmbed {
 }
 
 fn base_activity_embed(activity: &Activity, author: &UserBase) -> CreateEmbed {
-    let datetime = NaiveDateTime::from_timestamp(activity.created_at as i64, 0)
+    let datetime = NaiveDateTime::from_timestamp_opt(activity.created_at as i64, 0)
+        .unwrap() // TODO: should check the option instead of unwrapping
         .format("%a, %B %e, %Y at %H:%M:%S")
         .to_string();
     let footer = Some(format!("Powered by AniList | {}", datetime));
@@ -277,7 +278,7 @@ fn _weekday_to_md(weekday: Weekday) -> String {
     let emoji = crate::utils::num_to_emoji(weekday as u32 + 1);
     let day = _weekday_to_string(weekday);
     let mut is_today = "";
-    if weekday == Utc::today().weekday() {
+    if weekday == Utc::now().weekday() {
         is_today = "**(Today)**";
     }
 

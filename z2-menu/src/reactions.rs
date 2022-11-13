@@ -8,7 +8,7 @@ pub const LAST: &str = "⏭️";
 pub const STOP: &str = "❌";
 pub const HOME: &str = "🔢";
 
-pub const DELETE: &str = "⛔";
+pub const DELETE: &str = "🗑️";
 
 pub const ONE: &str = "1⃣";
 pub const TWO: &str = "2⃣";

@@ -1,8 +1,7 @@
 use serenity::{
     builder::CreateApplicationCommandOption,
-    model::prelude::application_command::{
-        ApplicationCommandInteraction, ApplicationCommandOptionType,
-    },
+    model::application::command::CommandOptionType,
+    model::application::interaction::application_command::ApplicationCommandInteraction,
     model::prelude::{GuildId, Interaction},
     prelude::{Context, SerenityError},
 };
@@ -32,7 +31,7 @@ pub struct CommandOption<'a> {
     name: &'a str,
     description: &'a str,
     required: bool,
-    kind: ApplicationCommandOptionType,
+    kind: CommandOptionType,
     choices: Option<Vec<CommandOptionChoice<'a>>>, // TODO add choice types
 }
 
@@ -50,7 +49,7 @@ impl<'a> CommandOption<'a> {
             name,
             description,
             required: true,
-            kind: ApplicationCommandOptionType::String,
+            kind: CommandOptionType::String,
             choices: Some(choices),
         }
     }
@@ -60,7 +59,7 @@ impl<'a> CommandOption<'a> {
             name: "user",
             description: "User",
             required,
-            kind: ApplicationCommandOptionType::User,
+            kind: CommandOptionType::User,
             choices: None,
         }
     }
@@ -93,7 +92,7 @@ fn map_command_option(option: CommandOption) -> CreateApplicationCommandOption {
         .to_owned();
 
     match option.kind {
-        ApplicationCommandOptionType::String => {
+        CommandOptionType::String => {
             option.choices.map(|choices| {
                 choices.iter().for_each(|choice| {
                     if let Some(value) = choice.value.as_str() {
@@ -102,7 +101,7 @@ fn map_command_option(option: CommandOption) -> CreateApplicationCommandOption {
                 });
             });
         }
-        ApplicationCommandOptionType::Integer => {
+        CommandOptionType::Integer => {
             option.choices.map(|choices| {
                 choices.iter().for_each(|choice| {
                     if let Some(value) = choice.value.as_i64() {

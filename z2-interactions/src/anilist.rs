@@ -1,6 +1,6 @@
 use menu::anilist::{AniListPagination, AniListUserView};
 use serenity::{
-    model::interactions::application_command::ApplicationCommandInteraction,
+    model::application::interaction::application_command::ApplicationCommandInteraction,
     model::prelude::{GuildId, Interaction},
     prelude::{Context, SerenityError},
 };

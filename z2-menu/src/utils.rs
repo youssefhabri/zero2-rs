@@ -1,4 +1,4 @@
-use chrono::{Date, Datelike, Duration, Utc, Weekday};
+use chrono::{Datelike, Duration, Utc, Weekday, NaiveDate};
 use serenity::builder::CreateEmbed;
 use serenity::framework::standard::CommandResult;
 use serenity::model::prelude::{ChannelId, Message, MessageId, ReactionType, UserId};
@@ -72,8 +72,8 @@ pub fn reaction_to_weekday(reaction: &str) -> Option<Weekday> {
     }
 }
 
-pub fn weekday_to_date(weekday: Weekday) -> Date<Utc> {
-    let mut date = Utc::today();
+pub fn weekday_to_date(weekday: Weekday) -> NaiveDate {
+    let mut date = Utc::now().date_naive();
     while date.weekday() != weekday {
         date = date.add(Duration::days(1));
     }
