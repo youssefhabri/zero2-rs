@@ -8,7 +8,7 @@ use std::collections::HashMap;
 use crate::core::consts::MAIN_COLOUR;
 
 lazy_static! {
-    pub static ref MESSAGE_ID_RE: Regex = Regex::new(r"[0-9]{17,18}").unwrap();
+    pub static ref MESSAGE_ID_RE: Regex = Regex::new(r"[0-9]{16,20}").unwrap();
     pub static ref MESSAGE_LINK_RE: Regex =
         Regex::new(r"https://.*discord(?:app)?\.com/channels/([0-9]*)/([0-9]*)/([0-9]*)/?")
             .unwrap();
