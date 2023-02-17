@@ -1,11 +1,10 @@
+use once_cell::sync::Lazy;
 use serenity::model::prelude::{ChannelId, GuildId, Member};
 use serenity::prelude::Context;
 
 use crate::core::consts::OWNER_ID;
 
-lazy_static! {
-    pub static ref GREETINGS: Greetings = Greetings::new();
-}
+pub static GREETINGS: Lazy<Greetings> = Lazy::new(|| Greetings::new());
 
 #[derive(Debug, Default)]
 pub struct Greetings {

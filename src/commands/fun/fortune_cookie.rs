@@ -1,15 +1,18 @@
+use once_cell::sync::Lazy;
 use serenity::framework::standard::{macros::command, Args, CommandError, CommandResult};
 use serenity::model::prelude::Message;
 use serenity::prelude::Context;
 
-lazy_static! {
-    static ref COOKIES: Option<Vec<String>> = load_from_url(
-        "https://raw.githubusercontent.com/ianli/fortune-cookies-galore/master/fortunes.txt"
-    );
-    static ref FORTUNES: Option<Vec<String>> = load_from_url(
-        "https://raw.githubusercontent.com/larryprice/fortune-cookie-api/master/data/proverbs.txt"
-    );
-}
+static COOKIES: Lazy<Option<Vec<String>>> = Lazy::new(|| {
+    load_from_url(
+        "https://raw.githubusercontent.com/ianli/fortune-cookies-galore/master/fortunes.txt",
+    )
+});
+static FORTUNES: Lazy<Option<Vec<String>>> = Lazy::new(|| {
+    load_from_url(
+        "https://raw.githubusercontent.com/larryprice/fortune-cookie-api/master/data/proverbs.txt",
+    )
+});
 
 fn load_from_url(url: &str) -> Option<Vec<String>> {
     let response = reqwest::blocking::get(url).ok()?;

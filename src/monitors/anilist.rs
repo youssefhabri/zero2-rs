@@ -1,13 +1,13 @@
 use menu::anilist::AniListPagination;
+use once_cell::sync::Lazy;
 use regex::Regex;
 use serenity::model::prelude::Message;
 use serenity::prelude::Context;
 
-lazy_static! {
-    static ref RE: Regex =
-        Regex::new(r"https://anilist\.co/(character|activity|studio|staff)/([0-9]+)?/?([^/]+)?/?",)
-            .unwrap();
-}
+static RE: Lazy<Regex> = Lazy::new(|| {
+    Regex::new(r"https://anilist\.co/(character|activity|studio|staff)/([0-9]+)?/?([^/]+)?/?")
+        .unwrap()
+});
 
 fn should_embed(message: &str) -> bool {
     message.contains("https://anilist.co/")

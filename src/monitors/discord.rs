@@ -1,3 +1,4 @@
+use once_cell::sync::Lazy;
 use regex::Regex;
 use serenity::builder::CreateEmbed;
 use serenity::model::id::{ChannelId, GuildId, MessageId};
@@ -7,12 +8,10 @@ use std::collections::HashMap;
 
 use crate::core::consts::MAIN_COLOUR;
 
-lazy_static! {
-    pub static ref MESSAGE_ID_RE: Regex = Regex::new(r"[0-9]{16,20}").unwrap();
-    pub static ref MESSAGE_LINK_RE: Regex =
-        Regex::new(r"https://.*discord(?:app)?\.com/channels/([0-9]*)/([0-9]*)/([0-9]*)/?")
-            .unwrap();
-}
+pub static MESSAGE_ID_RE: Lazy<Regex> = Lazy::new(|| Regex::new(r"[0-9]{16,20}").unwrap());
+pub static MESSAGE_LINK_RE: Lazy<Regex> = Lazy::new(|| {
+    Regex::new(r"https://.*discord(?:app)?\.com/channels/([0-9]*)/([0-9]*)/([0-9]*)/?").unwrap()
+});
 
 pub async fn id_mention(context: &Context, new_message: &Message) {
     // Fix for Threads having the same id as the original message
